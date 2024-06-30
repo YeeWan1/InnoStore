@@ -1,0 +1,2 @@
+# InnoStore
+Smart Retail App
