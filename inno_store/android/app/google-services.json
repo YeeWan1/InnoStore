@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "396405032929",
+    "project_id": "smart-retail-app-4b6a5",
+    "storage_bucket": "smart-retail-app-4b6a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396405032929:android:fa7a9d2db91884af1434a0",
+        "android_client_info": {
+          "package_name": "com.example.inno_store"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFDPwZCsNSnckcq2jHvJcm7ejEhg5-2LU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
