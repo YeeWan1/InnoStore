@@ -6,7 +6,7 @@ import 'package:inno_store/features/app/splash_screen/splash_screen.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/home_page.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/login_page.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/sign_up_page.dart';
-
+//hihi
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
