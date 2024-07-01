@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:inno_store/my_account.dart'; // Import MyAccountPage
 
 class HomePage extends StatefulWidget {
   @override
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     MapScreen(),
     CategoryScreen(),
     RequestHelpScreen(),
-    AccountScreen(),
+    MyAccountPage(),
   ];
 
   void _onItemTapped(int index) {
