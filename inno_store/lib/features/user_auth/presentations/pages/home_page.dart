@@ -1,26 +1,20 @@
-import 'dart:ffi';
+// lib/home.dart
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import '../../../../global/common/toast.dart';
-
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
   @override
-  State<HomePage> createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions = <Widget>[
-    UserHomeScreen(),
+    HomeScreen(),
     MapScreen(),
+    CategoryScreen(),
     RequestHelpScreen(),
     AccountScreen(),
   ];
@@ -35,10 +29,25 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: Text('Inno Store'),
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: Stack(
+        children: _widgetOptions.asMap().entries.map((entry) {
+          int idx = entry.key;
+          Widget widget = entry.value;
+
+          return Offstage(
+            offstage: _selectedIndex != idx,
+            child: TickerMode(
+              enabled: _selectedIndex == idx,
+              child: Container(
+                color: _selectedIndex == idx ? Colors.grey[200] : Colors.white,
+                child: widget,
+              ),
+            ),
+          );
+        }).toList(),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -50,6 +59,10 @@ class _HomePageState extends State<HomePage> {
             label: 'Map',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.category),
+            label: 'Category',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.help),
             label: 'Request Help',
           ),
@@ -59,29 +72,23 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.orange,
+        unselectedItemColor: Colors.black,
         onTap: _onItemTapped,
       ),
     );
   }
 }
 
-class UserHomeScreen extends StatefulWidget {
-  const UserHomeScreen({super.key});
+class HomeScreen extends StatelessWidget {
+  final List<String> imgList = [
+    'https://via.placeholder.com/600x400?text=Buy+1+Free+1',
+    'https://via.placeholder.com/600x400?text=20%+Off',
+    'https://via.placeholder.com/600x400?text=Free+Shipping',
+  ];
 
-  @override
-  State<UserHomeScreen> createState() => _UserHomeScreenState();
-}
-
-class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final List<String> imgList = [
-      'https://via.placeholder.com/600x400?text=Buy+1+Free+1',
-      'https://via.placeholder.com/600x400?text=20%+Off',
-      'https://via.placeholder.com/600x400?text=Free+Shipping',
-    ];
-
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -117,8 +124,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 Text(
                   '30% OFF\n27 Jun - 1 Jul 2024',
                   style: TextStyle(color: Colors.white, fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
+                  textAlign: TextAlign.center),
               ],
             ),
           ),
@@ -130,7 +136,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             ),
             items: imgList.map((item) => Container(
               child: Center(
-                child: Image.network(item, fit: BoxFit.cover, width: 1000)
+                child: Image.network(item, fit: BoxFit.cover, width: 1000),
               ),
             )).toList(),
           ),
@@ -151,101 +157,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               _buildIconCard(Icons.content_cut, 'Haircare Finder'),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    _createData(UserModel(
-                      username: "Henry",
-                      age: 21,
-                      address: "London",
-                    ));
-                  },
-                  child: Container(
-                    height: 45,
-                    width: 100,
-                    decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Center(
-                      child: Text(
-                        "Create Data",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                StreamBuilder<List<UserModel>>(
-                  stream: _readData(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.data!.isEmpty) {
-                      return Center(child: Text("No Data Yet"));
-                    }
-                    final users = snapshot.data;
-                    return Column(
-                      children: users!.map((user) {
-                        return ListTile(
-                          leading: GestureDetector(
-                            onTap: () {
-                              _deleteData(user.id!);
-                            },
-                            child: Icon(Icons.delete),
-                          ),
-                          trailing: GestureDetector(
-                            onTap: () {
-                              _updateData(
-                                UserModel(
-                                  id: user.id,
-                                  username: "John Wick",
-                                  address: "Pakistan",
-                                ),
-                              );
-                            },
-                            child: Icon(Icons.update),
-                          ),
-                          title: Text(user.username!),
-                          subtitle: Text(user.address!),
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
-                GestureDetector(
-                  onTap: () {
-                    FirebaseAuth.instance.signOut();
-                    Navigator.pushNamed(context, "/login");
-                    showToast(message: "Successfully signed out");
-                  },
-                  child: Container(
-                    height: 45,
-                    width: 100,
-                    decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Center(
-                      child: Text(
-                        "Sign out",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -260,74 +171,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       ],
     );
   }
-
-  Stream<List<UserModel>> _readData() {
-    final userCollection = FirebaseFirestore.instance.collection("users");
-
-    return userCollection.snapshots().map((querySnapshot) =>
-        querySnapshot.docs.map((e) => UserModel.fromSnapshot(e)).toList());
-  }
-
-  void _createData(UserModel userModel) {
-    final userCollection = FirebaseFirestore.instance.collection("users");
-
-    String id = userCollection.doc().id;
-
-    final newUser = UserModel(
-      username: userModel.username,
-      age: userModel.age,
-      address: userModel.address,
-      id: id,
-    ).toJson();
-
-    userCollection.doc(id).set(newUser);
-  }
-
-  void _updateData(UserModel userModel) {
-    final userCollection = FirebaseFirestore.instance.collection("users");
-
-    final newData = UserModel(
-      username: userModel.username,
-      id: userModel.id,
-      address: userModel.address,
-      age: userModel.age,
-    ).toJson();
-
-    userCollection.doc(userModel.id).update(newData);
-  }
-
-  void _deleteData(String id) {
-    final userCollection = FirebaseFirestore.instance.collection("users");
-
-    userCollection.doc(id).delete();
-  }
-}
-
-class UserModel {
-  final String? username;
-  final String? address;
-  final int? age;
-  final String? id;
-
-  UserModel({this.id, this.username, this.address, this.age});
-
-  static UserModel fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    return UserModel(
-      username: snapshot['username'],
-      address: snapshot['address'],
-      age: snapshot['age'],
-      id: snapshot['id'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "username": username,
-      "age": age,
-      "id": id,
-      "address": address,
-    };
-  }
 }
 
 class MapScreen extends StatelessWidget {
@@ -335,6 +178,15 @@ class MapScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text('Map Screen'),
+    );
+  }
+}
+
+class CategoryScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Category Screen'),
     );
   }
 }
