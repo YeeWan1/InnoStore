@@ -17,6 +17,9 @@ dependencies:
   fluttertoast: ^8.2.2
   font_awesome_flutter: ^10.6.0
   google_sign_in: ^6.1.5
+  carousel_slider: ^4.2.1
+
+
   
 dev_dependencies:
   flutter_test:
