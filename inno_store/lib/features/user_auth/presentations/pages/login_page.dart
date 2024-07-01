@@ -182,33 +182,36 @@ class _LoginPageState extends State<LoginPage> {
   }
 
 
-  _signInWithGoogle()async{
+  _signInWithGoogle() async {
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-    final GoogleSignIn _googleSignIn = GoogleSignIn();
+  try {
+    final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
 
-    try {
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
-      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        idToken: googleSignInAuthentication.idToken,
+        accessToken: googleSignInAuthentication.accessToken,
+      );
 
-      if(googleSignInAccount != null ){
-        final GoogleSignInAuthentication googleSignInAuthentication = await
-        googleSignInAccount.authentication;
+      UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
 
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          idToken: googleSignInAuthentication.idToken,
-          accessToken: googleSignInAuthentication.accessToken,
-        );
-
-        await _firebaseAuth.signInWithCredential(credential);
+      if (userCredential.user != null) {
         Navigator.pushNamed(context, "/home");
+      } else {
+        showToast(message: "Google sign-in failed: user is null");
       }
-
-    }catch(e) {
-showToast(message: "some error occured $e");
+    } else {
+      showToast(message: "Google sign-in cancelled by user");
     }
-
+  } catch (error) {
+    showToast(message: "Google sign-in error: $error");
+    debugPrint("Google sign-in error: $error");
+  }
+}
 
   }
 
 
-}
