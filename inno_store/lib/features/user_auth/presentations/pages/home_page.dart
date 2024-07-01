@@ -1,7 +1,7 @@
-// lib/home.dart
-
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,9 +10,28 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  User? user;
+  String? username;
 
-  static List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
+  @override
+  void initState() {
+    super.initState();
+    fetchUser();
+  }
+
+  Future<void> fetchUser() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
+      setState(() {
+        user = currentUser;
+        username = userDoc['username'] ?? "User";
+      });
+    }
+  }
+
+  static List<Widget> _widgetOptions(String username) => <Widget>[
+    HomeScreen(username: username),
     MapScreen(),
     CategoryScreen(),
     RequestHelpScreen(),
@@ -27,12 +46,19 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (user == null || username == null) {
+      return Center(child: CircularProgressIndicator()); // Show a loading indicator while fetching user data
+    }
+
+    // Generate the list of widget options with the username
+    List<Widget> widgetOptions = _widgetOptions(username!);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Inno Store'),
       ),
       body: Stack(
-        children: _widgetOptions.asMap().entries.map((entry) {
+        children: widgetOptions.asMap().entries.map((entry) {
           int idx = entry.key;
           Widget widget = entry.value;
 
@@ -81,11 +107,14 @@ class _HomePageState extends State<HomePage> {
 }
 
 class HomeScreen extends StatelessWidget {
+  final String username;
   final List<String> imgList = [
     'https://via.placeholder.com/600x400?text=Buy+1+Free+1',
     'https://via.placeholder.com/600x400?text=20%+Off',
     'https://via.placeholder.com/600x400?text=Free+Shipping',
   ];
+
+  HomeScreen({required this.username});
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +127,7 @@ class HomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Hello, User!',
+                  'Hello, $username!',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
