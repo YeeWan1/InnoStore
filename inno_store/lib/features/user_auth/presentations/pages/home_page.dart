@@ -1,21 +1,7 @@
+// lib/home.dart
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomePage(),
-      routes: {
-        '/profile': (context) => ProfileScreen(),
-      },
-    );
-  }
-}
 
 class HomePage extends StatefulWidget {
   @override
@@ -28,7 +14,6 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     MapScreen(),
-    CategoryScreen(),
     RequestHelpScreen(),
     AccountScreen(),
   ];
@@ -55,10 +40,6 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
             label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: 'Category',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.help),
@@ -180,15 +161,6 @@ class MapScreen extends StatelessWidget {
   }
 }
 
-class CategoryScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Category Screen'),
-    );
-  }
-}
-
 class RequestHelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -203,20 +175,6 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text('My Account Screen'),
-    );
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-      ),
-      body: Center(
-        child: Text('Profile Screen'),
-      ),
     );
   }
 }
