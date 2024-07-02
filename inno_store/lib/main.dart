@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 import 'package:inno_store/features/app/splash_screen/splash_screen.dart';
-import 'package:inno_store/features/user_auth/presentations/pages/home_page.dart';
+import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/login_page.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/sign_up_page.dart';
-//hihi
+
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
@@ -28,7 +28,6 @@ Future main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Firebase',
@@ -39,10 +38,8 @@ class MyApp extends StatelessWidget {
         ),
         '/login': (context) => LoginPage(),
         '/signUp': (context) => SignUpPage(),
-        '/home': (context) => HomePage(),
+        '/home': (context) => MainHomePage(), // Update to MainHomePage
       },
     );
   }
-  
-  
 }
