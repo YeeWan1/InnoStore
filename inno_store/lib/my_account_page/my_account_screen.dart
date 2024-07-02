@@ -71,7 +71,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
               ),
               SizedBox(height: 16),
               Text(
-                'Welcome: $username',
+                'Username: $username',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
@@ -96,7 +96,17 @@ class _MyAccountPageState extends State<MyAccountPage> {
                   color: Colors.lightGreen[100],
                   borderRadius: BorderRadius.circular(10),
                 ),
-                
+                child: Column(
+                  children: [
+                    Text(
+                      'Welcome $username!',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8),
+                    Text('Have a nice day'),
+                  ],
+                ),
+              ),
               SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
