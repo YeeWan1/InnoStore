@@ -5,7 +5,7 @@ import 'package:inno_store/Home/home_page.dart';
 import 'package:inno_store/Map/map_screen.dart';
 import 'package:inno_store/Category/category_screen.dart';
 import 'package:inno_store/Request_Help/request_help_screen.dart';
-import 'package:inno_store/my_account_page/my_account.dart';
+import 'package:inno_store/my_account_page/my_account_screen.dart';
 
 class MainHomePage extends StatefulWidget {
   @override
