@@ -34,3 +34,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/products/healthcare/vitaminc.jpg
+    - assets/products/healthcare/krilloil.png
+    - assets/products/groceries/kokokrunch.jpg
