@@ -5,11 +5,11 @@ class CouponVoucherPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('eCoupon & eVouchers'),
+        title: Text('Coupon & Vouchers'),
         backgroundColor: Colors.blue,
       ),
       body: Center(
-        child: Text('eCoupon & eVouchers Page'),
+        child: Text('Coupon & Vouchers Page'),
       ),
     );
   }
