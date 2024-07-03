@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'profile.dart';
+import 'coupon_voucher.dart';
+import 'purchase_history.dart';
+import 'notification.dart';
+import 'rating_review.dart';
+import 'password.dart';
 
 class MyAccountPage extends StatefulWidget {
   @override
@@ -45,7 +51,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -61,7 +67,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                   ),
                   Spacer(),
                   IconButton(
-                    icon: Icon(Icons.logout),
+                    icon: Icon(Icons.logout, color: Colors.blue),
                     onPressed: () async {
                       await FirebaseAuth.instance.signOut();
                       Navigator.pushReplacementNamed(context, '/login');
@@ -71,91 +77,16 @@ class _MyAccountPageState extends State<MyAccountPage> {
               ),
               SizedBox(height: 16),
               Text(
-                'Username: $username',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Email: $email',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Gender: $gender',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Birthday: $birthday',
-                style: TextStyle(fontSize: 18),
+                'Hello, $username! Have a nice day :)',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
               SizedBox(height: 16),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.lightGreen[100],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      'Welcome $username!',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 8),
-                    Text('Have a nice day'),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildIconTextColumn(Icons.mail, "0", "Inbox"),
-                  _buildIconTextColumn(Icons.local_offer, "1", "eCoupon & eVoucher"),
-                  _buildIconTextColumn(Icons.favorite, "0", "My Wish List"),
-                  _buildIconTextColumn(Icons.notifications, "0", "Notify Me"),
-                ],
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // Add your membership link or action here
-                },
-                child: Text('Become a INNO store member'),
-              ),
-              SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  // Navigate to INNO store benefits page
-                },
-                child: Text('INNO store benefits'),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'My Order',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildIconTextColumn(Icons.history, "Order History"),
-                  _buildIconTextColumn(Icons.star, "Ratings & Reviews"),
-                ],
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Member Center',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  // Navigate to voucher page
-                },
-                child: Text('Voucher'),
-              ),
+              _buildMenuOption(Icons.person, 'Profile', context, ProfilePage()),
+              _buildMenuOption(Icons.local_offer, 'Coupon & Vouchers', context, CouponVoucherPage()),
+              _buildMenuOption(Icons.history, 'Purchase History', context, PurchaseHistoryPage()),
+              _buildMenuOption(Icons.notifications, 'Notifications', context, NotificationPage(), notificationCount: 5),
+              _buildMenuOption(Icons.star, 'Rating and Review', context, RatingReviewPage()),
+              _buildMenuOption(Icons.lock, 'Passwords', context, PasswordPage()),
             ],
           ),
         ),
@@ -163,17 +94,26 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
-  Widget _buildIconTextColumn(IconData icon, String text, [String? subtext]) {
-    return Column(
-      children: [
-        Icon(icon, size: 40),
-        SizedBox(height: 4),
-        Text(text, style: TextStyle(fontSize: 16)),
-        if (subtext != null) ...[
-          SizedBox(height: 2),
-          Text(subtext, style: TextStyle(fontSize: 14, color: Colors.grey)),
-        ],
-      ],
+  Widget _buildMenuOption(IconData icon, String title, BuildContext context, Widget page, {int notificationCount = 0}) {
+    return ListTile(
+      leading: Icon(icon, size: 40, color: Colors.blue),
+      title: Text(title, style: TextStyle(fontSize: 18, color: Colors.black87)),
+      trailing: notificationCount > 0 
+        ? CircleAvatar(
+            backgroundColor: Colors.red,
+            radius: 12,
+            child: Text(
+              notificationCount.toString(),
+              style: TextStyle(fontSize: 12, color: Colors.white),
+            ),
+          )
+        : null,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => page),
+        );
+      },
     );
   }
 }
