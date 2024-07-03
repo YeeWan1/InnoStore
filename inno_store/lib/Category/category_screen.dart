@@ -37,7 +37,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       // add more products
     ],
 
-    
+
     'Make Up': [
     
       // add more products
@@ -63,9 +63,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
         .toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Inno Store'),
-      ),
       body: Row(
         children: [
           Container(
