@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:inno_store/assets.dart';  // Add this import
+import 'package:inno_store/category/products/all.dart';
+import 'package:inno_store/category/products/healthcare.dart';
+import 'package:inno_store/category/products/groceries.dart';
+import 'package:inno_store/category/products/makeup.dart';
+import 'package:inno_store/category/products/petscare.dart';
+import 'package:inno_store/category/products/haircare.dart';
+import 'package:inno_store/category/locateitem.dart';
 
 void main() => runApp(MyApp());
 
@@ -22,74 +29,16 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  String selectedCategory = 'Health Care';
+  String selectedCategory = 'All';
   String searchText = '';
 
   final Map<String, List<Map<String, String>>> categoryProducts = {
-    'Health Care': [
-      {"title": "Swisse Ultiboost Vitamin C + Manuka Honey 120 Tablets", "image": Assets.vitaminc},
-      {"title": "Swisse Ultiboost High Strength Krill Oil 30 Capsules", "image": Assets.krilloil},
-      {"title": "Blackmores Digestive Enzymes Plus Capsule 60s", "image": Assets.enzymesplus},
-      {"title": "Blackmores Bio Ace Plus Capsule 30s", "image": Assets.bioaceplus},
-      {"title": "Blackmores Bio Zinc Capsule 168s", "image": Assets.biozinc},
-      {"title": "Blackmores Buffered C Capsule 30s", "image": Assets.bufferedc},
-      {"title": "EYS Bird's Nest With Rock Sugar", "image": Assets.birdnest},
-      {"title": "EYS Pure Chicken Essence", "image": Assets.chickenessence},
-      {"title": "HM Euphoria Longana Honey", "image": Assets.honey},
-      {"title": "Brand's Essence of Chicken 70g x 30's", "image": Assets.brands},
-    ],
-
-    'Groceries': [
-      {"title": "Nestle Koko Krunch 450g", "image": Assets.kokokrunch},
-      {"title": "Saji Brand Cooking Oil 5kg", "image": Assets.saji},
-      {"title": "Knife Cooking Oil 5kg", "image": Assets.knifeoil},
-      {"title": "Maggi Curry Flavour Instant Noodles 79g x 5", "image": Assets.maggiekari},
-      {"title": "Old Town 2 in 1 White Coffee (Coffee & Creamer) 375g", "image": Assets.oldtown},
-      {"title": "Old Town 3-in-1 Hazelnut Instant White Coffee 570g", "image": Assets.oldtownhazelnut},
-      {"title": "Yeo's Chicken Curry with Potatoes 280g", "image": Assets.yeoscurry},
-      {"title": "Jasmine Super 5 White Rice Imported 5kg", "image": Assets.jasmine},
-      {"title": "Ayam Brand Mackerel in Tomato Sauce 230g", "image": Assets.tomatosauce},
-      {"title": "Cap Rambutan 5% Super Import White Rice 5kg", "image": Assets.rambutans},
-      {"title": "Milo Original Chocolate Malt Drink 30g x 18", "image": Assets.milo},
-      {"title": "Nestle Kit Kat Sharebag Value Pack 17g x 24", "image": Assets.kitkat},
-      {"title": "Milo Soft Pack 2kg", "image": Assets.milo2kg},
-    ],
-
-    'Make Up': [
-      {"title": "Garnier Skin Naturals Micellar Water Pink 125ml", "image": Assets.garnier},
-      {"title": "Reihaku Hatomugi Whip Face Wash Cleansing Water (Make Up Remover) 200ml", "image": Assets.hatomugi},
-      {"title": "Garnier Micellar Salicylic BHA 125ml", "image": Assets.garnierblue},
-      {"title": "Silky White Bright Up Liquid Foundation 01 Light", "image": Assets.foundation},
-      {"title": "Palladio Herbal Foundation Tube PFS01 Ivory", "image": Assets.palladio},
-      {"title": "Palladio Herbal Foundation Tube PFS02 Porcelain", "image": Assets.palladio02},
-      {"title": "Palladio Dual Wet & Dry Foundation WD400 Laurel Nude", "image": Assets.dryfoundation},
-      {"title": "Palladio Dual Wet & Dry Foundation WD401 Ivory Myrrh", "image": Assets.dryfoundation401},
-      {"title": "Rimmel Wonder'Ink Ultimate Waterproof Eyeliner", "image": Assets.eyeliner},
-      {"title": "SilkyGirl Long-Wearing Eyeliner 01 Black Black", "image": Assets.eyelinerblack},
-    
-    ],
-    'Pets Care': [
-     {"title": "Dog Dry Food Chicken & Veg 3kg", "image": Assets.pedigree},
-     {"title": "Cat Wet Food Flake Tuna in Gravy 85gm", "image": Assets.sheba},
-     {"title": "Dog Oral Care Dentastix Toy 60g", "image": Assets.dogoral},
-     {"title": "Pottty Here Training Aid Spray 8Oz", "image": Assets.naturvet},
-     {"title": "Ear Wash Liquid 4Oz", "image": Assets.earwash},
-     {"title": "Peony Anti-Bacteria Formula Pets Shampoo 400ml", "image": Assets.shampoo},
-     {"title": "Unique Pet Shower Silicon Brush with Soap Container", "image": Assets.brush},
-     
-    ],
-
-    'Hair Care': [
-      {"title": "KUNDAL Honey & Macadamia Nature Shampoo - Cherry Blossom 500ml", "image": Assets.kundalshampoo},
-      {"title": "Kundal Honey & Macadamia Hair Treatment - Cherry Blossom 500ml", "image": Assets.kundalhoney},
-      {"title": "Grafen Perfume Hair Shampoo Emerald Blossom 500ml (Anti-Hair Loss)", "image": Assets.grafen},
-      {"title": "Ryo Hair Loss Expert Scalp Massage Essence 80ml", "image": Assets.ryo},
-      {"title": "Kundal Caffeine Scalp Care Tonic 100ml", "image": Assets.hairtonic},
-      {"title": "Pantene 3Mm Conditioner 480Ml Keratin Silky Smooth", "image": Assets.pantene},
-      {"title": "Amino Mason Treatment Night Recipe Sleek 450Ml", "image": Assets.amino},   
-      {"title": "Ryo Damage Care And Nourishing Shampoo 480ml", "image": Assets.ryodamage},   
-    
-    ],
+    'All': allProducts,
+    'Health Care': healthcareProducts,
+    'Groceries': groceriesProducts,
+    'Make Up': makeupProducts,
+    'Pets Care': petsCareProducts,
+    'Hair Care': hairCareProducts,
   };
 
   @override
@@ -97,6 +46,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
     List<Map<String, String>> filteredProducts = categoryProducts[selectedCategory]!
         .where((product) => product["title"]!.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
+
+    filteredProducts.sort((a, b) => a["title"]!.compareTo(b["title"]!));
 
     return Scaffold(
       body: Row(
@@ -119,6 +70,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       ),
                     ),
                   ),
+                  buildCategoryItem('All', Icons.all_inclusive),
                   buildCategoryItem('Health Care', Icons.local_hospital),
                   buildCategoryItem('Groceries', Icons.shopping_cart),
                   buildCategoryItem('Make Up', Icons.brush),
@@ -158,6 +110,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     itemCount: filteredProducts.length,
                     itemBuilder: (ctx, i) => ProductItem(
                       filteredProducts[i]["title"]!,
+                      filteredProducts[i]["category"]!,
+                      filteredProducts[i]["price"]!,
                       filteredProducts[i]["image"]!,
                     ),
                   ),
@@ -197,24 +151,76 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
 class ProductItem extends StatelessWidget {
   final String title;
+  final String category;
+  final String price;
   final String imageUrl;
 
-  ProductItem(this.title, this.imageUrl);
+  ProductItem(this.title, this.category, this.price, this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
-    return GridTile(
-      child: Image.asset(
-        imageUrl,
-        fit: BoxFit.cover,
-      ),
-      footer: GridTileBar(
-        backgroundColor: Colors.black87,
-        title: Text(
-          title,
-          textAlign: TextAlign.center,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LocateItem( // Update to LocateItem
+              title: title,
+              category: category,
+              price: price,
+              stockCount: 10, // Example: Assuming 10 items in stock
+              imageUrl: imageUrl, // Pass imageUrl to LocateItem
+            ),
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: 1),
+        ),
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Image.asset(
+              imageUrl,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    Text(
+                      category,
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    Text(
+                      price,
+                      style: TextStyle(fontSize: 12, color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
+
+
+
+
+
