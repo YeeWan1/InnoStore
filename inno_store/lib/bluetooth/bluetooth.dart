@@ -39,6 +39,7 @@ class BluetoothConnect extends GetxController {
 
             // Try to connect to the device
             connectDevice(r.device);
+            print('device connected');
           }
         },
         onError: (e) => print(e),
