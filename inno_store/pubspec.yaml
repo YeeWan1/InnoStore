@@ -34,7 +34,61 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/map/floorplan.jpg
+    
+    - assets/products/groceries/kokokrunch.jpg
+    - assets/products/groceries/saji.jpg
+    - assets/products/groceries/knifeoil.jpg
+    - assets/products/groceries/maggiekari.jpg
+    - assets/products/groceries/oldtown.jpg
+    - assets/products/groceries/oldtownhazelnut.jpg
+    - assets/products/groceries/yeoscurry.jpg
+    - assets/products/groceries/jasmine.jpg
+    - assets/products/groceries/tomatosauce.jpg
+    - assets/products/groceries/rambutan.jpg
+    - assets/products/groceries/milo.jpg
+    - assets/products/groceries/kitkat.jpg
+    - assets/products/groceries/milo2kg.jpg
+
     - assets/products/healthcare/vitaminc.jpg
     - assets/products/healthcare/krilloil.png
-    - assets/products/groceries/kokokrunch.jpg
-    - assets/map/floorplan.jpg
+    - assets/products/healthcare/enzymesplus.jpg
+    - assets/products/healthcare/bioaceplus.jpg
+    - assets/products/healthcare/biozinc.jpg
+    - assets/products/healthcare/bufferedc.jpg
+    - assets/products/healthcare/birdnest.jpg
+    - assets/products/healthcare/chickenessence.jpg
+    - assets/products/healthcare/honey.jpg
+    - assets/products/healthcare/brands.jpg
+
+    - assets/products/makeup/garnier.jpg
+    - assets/products/makeup/hatomugi.jpg
+    - assets/products/makeup/garnierblue.jpg
+    - assets/products/makeup/foundation.jpg
+    - assets/products/makeup/palladio.jpg
+    - assets/products/makeup/palladio02.jpg
+    - assets/products/makeup/dryfoundation.jpg
+    - assets/products/makeup/dryfoundation401.jpg
+    - assets/products/makeup/eyeliner.jpg
+    - assets/products/makeup/eyelinerblack.jpg
+
+    - assets/products/petcare/pedigree.jpg
+    - assets/products/petcare/sheba.jpg
+    - assets/products/petcare/dogoral.jpg
+    - assets/products/petcare/whiskas.jpg
+    - assets/products/petcare/naturvet.jpg
+    - assets/products/petcare/earwash.jpg
+    - assets/products/petcare/shampoo.jpg
+    - assets/products/petcare/brush.jpg
+    - assets/products/petcare/pet.jpg
+
+    - assets/products/haircare/kundalshampoo.jpg
+    - assets/products/haircare/kundalhoney.jpg
+    - assets/products/haircare/grafen.jpg
+    - assets/products/haircare/ryo.jpg
+    - assets/products/haircare/hairtonic.jpg
+    - assets/products/haircare/pantene.jpg
+    - assets/products/haircare/amino.jpg
+    - assets/products/haircare/ryodamage.jpg
+
+    
