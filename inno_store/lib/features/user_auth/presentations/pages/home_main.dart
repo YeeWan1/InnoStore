@@ -36,7 +36,7 @@ class _MainHomePageState extends State<MainHomePage> {
 
   static List<Widget> _widgetOptions(String username) => <Widget>[
     HomePage(username: username),
-    MapScreen(),
+    MapScreen(x: 0.0, y: 0.0),
     CategoryScreen(),
     RequestHelpScreen(),
     MyAccountPage(),

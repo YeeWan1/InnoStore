@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inno_store/Map/map_screen.dart';
 
 class LocateItem extends StatelessWidget {
   final String title;
@@ -14,6 +15,24 @@ class LocateItem extends StatelessWidget {
     required this.stockCount,
     required this.imageUrl,
   });
+
+  // Method to determine coordinates based on category
+  Offset getCoordinatesForCategory(String category) {
+    switch (category) {
+      case 'Health Care':
+        return Offset(0.35, 0.4); // Coordinates for green region
+      case 'Groceries':
+        return Offset(0.35, 0.7); // Coordinates for yellow region
+      case 'Make Up':
+        return Offset(1.25, 0.92); // Coordinates for blue region
+      case 'Pets Care':
+        return Offset(1.34, 0.6); // Coordinates for orange region
+      case 'Hair Care':
+        return Offset(1.0, 0.6); // Coordinates for purple region
+      default:
+        return Offset(0.0, 0.0); // Default coordinates if category is unknown
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,27 +74,14 @@ class LocateItem extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Locate Item'),
-                        content: Text('Show location details or map here.'),
-                        actions: <Widget>[
-                          Center( // Center the button
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0), // Padding around button text
-                                child: Text('Locate Item', style: TextStyle(fontSize: 18)),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                  Offset coordinates = getCoordinatesForCategory(category);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => MapScreen(
+                        x: coordinates.dx,
+                        y: coordinates.dy,
+                      ),
+                    ),
                   );
                 },
                 child: Text('Locate Item', style: TextStyle(fontSize: 18)),
