@@ -34,6 +34,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/point.png
+    - assets/40%.jpg
+    - assets/20%.jpg
+    - assets/member.jpg
     - assets/map/floorplan.jpg
     
     - assets/products/groceries/kokokrunch.jpg
