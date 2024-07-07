@@ -21,6 +21,8 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _genderController = TextEditingController();
   TextEditingController _birthdayController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
+  TextEditingController _occupationController = TextEditingController();
 
   bool isSigningUp = false;
 
@@ -31,6 +33,8 @@ class _SignUpPageState extends State<SignUpPage> {
     _passwordController.dispose();
     _genderController.dispose();
     _birthdayController.dispose();
+    _ageController.dispose();
+    _occupationController.dispose();
     super.dispose();
   }
 
@@ -44,93 +48,107 @@ class _SignUpPageState extends State<SignUpPage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Sign Up",
-                style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 30),
-              FormContainerWidget(
-                controller: _usernameController,
-                hintText: "Username",
-                isPasswordField: false,
-              ),
-              SizedBox(height: 10),
-              FormContainerWidget(
-                controller: _emailController,
-                hintText: "Email",
-                isPasswordField: false,
-              ),
-              SizedBox(height: 10),
-              FormContainerWidget(
-                controller: _passwordController,
-                hintText: "Password",
-                isPasswordField: true,
-              ),
-              SizedBox(height: 10),
-              FormContainerWidget(
-                controller: _genderController,
-                hintText: "Gender",
-                isPasswordField: false,
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: _birthdayController,
-                decoration: InputDecoration(
-                  hintText: "Birthday (YYYY-MM-DD)",
-                  border: OutlineInputBorder(),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Sign Up",
+                  style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
                 ),
-                keyboardType: TextInputType.datetime,
-              ),
-              SizedBox(height: 30),
-              GestureDetector(
-                onTap: () {
-                  _signUp();
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(10),
+                SizedBox(height: 30),
+                FormContainerWidget(
+                  controller: _usernameController,
+                  hintText: "Username",
+                  isPasswordField: false,
+                ),
+                SizedBox(height: 10),
+                FormContainerWidget(
+                  controller: _emailController,
+                  hintText: "Email",
+                  isPasswordField: false,
+                ),
+                SizedBox(height: 10),
+                FormContainerWidget(
+                  controller: _passwordController,
+                  hintText: "Password",
+                  isPasswordField: true,
+                ),
+                SizedBox(height: 10),
+                FormContainerWidget(
+                  controller: _genderController,
+                  hintText: "Gender",
+                  isPasswordField: false,
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: _birthdayController,
+                  decoration: InputDecoration(
+                    hintText: "Birthday (YYYY-MM-DD)",
+                    border: OutlineInputBorder(),
                   ),
-                  child: Center(
-                    child: isSigningUp
-                        ? CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                            "Sign Up",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
+                  keyboardType: TextInputType.datetime,
+                ),
+                SizedBox(height: 10),
+                FormContainerWidget(
+                  controller: _ageController,
+                  hintText: "Age",
+                  isPasswordField: false,
+                ),
+                SizedBox(height: 10),
+                FormContainerWidget(
+                  controller: _occupationController,
+                  hintText: "Occupation",
+                  isPasswordField: false,
+                ),
+                SizedBox(height: 30),
+                GestureDetector(
+                  onTap: () {
+                    _signUp();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: isSigningUp
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Already have an account?"),
-                  SizedBox(width: 5),
-                  GestureDetector(
-                      onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()),
-                            (route) => false);
-                      },
-                      child: Text(
-                        "Login",
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold),
-                      ))
-                ],
-              )
-            ],
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Already have an account?"),
+                    SizedBox(width: 5),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()),
+                              (route) => false);
+                        },
+                        child: Text(
+                          "Login",
+                          style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold),
+                        ))
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -147,6 +165,8 @@ class _SignUpPageState extends State<SignUpPage> {
     String password = _passwordController.text;
     String gender = _genderController.text;
     String birthday = _birthdayController.text;
+    String age = _ageController.text;
+    String occupation = _occupationController.text;
 
     User? user = await _auth.signUpWithEmailAndPassword(email, password);
 
@@ -160,6 +180,8 @@ class _SignUpPageState extends State<SignUpPage> {
         'email': email,
         'gender': gender,
         'birthday': birthday,
+        'age': age,
+        'occupation': occupation,
       });
 
       showToast(message: "User is successfully created");
