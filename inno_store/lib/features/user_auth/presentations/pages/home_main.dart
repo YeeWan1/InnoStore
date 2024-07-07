@@ -16,6 +16,7 @@ class _MainHomePageState extends State<MainHomePage> {
   int _selectedIndex = 0;
   User? user;
   String? username;
+  bool isLoading = true; // Track loading state
 
   @override
   void initState() {
@@ -24,12 +25,24 @@ class _MainHomePageState extends State<MainHomePage> {
   }
 
   Future<void> fetchUser() async {
-    User? currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
+    try {
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
+        setState(() {
+          user = currentUser;
+          username = userDoc['username'] ?? "User";
+          isLoading = false; // Set loading state to false
+        });
+      } else {
+        setState(() {
+          isLoading = false; // Set loading state to false even if user is null
+        });
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
       setState(() {
-        user = currentUser;
-        username = userDoc['username'] ?? "User";
+        isLoading = false; // Set loading state to false in case of error
       });
     }
   }
@@ -50,8 +63,17 @@ class _MainHomePageState extends State<MainHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (user == null || username == null) {
-      return Center(child: CircularProgressIndicator()); // Show a loading indicator while fetching user data
+    if (isLoading) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()), // Show a loading indicator while fetching user data
+      );
+    }
+
+    // Handle the case where username is still null
+    if (username == null) {
+      return Scaffold(
+        body: Center(child: Text("Failed to fetch user data")),
+      );
     }
 
     // Generate the list of widget options with the username
@@ -70,10 +92,7 @@ class _MainHomePageState extends State<MainHomePage> {
             offstage: _selectedIndex != idx,
             child: TickerMode(
               enabled: _selectedIndex == idx,
-              child: Container(
-                color: _selectedIndex == idx ? Colors.grey[200] : Colors.white,
-                child: widget,
-              ),
+              child: widget,
             ),
           );
         }).toList(),
