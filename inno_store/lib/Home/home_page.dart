@@ -90,20 +90,25 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
               padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.orangeAccent,
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Hello, ${widget.username}!',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   IconButton(
-                    icon: Icon(Icons.account_circle, size: 40),
+                    icon: Icon(Icons.account_circle, size: 40, color: Colors.white),
                     onPressed: () {
                       Navigator.pushNamed(context, '/profile');
                     },
@@ -112,14 +117,16 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
+              margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              padding: EdgeInsets.all(16),
               width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.3,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color.fromARGB(255, 244, 143, 54), Colors.green],
+                  colors: [Color.fromARGB(255, 54, 181, 244), Color.fromARGB(255, 167, 175, 76)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -157,8 +164,40 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
                   child: Container(
-                    child: Center(
-                      child: Image.asset(item['path']!, fit: BoxFit.contain, width: 1000),
+                    margin: EdgeInsets.all(5.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      child: Stack(
+                        children: <Widget>[
+                          Image.asset(item['path']!, fit: BoxFit.cover, width: 1000),
+                          Positioned(
+                            bottom: 0.0,
+                            left: 0.0,
+                            right: 0.0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color.fromARGB(200, 0, 0, 0),
+                                    Color.fromARGB(0, 0, 0, 0)
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                              child: Text(
+                                item['title']!,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 )).toList(),
@@ -190,16 +229,20 @@ class _HomePageState extends State<HomePage> {
       margin: EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         title,
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.orange),
       ),
     );
   }
 
   Widget _buildVoucherCard(String title, String imagePath) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      elevation: 4,
       child: ListTile(
         leading: Image.asset(imagePath, fit: BoxFit.contain, width: 50),
-        title: Text(title),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -209,7 +252,7 @@ class _HomePageState extends State<HomePage> {
       children: [
         ListTile(
           leading: Image.asset('assets/point.png', width: 40), // Update the icon path
-          title: Text('Your Points'),
+          title: Text('Your Points', style: TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text('You have $_currentPoints points'),
           onTap: () async {
             final updatedPoints = await Navigator.push(
@@ -229,6 +272,7 @@ class _HomePageState extends State<HomePage> {
             }
           },
         ),
+        SizedBox(height: 8),
         ElevatedButton(
           onPressed: () async {
             final updatedPoints = await Navigator.push(
@@ -248,6 +292,15 @@ class _HomePageState extends State<HomePage> {
             }
           },
           child: Text('Redeem Points'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange, // Button color
+            foregroundColor: Colors.white, // Text color
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );
