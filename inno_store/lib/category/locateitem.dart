@@ -24,13 +24,13 @@ class LocateItem extends StatelessWidget {
       case 'Groceries':
         return Offset(0.35, 0.7); // Coordinates for yellow region
       case 'Make Up':
-        return Offset(1.25, 0.92); // Coordinates for blue region
+        return Offset(1.21, 0.82); // Coordinates for blue region
       case 'Pets Care':
-        return Offset(1.34, 0.6); // Coordinates for orange region
+        return Offset(1.3, 0.5); // Coordinates for orange region
       case 'Hair Care':
-        return Offset(1.0, 0.6); // Coordinates for purple region
+        return Offset(0.96, 0.5); // Coordinates for purple region
       default:
-        return Offset(0.0, 0.0); // Default coordinates if category is unknown
+        return Offset(2.0, 2.0); // Default coordinates if category is unknown
     }
   }
 
