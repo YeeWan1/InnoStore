@@ -51,6 +51,10 @@ class MapScreen extends StatelessWidget {
             double redDotX = parts.length > 0 ? double.tryParse(parts[0]) ?? 0.0 : 0.0;
             double redDotY = parts.length > 1 ? double.tryParse(parts[1]) ?? 0.0 : 0.0;
 
+            // Clamp the coordinates within the specified limits
+            redDotX = redDotX.clamp(0.0, 1.5);
+            redDotY = redDotY.clamp(0.0, 1.0);
+
             // Update y value based on the condition
             redDotY = 1 - redDotY;
 
@@ -67,6 +71,10 @@ class MapScreen extends StatelessWidget {
                 List<String> parts = data.split(',');
                 double redDotX = parts.length > 0 ? double.tryParse(parts[0]) ?? 0.0 : 0.0;
                 double redDotY = parts.length > 1 ? double.tryParse(parts[1]) ?? 0.0 : 0.0;
+
+                // Clamp the coordinates within the specified limits
+                redDotX = redDotX.clamp(0.0, 1.5);
+                redDotY = redDotY.clamp(0.0, 1.0);
 
                 // Update y value based on the condition
                 redDotY = 1 - redDotY;
@@ -98,7 +106,7 @@ class MapScreen extends StatelessWidget {
 
                     return InteractiveViewer(
                       constrained: true,
-                      minScale: 1.0,
+                      minScale: 0.5,
                       maxScale: 1.5,
                       child: Stack(
                         alignment: Alignment.center,
@@ -137,106 +145,166 @@ class MapScreen extends StatelessWidget {
                           ),
                           // Define the first selectable region coordinates
                           Positioned(
-                            left: mapCoordinate(1.4, 0.0, 1.7, 0.0, floorplanWidth) - dotSize / 2,
-                            top: mapCoordinate(0.45, 0.0, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            left: mapCoordinate(1.0, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(1.0, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
                             child: GestureDetector(
                               onTap: () {
                                 print('First selectable region tapped!');
                               },
                               child: Container(
-                                width: (mapCoordinate(1.5, 0.0, 1.7, 0.0, floorplanWidth) - mapCoordinate(1.4, 0.0, 1.7, 0.0, floorplanWidth)),
-                                height: (mapCoordinate(0.7, 0.0, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.35, 0.0, 1.2, 0.0, floorplanHeight)),
+                                width: (mapCoordinate(1.4, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(1.0, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(1.1, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(1.0, -0.2, 1.2, 0.0, floorplanHeight)),
                                 color: Colors.orange.withOpacity(0.7),
                               ),
                             ),
                           ),
                           // Define the second selectable region coordinates
                           Positioned(
-                            left: mapCoordinate(1.05, 0.0, 1.7, 0.0, floorplanWidth) - dotSize / 2,
-                            top: mapCoordinate(0.2, 0.0, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            left: mapCoordinate(0.5, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(1.0, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
                             child: GestureDetector(
                               onTap: () {
                                 print('Second selectable region tapped!');
                               },
                               child: Container(
-                                width: (mapCoordinate(1.5, 0.0, 1.7, 0.0, floorplanWidth) - mapCoordinate(1.05, 0.0, 1.7, 0.0, floorplanWidth)),
-                                height: (mapCoordinate(0.2, 0.0, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.1, 0.0, 1.2, 0.0, floorplanHeight)),
+                                width: (mapCoordinate(0.9, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(0.5, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(1.1, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(1.0, -0.2, 1.2, 0.0, floorplanHeight)),
                                 color: Colors.blue.withOpacity(0.7),
                               ),
                             ),
                           ),
                           // Define the third selectable region coordinates
                           Positioned(
-                            left: mapCoordinate(0.3, 0.0, 1.7, 0.0, floorplanWidth) - dotSize / 2,
-                            top: mapCoordinate(0.3, 0.0, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            left: mapCoordinate(0.5, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(0.0, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
                             child: GestureDetector(
                               onTap: () {
                                 print('Third selectable region tapped!');
                               },
                               child: Container(
-                                width: (mapCoordinate(0.7, 0.0, 1.7, 0.0, floorplanWidth) - mapCoordinate(0.3, 0.0, 1.7, 0.0, floorplanWidth)),
-                                height: (mapCoordinate(0.4, 0.0, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, 0.0, 1.2, 0.0, floorplanHeight)),
+                                width: (mapCoordinate(0.9, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(0.5, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(0.1, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.0, -0.2, 1.2, 0.0, floorplanHeight)),
                                 color: Colors.yellow.withOpacity(0.7),
                               ),
                             ),
                           ),
                           // Define the fourth selectable region coordinates
                           Positioned(
-                            left: mapCoordinate(0.3, 0.0, 1.7, 0.0, floorplanWidth) - dotSize / 2,
-                            top: mapCoordinate(0.55, 0.0, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            left: mapCoordinate(1.0, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(0.0, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
                             child: GestureDetector(
                               onTap: () {
                                 print('Fourth selectable region tapped!');
                               },
                               child: Container(
-                                width: (mapCoordinate(0.7, 0.0, 1.7, 0.0, floorplanWidth) - mapCoordinate(0.3, 0.0, 1.7, 0.0, floorplanWidth)),
-                                height: (mapCoordinate(0.65, 0.0, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.55, 0.0, 1.2, 0.0, floorplanHeight)),
+                                width: (mapCoordinate(1.4, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(1.0, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(0.1, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.0, -0.2, 1.2, 0.0, floorplanHeight)),
                                 color: Colors.green.withOpacity(0.7),
                               ),
                             ),
                           ),
                           // Define the fifth selectable region coordinates
                           Positioned(
-                            left: mapCoordinate(1.1, 0.0, 1.7, 0.0, floorplanWidth) - dotSize / 2,
-                            top: mapCoordinate(0.95, 0.0, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            left: mapCoordinate(1.5, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
                             child: GestureDetector(
                               onTap: () {
                                 print('Fifth selectable region tapped!');
                               },
                               child: Container(
-                                width: (mapCoordinate(1.4, 0.0, 1.7, 0.0, floorplanWidth) - mapCoordinate(1.1, 0.0, 1.7, 0.0, floorplanWidth)),
-                                height: (mapCoordinate(1.0, 0.0, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.9, 0.0, 1.2, 0.0, floorplanHeight)),
-                                color: Colors.grey.withOpacity(0.7),
+                                width: (mapCoordinate(1.6, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(1.5, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight)),
+                                color: Color.fromARGB(255, 223, 5, 111).withOpacity(0.7),
                               ),
                             ),
                           ),
                           // Define the sixth selectable region coordinates
                           Positioned(
-                            left: mapCoordinate(0.4, 0.0, 1.7, 0.0, floorplanWidth) - dotSize / 2,
-                            top: mapCoordinate(0.95, 0.0, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            left: mapCoordinate(1.15, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
                             child: GestureDetector(
                               onTap: () {
                                 print('Sixth selectable region tapped!');
                               },
                               child: Container(
-                                width: (mapCoordinate(0.7, 0.0, 1.7, 0.0, floorplanWidth) - mapCoordinate(0.4, 0.0, 1.7, 0.0, floorplanWidth)),
-                                height: (mapCoordinate(1.0, 0.0, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.9, 0.0, 1.2, 0.0, floorplanHeight)),
+                                width: (mapCoordinate(1.2, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(1.15, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight)),
                                 color: Colors.grey.withOpacity(0.7),
                               ),
                             ),
                           ),
                           // Define the seventh selectable region coordinates
                           Positioned(
-                            left: mapCoordinate(1.1, 0.0, 1.7, 0.0, floorplanWidth) - dotSize / 2,
-                            top: mapCoordinate(0.45, 0.0, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            left: mapCoordinate(1.1, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
                             child: GestureDetector(
                               onTap: () {
                                 print('Seventh selectable region tapped!');
                               },
                               child: Container(
-                                width: (mapCoordinate(1.2, 0.0, 1.7, 0.0, floorplanWidth) - mapCoordinate(1.1, 0.0, 1.7, 0.0, floorplanWidth)),
-                                height: (mapCoordinate(0.7, 0.0, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.35, 0.0, 1.2, 0.0, floorplanHeight)),
-                                color: Colors.purple.withOpacity(0.7),
+                                width: (mapCoordinate(1.15, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(1.1, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight)),
+                                color: Color.fromARGB(255, 16, 180, 202).withOpacity(0.7),
+                              ),
+                            ),
+                          ),
+                          // Define the eighth selectable region coordinates
+                          Positioned(
+                            left: mapCoordinate(0.7, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            child: GestureDetector(
+                              onTap: () {
+                                print('Eighth selectable region tapped!');
+                              },
+                              child: Container(
+                                width: (mapCoordinate(0.75, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(0.7, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight)),
+                                color: const Color.fromARGB(255, 176, 39, 55).withOpacity(0.7),
+                              ),
+                            ),
+                          ),
+                          // Define the ninth selectable region coordinates
+                          Positioned(
+                            left: mapCoordinate(0.65, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            child: GestureDetector(
+                              onTap: () {
+                                print('Ninth selectable region tapped!');
+                              },
+                              child: Container(
+                                width: (mapCoordinate(0.7, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(0.65, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight)),
+                                color: Color.fromARGB(255, 43, 205, 28).withOpacity(0.7),
+                              ),
+                            ),
+                          ),
+                          // Define the tenth selectable region coordinates
+                          Positioned(
+                            left: mapCoordinate(0.25, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            child: GestureDetector(
+                              onTap: () {
+                                print('Tenth selectable region tapped!');
+                              },
+                              child: Container(
+                                width: (mapCoordinate(0.3, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(0.25, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight)),
+                                color: const Color.fromARGB(255, 176, 128, 39).withOpacity(0.7),
+                              ),
+                            ),
+                          ),
+                          // Define the eleventh selectable region coordinates
+                          Positioned(
+                            left: mapCoordinate(0.2, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
+                            top: mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
+                            child: GestureDetector(
+                              onTap: () {
+                                print('Eleventh selectable region tapped!');
+                              },
+                              child: Container(
+                                width: (mapCoordinate(0.25, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(0.2, -0.2, 1.7, 0.0, floorplanWidth)),
+                                height: (mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight)),
+                                color: Color.fromARGB(255, 39, 41, 176).withOpacity(0.7),
                               ),
                             ),
                           ),
@@ -253,4 +321,3 @@ class MapScreen extends StatelessWidget {
     );
   }
 }
- 
