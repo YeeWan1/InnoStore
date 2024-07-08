@@ -13,6 +13,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String? email;
   String? gender;
   String? birthday;
+  String? age;
+  String? occupation;
 
   @override
   void initState() {
@@ -30,13 +32,15 @@ class _ProfilePageState extends State<ProfilePage> {
         email = userDoc['email'] ?? currentUser.email;
         gender = userDoc['gender'] ?? "Not specified";
         birthday = userDoc['birthday'] ?? "Not specified";
+        age = userDoc['age'] ?? "Not specified";
+        occupation = userDoc['occupation'] ?? "Not specified";
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (user == null || username == null || email == null || gender == null || birthday == null) {
+    if (user == null || username == null || email == null || gender == null || birthday == null || age == null || occupation == null) {
       return Center(child: CircularProgressIndicator());
     }
 
@@ -67,6 +71,16 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(height: 8),
             Text(
               'Birthday: $birthday',
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Age: $age',
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Occupation: $occupation',
               style: TextStyle(fontSize: 18),
             ),
           ],

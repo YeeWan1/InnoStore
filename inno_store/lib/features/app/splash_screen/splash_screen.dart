@@ -1,28 +1,37 @@
 import 'package:flutter/material.dart';
-
-import '../../user_auth/presentations/pages/login_page.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:inno_store/features/user_auth/presentations/pages/login_page.dart';
+import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart';
 
 class SplashScreen extends StatefulWidget {
-  final Widget? child;
-  const SplashScreen({super.key, this.child});
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-@override
+  @override
   void initState() {
-    Future.delayed(
-      Duration(seconds: 3),(){
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => widget.child!), (route) => false);
-    }
-    );
     super.initState();
+    _checkAuth();
   }
 
+  void _checkAuth() async {
+    await Future.delayed(Duration(seconds: 3)); // Simulate a delay
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainHomePage()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +42,10 @@ class _SplashScreenState extends State<SplashScreen> {
           style: TextStyle(
             color: Colors.blue,
             fontWeight: FontWeight.bold,
+            fontSize: 24,
           ),
         ),
       ),
     );
   }
 }
-

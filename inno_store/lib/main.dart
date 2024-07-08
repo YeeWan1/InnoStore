@@ -35,13 +35,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Firebase',
       routes: {
-        '/': (context) => SplashScreen(
-          // Here, you can decide whether to show the LoginPage or HomePage based on user authentication
-          child: LoginPage(),
-        ),
+        '/': (context) => SplashScreen(),
         '/login': (context) => LoginPage(),
         '/signUp': (context) => SignUpPage(),
-        '/home': (context) => MainHomePage(), // Ensure this is correctly implemented
+        '/home': (context) => MainHomePage(),
       },
     );
   }

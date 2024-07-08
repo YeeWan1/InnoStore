@@ -12,31 +12,57 @@ class _RatingReviewPageState extends State<RatingReviewPage> {
   final TextEditingController _reviewController = TextEditingController();
   double _rating = 0.0;
   User? user;
+  String? username;
 
   @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
+    fetchUsername();
+  }
+
+  Future<void> fetchUsername() async {
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+      setState(() {
+        username = userDoc['username'] ?? 'Anonymous';
+      });
+    }
   }
 
   Future<void> _submitReview() async {
     if (_formKey.currentState!.validate()) {
-      await FirebaseFirestore.instance.collection('reviews').add({
-        'userId': user?.uid,
-        'username': user?.displayName ?? 'Anonymous',
-        'rating': _rating,
-        'review': _reviewController.text,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-      _reviewController.clear();
-      setState(() {
-        _rating = 0.0;
-      });
+      try {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user?.uid)
+            .collection('reviews')
+            .add({
+          'userId': user?.uid,
+          'username': username ?? 'Anonymous', // Use fetched username
+          'rating': _rating,
+          'review': _reviewController.text,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+        _reviewController.clear();
+        setState(() {
+          _rating = 0.0;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Review submitted successfully')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to submit review: $e')),
+        );
+      }
     }
   }
 
   Stream<QuerySnapshot> _fetchReviews() {
     return FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
         .collection('reviews')
         .orderBy('timestamp', descending: true)
         .snapshots();
@@ -115,9 +141,7 @@ class _RatingReviewPageState extends State<RatingReviewPage> {
                           ],
                         ),
                         trailing: Text(
-                          (review['timestamp'] as Timestamp)
-                              .toDate()
-                              .toString(),
+                          (review['timestamp'] as Timestamp).toDate().toString(),
                         ),
                       );
                     },
