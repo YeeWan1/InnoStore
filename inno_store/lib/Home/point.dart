@@ -1,14 +1,34 @@
 import 'package:flutter/material.dart';
 
 class PointPage extends StatefulWidget {
+  final int currentPoints;
+  final Function(int) onPointsUpdated;
+
+  PointPage({required this.currentPoints, required this.onPointsUpdated});
+
   @override
   _PointPageState createState() => _PointPageState();
 }
 
 class _PointPageState extends State<PointPage> {
-  int _currentPoints = 778;
+  int _currentPoints = 0;
   double _purchaseAmount = 0;
   int _pointsEarned = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPoints = widget.currentPoints;
+  }
+
+  void _redeemPoints() {
+    setState(() {
+      _currentPoints += _pointsEarned;
+    });
+
+    widget.onPointsUpdated(_currentPoints);
+    Navigator.pop(context, _currentPoints);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +79,7 @@ class _PointPageState extends State<PointPage> {
             Spacer(),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _currentPoints += _pointsEarned;
-                  });
-                },
+                onPressed: _redeemPoints,
                 child: Text('Redeem Points'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,

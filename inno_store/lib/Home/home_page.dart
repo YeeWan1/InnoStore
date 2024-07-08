@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _currentPoints = 778; // Initialize with your starting points
   final List<Map<String, String>> imgList = [
     {'path': 'assets/40%.jpg', 'title': '40% Off'},
     {'path': 'assets/20%.jpg', 'title': '20% Off'},
@@ -78,6 +79,12 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
+  }
+
+  void _updatePoints(int newPoints) {
+    setState(() {
+      _currentPoints = newPoints;
+    });
   }
 
   @override
@@ -203,30 +210,48 @@ class _HomePageState extends State<HomePage> {
         ListTile(
           leading: Image.asset('assets/point.png', width: 40), // Update the icon path
           title: Text('Your Points'),
-          subtitle: Text('You have 778 points'),
-          onTap: () {
-            Navigator.pushNamed(context, '/points');
+          subtitle: Text('You have $_currentPoints points'),
+          onTap: () async {
+            final updatedPoints = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PointPage(
+                  currentPoints: _currentPoints,
+                  onPointsUpdated: _updatePoints,
+                ),
+              ),
+            );
+
+            if (updatedPoints != null) {
+              setState(() {
+                _currentPoints = updatedPoints;
+              });
+            }
           },
         ),
         ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/points');
+          onPressed: () async {
+            final updatedPoints = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PointPage(
+                  currentPoints: _currentPoints,
+                  onPointsUpdated: _updatePoints,
+                ),
+              ),
+            );
+
+            if (updatedPoints != null) {
+              setState(() {
+                _currentPoints = updatedPoints;
+              });
+            }
           },
           child: Text('Redeem Points'),
         ),
       ],
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: HomePage(username: 'User'), // Replace 'User' with a dynamic value if needed
-    routes: {
-      '/profile': (context) => ProfilePage(), // Add your ProfilePage class
-      '/points': (context) => PointPage(), // Add the PointPage class
-    },
-  ));
 }
 
 class ProfilePage extends StatelessWidget {
