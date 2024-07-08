@@ -49,7 +49,7 @@ class _MainHomePageState extends State<MainHomePage> {
 
   static List<Widget> _widgetOptions(String username) => <Widget>[
     HomePage(username: username),
-    MapScreen(x: 0.0, y: 0.0),
+    MapScreen(x: 2.0, y: 2.0),
     CategoryScreen(),
     RequestHelpScreen(),
     MyAccountPage(),

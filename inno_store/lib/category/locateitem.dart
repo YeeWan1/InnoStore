@@ -78,8 +78,8 @@ class LocateItem extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => MapScreen(
-                        x: coordinates.dx,
-                        y: coordinates.dy,
+                        x: coordinates.dx, // Category-based x-coordinate for the black rectangle
+                        y: coordinates.dy, // Category-based y-coordinate for the black rectangle
                       ),
                     ),
                   );
