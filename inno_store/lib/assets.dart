@@ -3,32 +3,52 @@ class Assets {
   static const String logo = 'assets/logo.png';
 
   //for categories
-  //Healthcare
-  static const String vitaminc = 'assets/products/healthcare/vitaminc.jpg';
-  static const String krilloil = 'assets/products/healthcare/krilloil.png';
-  static const String enzymesplus = 'assets/products/healthcare/enzymesplus.jpg';
-  static const String bioaceplus = 'assets/products/healthcare/bioaceplus.jpg';
-  static const String biozinc = 'assets/products/healthcare/biozinc.jpg';
-  static const String bufferedc = 'assets/products/healthcare/bufferedc.jpg';
-  static const String birdnest = 'assets/products/healthcare/birdnest.jpg';
-  static const String chickenessence = 'assets/products/healthcare/chickenessence.jpg';
-  static const String honey = 'assets/products/healthcare/honey.jpg';
-  static const String brands = 'assets/products/healthcare/brands.jpg';
+  //Supplements
+  static const String vitaminc = 'assets/products/supplements/vitaminc.jpg';
+  static const String krilloil = 'assets/products/supplements/krilloil.png';
+  static const String enzymesplus = 'assets/products/supplements/enzymesplus.jpg';
+  static const String bioaceplus = 'assets/products/supplements/bioaceplus.jpg';
+  static const String biozinc = 'assets/products/supplements/biozinc.jpg';
+  static const String bufferedc = 'assets/products/supplements/bufferedc.jpg';
+
+  //Nutrition
+  static const String honey = 'assets/products/nutrition/honey.jpg';
+  static const String birdnest = 'assets/products/nutrition/birdnest.jpg';
+
+  //Tonic
+  static const String chickenessence = 'assets/products/tonic/chickenessence.jpg';
+  static const String brands = 'assets/products/tonic/brands.jpg';
+
+  //Foot Treament
+  static const String freeman = 'assets/products/foot_treament/freeman.jpg';
+  static const String ellgy = 'assets/products/foot_treament/ellgy.jpg';
+  static const String lotion = 'assets/products/foot_treament/lotion.jpg';
+
+  //Traditional Medicine
+  static const String kangaroo = 'assets/products/traditional_medicine/kangaroo.jpg';
+  static const String kapak = 'assets/products/traditional_medicine/kapak.jpg';
+  static const String kwan = 'assets/products/traditional_medicine/kwan.jpg';
+  static const String yuyee = 'assets/products/traditional_medicine/yuyee.jpg';
   
   //Groceries
   static const String kokokrunch = 'assets/products/groceries/kokokrunch.jpg';
   static const String saji = 'assets/products/groceries/saji.jpg';
   static const String knifeoil = 'assets/products/groceries/knifeoil.jpg';
   static const String maggiekari = 'assets/products/groceries/maggiekari.jpg';
-  static const String oldtown = 'assets/products/groceries/oldtown.jpg';
-  static const String oldtownhazelnut = 'assets/products/groceries/oldtownhazelnut.jpg';
   static const String yeoscurry = 'assets/products/groceries/yeoscurry.jpg';
   static const String jasmine = 'assets/products/groceries/jasmine.jpg';
   static const String tomatosauce = 'assets/products/groceries/tomatosauce.jpg';
   static const String rambutans = 'assets/products/groceries/rambutan.jpg';
-  static const String milo = 'assets/products/groceries/milo.jpg';
   static const String kitkat = 'assets/products/groceries/kitkat.jpg';
-  static const String milo2kg = 'assets/products/groceries/milo2kg.jpg';
+
+  //Dairy Product
+  static const String milo2kg = 'assets/products/dairy_product/milo2kg.jpg';
+  static const String milo = 'assets/products/dairy_product/milo.jpg';
+  static const String milk = 'assets/products/dairy_product/milk.jpg';
+
+  //Coffee
+  static const String oldtown = 'assets/products/coffee/oldtown.jpg';
+  static const String oldtownhazelnut = 'assets/products/coffee/oldtownhazelnut.jpg';
 
   //Make Up
   static const String garnier = 'assets/products/makeup/garnier.jpg';

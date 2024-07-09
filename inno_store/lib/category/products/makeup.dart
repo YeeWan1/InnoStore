@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:inno_store/assets.dart';  // Add this import
 
 final List<Map<String, String>> makeupProducts = [

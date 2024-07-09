@@ -44,26 +44,40 @@ flutter:
     - assets/products/groceries/saji.jpg
     - assets/products/groceries/knifeoil.jpg
     - assets/products/groceries/maggiekari.jpg
-    - assets/products/groceries/oldtown.jpg
-    - assets/products/groceries/oldtownhazelnut.jpg
     - assets/products/groceries/yeoscurry.jpg
     - assets/products/groceries/jasmine.jpg
     - assets/products/groceries/tomatosauce.jpg
     - assets/products/groceries/rambutan.jpg
-    - assets/products/groceries/milo.jpg
     - assets/products/groceries/kitkat.jpg
-    - assets/products/groceries/milo2kg.jpg
+    
+    - assets/products/dairy_product/milo2kg.jpg
+    - assets/products/dairy_product/milo.jpg
+    - assets/products/dairy_product/milk.jpg
 
-    - assets/products/healthcare/vitaminc.jpg
-    - assets/products/healthcare/krilloil.png
-    - assets/products/healthcare/enzymesplus.jpg
-    - assets/products/healthcare/bioaceplus.jpg
-    - assets/products/healthcare/biozinc.jpg
-    - assets/products/healthcare/bufferedc.jpg
-    - assets/products/healthcare/birdnest.jpg
-    - assets/products/healthcare/chickenessence.jpg
-    - assets/products/healthcare/honey.jpg
-    - assets/products/healthcare/brands.jpg
+    - assets/products/coffee/oldtown.jpg
+    - assets/products/coffee/oldtownhazelnut.jpg
+
+    - assets/products/supplements/vitaminc.jpg
+    - assets/products/supplements/krilloil.png
+    - assets/products/supplements/enzymesplus.jpg
+    - assets/products/supplements/bioaceplus.jpg
+    - assets/products/supplements/biozinc.jpg
+    - assets/products/supplements/bufferedc.jpg
+
+    - assets/products/tonic/chickenessence.jpg
+    - assets/products/tonic/brands.jpg
+
+    - assets/products/nutrition/birdnest.jpg
+    - assets/products/nutrition/honey.jpg
+
+    - assets/products/foot_treament/freeman.jpg
+    - assets/products/foot_treament/ellgy.jpg
+    - assets/products/foot_treament/lotion.jpg
+
+    - assets/products/traditional_medicine/kangaroo.jpg
+    - assets/products/traditional_medicine/kapak.jpg
+    - assets/products/traditional_medicine/kwan.jpg
+    - assets/products/traditional_medicine/yuyee.jpg
 
     - assets/products/makeup/garnier.jpg
     - assets/products/makeup/hatomugi.jpg

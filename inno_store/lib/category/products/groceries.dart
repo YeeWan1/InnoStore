@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:inno_store/assets.dart';  // Add this import
 
 final List<Map<String, String>> groceriesProducts = [
@@ -27,18 +26,6 @@ final List<Map<String, String>> groceriesProducts = [
     "image": Assets.maggiekari,
   },
   {
-    "title": "Old Town 2 in 1 White Coffee (Coffee & Creamer) 375g",
-    "category": "Groceries",
-    "price": "RM 9.99",
-    "image": Assets.oldtown,
-  },
-  {
-    "title": "Old Town 3-in-1 Hazelnut Instant White Coffee 570g",
-    "category": "Groceries",
-    "price": "RM 11.99",
-    "image": Assets.oldtownhazelnut,
-  },
-  {
     "title": "Yeo's Chicken Curry with Potatoes 280g",
     "category": "Groceries",
     "price": "RM 5.99",
@@ -63,21 +50,9 @@ final List<Map<String, String>> groceriesProducts = [
     "image": Assets.rambutans,
   },
   {
-    "title": "Milo Original Chocolate Malt Drink 30g x 18",
-    "category": "Groceries",
-    "price": "RM 16.99",
-    "image": Assets.milo,
-  },
-  {
     "title": "Nestle Kit Kat Sharebag Value Pack 17g x 24",
     "category": "Groceries",
     "price": "RM 14.99",
     "image": Assets.kitkat,
-  },
-  {
-    "title": "Milo Soft Pack 2kg",
-    "category": "Groceries",
-    "price": "RM 27.99",
-    "image": Assets.milo2kg,
   },
 ];

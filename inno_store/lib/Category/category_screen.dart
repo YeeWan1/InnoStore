@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:inno_store/assets.dart';  // Add this import
 import 'package:inno_store/category/products/all.dart';
-import 'package:inno_store/category/products/healthcare.dart';
+import 'package:inno_store/category/products/nutrition.dart';
+import 'package:inno_store/category/products/supplements.dart';
+import 'package:inno_store/category/products/tonic.dart';
+import 'package:inno_store/category/products/foot_treatment.dart';
+import 'package:inno_store/category/products/traditional_medicine.dart';
 import 'package:inno_store/category/products/groceries.dart';
+import 'package:inno_store/category/products/coffee.dart';
+import 'package:inno_store/category/products/dairy_product.dart';
 import 'package:inno_store/category/products/makeup.dart';
 import 'package:inno_store/category/products/petscare.dart';
 import 'package:inno_store/category/products/haircare.dart';
@@ -34,8 +39,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   final Map<String, List<Map<String, String>>> categoryProducts = {
     'All': allProducts,
-    'Health Care': healthcareProducts,
+    'Nutrition': nutritionProducts,
+    'Supplements': supplementsProducts,
+    'Tonic': tonicProducts,
+    'Foot Treatment': footTreatmentProducts,
+    'Traditional Medicine': traditionalMedicineProducts,
     'Groceries': groceriesProducts,
+    'Coffee': coffeeProducts,
+    'Dairy Product': dairyProductProducts,
     'Make Up': makeupProducts,
     'Pets Care': petsCareProducts,
     'Hair Care': hairCareProducts,
@@ -55,28 +66,36 @@ class _CategoryScreenState extends State<CategoryScreen> {
           Container(
             width: 100,
             child: Drawer(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    color: Colors.blue,
-                    padding: EdgeInsets.all(10.0),
-                    child: Center(
-                      child: Text(
-                        'Categories',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      color: Colors.blue,
+                      padding: EdgeInsets.all(10.0),
+                      child: Center(
+                        child: Text(
+                          'Categories',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  buildCategoryItem('All', Icons.all_inclusive),
-                  buildCategoryItem('Health Care', Icons.local_hospital),
-                  buildCategoryItem('Groceries', Icons.shopping_cart),
-                  buildCategoryItem('Make Up', Icons.brush),
-                  buildCategoryItem('Pets Care', Icons.pets),
-                  buildCategoryItem('Hair Care', Icons.face),
-                ],
+                    buildCategoryItem('All', Icons.all_inclusive),
+                    buildCategoryItem('Nutrition', Icons.local_dining),
+                    buildCategoryItem('Supplements', Icons.medical_services),
+                    buildCategoryItem('Tonic', Icons.local_drink),
+                    buildCategoryItem('Foot Treatment', Icons.spa),
+                    buildCategoryItem('Traditional Medicine', Icons.healing),
+                    buildCategoryItem('Groceries', Icons.shopping_cart),
+                    buildCategoryItem('Coffee', Icons.local_cafe),
+                    buildCategoryItem('Dairy Product', Icons.local_drink),
+                    buildCategoryItem('Make Up', Icons.brush),
+                    buildCategoryItem('Pets Care', Icons.pets),
+                    buildCategoryItem('Hair Care', Icons.face),
+                  ],
+                ),
               ),
             ),
           ),
@@ -218,9 +237,3 @@ class ProductItem extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
