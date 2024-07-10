@@ -19,16 +19,28 @@ class LocateItem extends StatelessWidget {
   // Method to determine coordinates based on category
   Offset getCoordinatesForCategory(String category) {
     switch (category) {
-      case 'Health Care':
-        return Offset(0.35, 0.4); // Coordinates for green region
+      case 'Nutrition':
+        return Offset(1.45, 0.55); // Coordinates for Nutrition
+      case 'Supplement':
+        return Offset(1.2, 0.55); // Coordinates for Supplement
+      case 'Tonic':
+        return Offset(1.05, 0.55); // Coordinates for Tonic
+      case 'Foot Treatment':
+        return Offset(0.75, 0.55); // Coordinates for Foot Treatment
+      case 'Traditional Medicine':
+        return Offset(0.6, 0.55); // Coordinates for Traditional Medicine
+      case 'Coffee':
+        return Offset(0.3, 0.55); // Coordinates for Coffee
+      case 'Dairy Product':
+        return Offset(0.15, 0.55); // Coordinates for Dairy Product
       case 'Groceries':
-        return Offset(0.35, 0.7); // Coordinates for yellow region
+        return Offset(0.67, 0.9); // Coordinates for Groceries
       case 'Make Up':
-        return Offset(1.21, 0.82); // Coordinates for blue region
+        return Offset(1.15, 0.9); // Coordinates for Make Up
       case 'Pets Care':
-        return Offset(1.3, 0.5); // Coordinates for orange region
+        return Offset(1.15, 0.05); // Coordinates for Pets Care
       case 'Hair Care':
-        return Offset(0.96, 0.5); // Coordinates for purple region
+        return Offset(0.67, 0.05); // Coordinates for Pets Care
       default:
         return Offset(2.0, 2.0); // Default coordinates if category is unknown
     }
