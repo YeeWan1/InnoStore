@@ -40,7 +40,7 @@ class LocateItem extends StatelessWidget {
       case 'Pets Care':
         return Offset(1.15, 0.05); // Coordinates for Pets Care
       case 'Hair Care':
-        return Offset(0.67, 0.05); // Coordinates for Pets Care
+        return Offset(0.67, 0.05); // Coordinates for Hair Care
       default:
         return Offset(2.0, 2.0); // Default coordinates if category is unknown
     }
