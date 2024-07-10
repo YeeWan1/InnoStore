@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:inno_store/Home/home_page.dart';
 import 'package:inno_store/Map/map_screen.dart';
 import 'package:inno_store/Category/category_screen.dart';
-import 'package:inno_store/Request_Help/request_help_screen.dart';
+import 'package:inno_store/Customer_Support/customer_support_screen.dart';
 import 'package:inno_store/my_account_page/my_account_screen.dart';
 
 class MainHomePage extends StatefulWidget {
@@ -16,7 +16,7 @@ class _MainHomePageState extends State<MainHomePage> {
   int _selectedIndex = 0;
   User? user;
   String? username;
-  bool isLoading = true; // Track loading state
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -32,17 +32,17 @@ class _MainHomePageState extends State<MainHomePage> {
         setState(() {
           user = currentUser;
           username = userDoc['username'] ?? "User";
-          isLoading = false; // Set loading state to false
+          isLoading = false;
         });
       } else {
         setState(() {
-          isLoading = false; // Set loading state to false even if user is null
+          isLoading = false;
         });
       }
     } catch (e) {
       print('Error fetching user data: $e');
       setState(() {
-        isLoading = false; // Set loading state to false in case of error
+        isLoading = false;
       });
     }
   }
@@ -51,7 +51,7 @@ class _MainHomePageState extends State<MainHomePage> {
     HomePage(username: username),
     MapScreen(x: 2.0, y: 2.0),
     CategoryScreen(),
-    RequestHelpScreen(),
+    CustomerSupportScreen(),
     MyAccountPage(),
   ];
 
@@ -65,18 +65,16 @@ class _MainHomePageState extends State<MainHomePage> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        body: Center(child: CircularProgressIndicator()), // Show a loading indicator while fetching user data
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    // Handle the case where username is still null
     if (username == null) {
       return Scaffold(
         body: Center(child: Text("Failed to fetch user data")),
       );
     }
 
-    // Generate the list of widget options with the username
     List<Widget> widgetOptions = _widgetOptions(username!);
 
     return Scaffold(
@@ -113,7 +111,7 @@ class _MainHomePageState extends State<MainHomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.help),
-            label: 'Request Help',
+            label: 'Support',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),

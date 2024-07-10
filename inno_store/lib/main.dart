@@ -5,6 +5,7 @@ import 'package:inno_store/features/app/splash_screen/splash_screen.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/login_page.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/sign_up_page.dart';
+import 'package:inno_store/Customer_Support/customer_support_screen.dart';  // Ensure correct import
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/signUp': (context) => SignUpPage(),
         '/home': (context) => MainHomePage(),
+        '/customerSupport': (context) => CustomerSupportScreen(),  // Add the route here
       },
     );
   }
