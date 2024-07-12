@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:inno_store/Map/map_screen.dart';
 import 'package:inno_store/Map/path.dart';
 import 'package:inno_store/Map/region.dart'; // Import the region.dart file
+import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart'; // Import the MainHomePage
 
 class LocateItem extends StatelessWidget {
   final String title;
@@ -103,9 +104,11 @@ class LocateItem extends StatelessWidget {
                   PathFinder pathFinder = PathFinder(start: start, goal: goal, obstacles: obstacles);
                   List<Offset> path = pathFinder.aStar();
 
+                  // Navigate to MainHomePage and pass the coordinates and path
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => MapScreen(
+                      builder: (context) => MainHomePage(
+                        initialIndex: 1, // Index of MapScreen
                         x: goal.dx, // Category-based x-coordinate for the black rectangle
                         y: 1 - goal.dy, // Category-based y-coordinate for the black rectangle
                         path: path, // Pass the computed path

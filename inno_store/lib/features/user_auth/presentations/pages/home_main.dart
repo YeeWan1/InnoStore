@@ -8,6 +8,18 @@ import 'package:inno_store/Customer_Support/customer_support_screen.dart';
 import 'package:inno_store/my_account_page/my_account_screen.dart';
 
 class MainHomePage extends StatefulWidget {
+  final int initialIndex;
+  final double x;
+  final double y;
+  final List<Offset> path;
+
+  MainHomePage({
+    this.initialIndex = 0,
+    this.x = 2.0,
+    this.y = 2.0,
+    this.path = const [],
+  });
+
   @override
   _MainHomePageState createState() => _MainHomePageState();
 }
@@ -17,10 +29,17 @@ class _MainHomePageState extends State<MainHomePage> {
   User? user;
   String? username;
   bool isLoading = true;
+  late double x;
+  late double y;
+  late List<Offset> path;
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.initialIndex;
+    x = widget.x;
+    y = widget.y;
+    path = widget.path;
     fetchUser();
   }
 
@@ -47,9 +66,9 @@ class _MainHomePageState extends State<MainHomePage> {
     }
   }
 
-  static List<Widget> _widgetOptions(String username) => <Widget>[
+  static List<Widget> _widgetOptions(String username, double x, double y, List<Offset> path) => <Widget>[
     HomePage(username: username),
-    MapScreen(x: 2.0, y: 2.0, path:[]), // Pass an empty path initially
+    MapScreen(x: x, y: y, path: path), // Use the passed coordinates and path
     CategoryScreen(),
     CustomerSupportScreen(),
     MyAccountPage(),
@@ -75,7 +94,7 @@ class _MainHomePageState extends State<MainHomePage> {
       );
     }
 
-    List<Widget> widgetOptions = _widgetOptions(username!);
+    List<Widget> widgetOptions = _widgetOptions(username!, x, y, path);
 
     return Scaffold(
       appBar: AppBar(
