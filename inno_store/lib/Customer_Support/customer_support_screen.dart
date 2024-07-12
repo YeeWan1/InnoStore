@@ -31,11 +31,17 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
         _username = userDoc['username'] ?? _currentUser!.email ?? 'Anonymous';
         print('Fetched username: $_username');
 
+        print('Fetching help requests for user: ${_currentUser!.uid}');
         final querySnapshot = await _helpRequests
             .where('userId', isEqualTo: _currentUser!.uid)
             .orderBy('timestamp', descending: true)
             .limit(1)
             .get();
+
+        print('Query snapshot: ${querySnapshot.docs.length} documents found.');
+        for (var doc in querySnapshot.docs) {
+          print('Document ID: ${doc.id}, Data: ${doc.data()}');
+        }
 
         if (querySnapshot.docs.isNotEmpty) {
           print('Help request found for user: ${_currentUser!.uid}');
