@@ -3,6 +3,8 @@ import 'package:inno_store/Map/map_screen.dart';
 import 'package:inno_store/Map/path.dart';
 import 'package:inno_store/Map/region.dart'; // Import the region.dart file
 import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart'; // Import the MainHomePage
+import 'package:inno_store/bluetooth/bluetooth.dart'; // Import the BluetoothConnect
+import 'package:get/get.dart'; // Import the Get package
 
 class LocateItem extends StatelessWidget {
   final String title;
@@ -51,6 +53,8 @@ class LocateItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final BluetoothConnect bluetoothConnect = Get.find<BluetoothConnect>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Product Details'),
@@ -98,7 +102,7 @@ class LocateItem extends StatelessWidget {
                   ];
 
                   // Get red dot coordinates from Bluetooth
-                  Offset start = Offset(0.0, 0.0); // Example coordinates, replace with actual data
+                  Offset start = bluetoothConnect.getRedDotCoordinates(); // Get the red dot coordinates from Bluetooth
                   Offset goal = Offset(coordinates.dx, 1 - coordinates.dy); // Target coordinates
 
                   PathFinder pathFinder = PathFinder(start: start, goal: goal, obstacles: obstacles);

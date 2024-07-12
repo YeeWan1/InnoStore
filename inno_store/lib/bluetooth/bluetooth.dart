@@ -153,6 +153,17 @@ class BluetoothConnect extends GetxController {
       await discoverServices(device);
     }
   }
+
+  Offset getRedDotCoordinates() {
+    // Assume the received data contains the coordinates in the format "x,y"
+    var coordinates = receivedData.value.split(',');
+    if (coordinates.length == 2) {
+      double x = double.tryParse(coordinates[0]) ?? 0.0;
+      double y = double.tryParse(coordinates[1]) ?? 0.0;
+      return Offset(x, y);
+    }
+    return Offset(0.0, 0.0); // Default coordinates if parsing fails
+  }
 }
 
 class HomePage extends StatelessWidget {
