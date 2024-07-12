@@ -14,6 +14,7 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
   String? _requestId;
   bool _loading = true;
   bool _error = false;
+  String? _username;
 
   @override
   void initState() {
@@ -25,6 +26,11 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
     if (_currentUser != null) {
       print('User ID: ${_currentUser!.uid}, Email: ${_currentUser!.email}');
       try {
+        // Fetch username from the 'users' collection
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid).get();
+        _username = userDoc['username'] ?? _currentUser!.email ?? 'Anonymous';
+        print('Fetched username: $_username');
+
         print('Fetching help requests for user: ${_currentUser!.uid}');
         final querySnapshot = await _helpRequests
             .where('userId', isEqualTo: _currentUser!.uid)
@@ -47,7 +53,7 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
           print('No help request found. Creating a new one for user: ${_currentUser!.uid}');
           DocumentReference newRequest = await _helpRequests.add({
             'userId': _currentUser!.uid,
-            'username': _currentUser!.email ?? 'Anonymous',
+            'username': _username,
             'message': 'Initial help request',
             'timestamp': Timestamp.now(),
             'status': 'Pending',
@@ -78,7 +84,7 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
     if (_messageController.text.isNotEmpty && _requestId != null) {
       try {
         await _helpRequests.doc(_requestId).collection('messages').add({
-          'sender': 'user',
+          'sender': _username,
           'text': _messageController.text,
           'timestamp': Timestamp.now(),
         });
@@ -92,7 +98,7 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
 
   Widget _buildMessageItem(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    final isUserMessage = data['sender'] == 'user';
+    final isUserMessage = data['sender'] == _username;
 
     return Align(
       alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
