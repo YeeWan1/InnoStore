@@ -24,12 +24,9 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
 
   Future<void> _initChat() async {
     if (_currentUser != null) {
-      print('User ID: ${_currentUser!.uid}, Email: ${_currentUser!.email}');
       try {
-        // Fetch username from the 'users' collection
         DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid).get();
         _username = userDoc['username'] ?? _currentUser!.email ?? 'Anonymous';
-        print('Fetched username: $_username');
 
         final querySnapshot = await _helpRequests
             .where('userId', isEqualTo: _currentUser!.uid)
@@ -38,13 +35,11 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
             .get();
 
         if (querySnapshot.docs.isNotEmpty) {
-          print('Help request found for user: ${_currentUser!.uid}');
           setState(() {
             _requestId = querySnapshot.docs.first.id;
             _loading = false;
           });
         } else {
-          print('No help request found. Creating a new one for user: ${_currentUser!.uid}');
           DocumentReference newRequest = await _helpRequests.add({
             'userId': _currentUser!.uid,
             'username': _username,
@@ -52,21 +47,18 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
             'timestamp': Timestamp.now(),
             'status': 'Pending',
           });
-          print('New help request created with ID: ${newRequest.id}');
           setState(() {
             _requestId = newRequest.id;
             _loading = false;
           });
         }
       } catch (e) {
-        print('Error initializing chat: $e');
         setState(() {
           _loading = false;
           _error = true;
         });
       }
     } else {
-      print('User is not authenticated');
       setState(() {
         _loading = false;
         _error = true;
@@ -82,7 +74,6 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
           'text': _messageController.text,
           'timestamp': Timestamp.now(),
         });
-        print('Message sent: ${_messageController.text}');
         _messageController.clear();
       } catch (e) {
         print('Error sending message: $e');
