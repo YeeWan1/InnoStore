@@ -12,7 +12,7 @@ import 'package:inno_store/category/products/makeup.dart';
 import 'package:inno_store/category/products/petscare.dart';
 import 'package:inno_store/category/products/haircare.dart';
 import 'package:inno_store/category/locateitem.dart';
-
+//hihi
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
