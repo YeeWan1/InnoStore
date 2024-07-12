@@ -82,7 +82,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         ),
                       ),
                     ),
-                    buildCategoryItem('All HIHI', Icons.all_inclusive),
+                    buildCategoryItem('All', Icons.all_inclusive),
                     buildCategoryItem('Nutrition', Icons.local_dining),
                     buildCategoryItem('Supplements', Icons.medical_services),
                     buildCategoryItem('Tonic', Icons.local_drink),
