@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:inno_store/bluetooth/bluetooth.dart';
 import 'region.dart'; // Import the region.dart file
+import 'path.dart'; // Import the path.dart file
 
 class RedDotCoordinates {
   final double x;
@@ -16,10 +17,12 @@ class RedDotCoordinates {
 class MapScreen extends StatelessWidget {
   final double x;
   final double y;
+  final List<Offset> path;
 
   MapScreen({
     required this.x,
     required this.y,
+    required this.path,
   });
 
   @override
@@ -158,6 +161,11 @@ class MapScreen extends StatelessWidget {
                               ),
                             );
                           }).toList(),
+                          Positioned.fill(
+                            child: CustomPaint(
+                              painter: PathPainter(path, floorplanWidth, floorplanHeight, mapCoordinate),
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -170,4 +178,41 @@ class MapScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class PathPainter extends CustomPainter {
+  final List<Offset> path;
+  final double floorplanWidth;
+  final double floorplanHeight;
+  final double Function(double, double, double, double, double) mapCoordinate;
+
+  PathPainter(this.path, this.floorplanWidth, this.floorplanHeight, this.mapCoordinate);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.blue
+      ..strokeWidth = 4.0
+      ..style = PaintingStyle.stroke;
+
+    if (path.isNotEmpty) {
+      final pathToDraw = Path()
+        ..moveTo(
+          mapCoordinate(path[0].dx, -0.2, 1.7, 0.0, floorplanWidth),
+          mapCoordinate(path[0].dy, -0.2, 1.2, 0.0, floorplanHeight),
+        );
+
+      for (int i = 1; i < path.length; i++) {
+        pathToDraw.lineTo(
+          mapCoordinate(path[i].dx, -0.2, 1.7, 0.0, floorplanWidth),
+          mapCoordinate(path[i].dy, -0.2, 1.2, 0.0, floorplanHeight),
+        );
+      }
+
+      canvas.drawPath(pathToDraw, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

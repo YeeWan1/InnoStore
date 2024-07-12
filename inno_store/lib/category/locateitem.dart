@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inno_store/Map/map_screen.dart';
+import 'package:inno_store/Map/path.dart';
+import 'package:inno_store/Map/region.dart'; // Import the region.dart file
 
 class LocateItem extends StatelessWidget {
   final String title;
@@ -87,11 +89,26 @@ class LocateItem extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Offset coordinates = getCoordinatesForCategory(category);
+
+                  // Define obstacles
+                  List<Rect> obstacles = [
+                    ...getSelectableRegions(1.5, 1.2, (v, min, max, minPixel, maxPixel) => v, 0) // Adjust these parameters as needed
+                        .map((region) => Rect.fromLTWH(region.left, region.top, region.width, region.height)),
+                  ];
+
+                  // Get red dot coordinates from Bluetooth
+                  Offset start = Offset(0.0, 0.0); // Example coordinates, replace with actual data
+                  Offset goal = Offset(coordinates.dx, 1 - coordinates.dy); // Target coordinates
+
+                  PathFinder pathFinder = PathFinder(start: start, goal: goal, obstacles: obstacles);
+                  List<Offset> path = pathFinder.aStar();
+
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => MapScreen(
-                        x: coordinates.dx, // Category-based x-coordinate for the black rectangle
-                        y: coordinates.dy, // Category-based y-coordinate for the black rectangle
+                        x: goal.dx, // Category-based x-coordinate for the black rectangle
+                        y: 1 - goal.dy, // Category-based y-coordinate for the black rectangle
+                        path: path, // Pass the computed path
                       ),
                     ),
                   );
