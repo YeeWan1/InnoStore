@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:inno_store/Map/map_screen.dart';
 import 'package:inno_store/Map/path.dart';
@@ -6,7 +7,7 @@ import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart
 import 'package:inno_store/bluetooth/bluetooth.dart'; // Import the BluetoothConnect
 import 'package:get/get.dart'; // Import the Get package
 
-class LocateItem extends StatelessWidget {
+class LocateItem extends StatefulWidget {
   final String title;
   final String category;
   final String price;
@@ -21,7 +22,29 @@ class LocateItem extends StatelessWidget {
     required this.imageUrl,
   });
 
-  // Method to determine coordinates based on category
+  @override
+  _LocateItemState createState() => _LocateItemState();
+}
+
+class _LocateItemState extends State<LocateItem> {
+  Timer? _timer;
+  Offset? _goal;
+  ValueNotifier<List<Offset>> pathNotifier = ValueNotifier<List<Offset>>([]);
+
+  @override
+  void initState() {
+    super.initState();
+    // Set the goal coordinates based on category
+    _goal = getCoordinatesForCategory(widget.category);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    pathNotifier.dispose();
+    super.dispose();
+  }
+
   Offset getCoordinatesForCategory(String category) {
     switch (category) {
       case 'Nutrition':
@@ -51,6 +74,42 @@ class LocateItem extends StatelessWidget {
     }
   }
 
+  void _startPathFinding(BluetoothConnect bluetoothConnect, List<Rect> obstacles) {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      // Get the received data from Bluetooth and parse it
+      String data = bluetoothConnect.receivedData.value;
+      List<String> parts = data.split(',');
+      double redDotX = parts.length > 0 ? double.tryParse(parts[0]) ?? 0.0 : 0.0;
+      double redDotY = parts.length > 1 ? double.tryParse(parts[1]) ?? 0.0 : 0.0;
+
+      // Clamp the coordinates within the specified limits
+      redDotX = redDotX.clamp(0.0, 1.5);
+      redDotY = redDotY.clamp(0.0, 1.0);
+
+      // Update y value based on the condition
+      redDotY = redDotY;
+
+      Offset start = Offset(redDotX, redDotY); // Use clamped and adjusted coordinates
+      Offset goal = Offset(_goal!.dx, _goal!.dy); // Use consistent goal coordinates
+
+      PathFinder pathFinder = PathFinder(start: start, goal: goal, obstacles: obstacles);
+      List<Offset> newPath = pathFinder.aStar();
+
+      // Only update the ValueNotifier if the path has changed
+      if (!_arePathsEqual(pathNotifier.value, newPath)) {
+        pathNotifier.value = newPath; // Update the pathNotifier
+      }
+    });
+  }
+
+  bool _arePathsEqual(List<Offset> path1, List<Offset> path2) {
+    if (path1.length != path2.length) return false;
+    for (int i = 0; i < path1.length; i++) {
+      if (path1[i] != path2[i]) return false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final BluetoothConnect bluetoothConnect = Get.find<BluetoothConnect>();
@@ -67,63 +126,61 @@ class LocateItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image.asset(
-                imageUrl,
+                widget.imageUrl,
                 fit: BoxFit.contain, // Show entire image without cropping
               ),
               SizedBox(height: 20),
               Text(
-                title, // Display title without "Title:"
+                widget.title, // Display title without "Title:"
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               SizedBox(height: 10),
               Text(
-                'Category: $category',
+                'Category: ${widget.category}',
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 10),
               Text(
-                'Price: $price',
+                'Price: ${widget.price}',
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 10),
               Text(
-                'In Stock: $stockCount',
+                'In Stock: ${widget.stockCount}',
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  Offset coordinates = getCoordinatesForCategory(category);
-
                   // Define obstacles
                   List<Rect> obstacles = [
                     ...getSelectableRegions(1.5, 1.2, (v, min, max, minPixel, maxPixel) => v, 0) // Adjust these parameters as needed
                         .map((region) => Rect.fromLTWH(region.left, region.top, region.width, region.height)),
                   ];
 
-                  // Get red dot coordinates from Bluetooth
-                  Offset start = bluetoothConnect.getRedDotCoordinates(); // Get the red dot coordinates from Bluetooth
-                  Offset goal = Offset(coordinates.dx, 1 - coordinates.dy); // Target coordinates
+                  // Start periodic pathfinding
+                  _startPathFinding(bluetoothConnect, obstacles);
 
-                  PathFinder pathFinder = PathFinder(start: start, goal: goal, obstacles: obstacles);
-                  List<Offset> path = pathFinder.aStar();
-
-                  // Navigate to MainHomePage and pass the coordinates and path
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => MainHomePage(
-                        initialIndex: 1, // Index of MapScreen
-                        x: goal.dx, // Category-based x-coordinate for the black rectangle
-                        y: 1 - goal.dy, // Category-based y-coordinate for the black rectangle
-                        path: path, // Pass the computed path
-                      ),
-                    ),
-                  );
+                  // Navigate to MainHomePage and pass the pathNotifier
+                  _navigateToMainHomePage();
                 },
                 child: Text('Locate Item', style: TextStyle(fontSize: 18)),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToMainHomePage() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MainHomePage(
+          initialIndex: 1, // Index of MapScreen
+          pathNotifier: pathNotifier, // Pass the pathNotifier
+          x: _goal!.dx, // Pass the x-coordinate of the goal
+          y: _goal!.dy, // Pass the y-coordinate of the goal
         ),
       ),
     );

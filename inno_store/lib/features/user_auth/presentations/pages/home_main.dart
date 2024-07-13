@@ -9,15 +9,15 @@ import 'package:inno_store/my_account_page/my_account_screen.dart';
 
 class MainHomePage extends StatefulWidget {
   final int initialIndex;
+  final ValueNotifier<List<Offset>> pathNotifier;
   final double x;
   final double y;
-  final List<Offset> path;
 
   MainHomePage({
     this.initialIndex = 0,
+    required this.pathNotifier,
     this.x = 2.0,
     this.y = 2.0,
-    this.path = const [],
   });
 
   @override
@@ -39,8 +39,15 @@ class _MainHomePageState extends State<MainHomePage> {
     _selectedIndex = widget.initialIndex;
     x = widget.x;
     y = widget.y;
-    path = widget.path;
+    path = widget.pathNotifier.value;
     fetchUser();
+    widget.pathNotifier.addListener(_onPathChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.pathNotifier.removeListener(_onPathChanged);
+    super.dispose();
   }
 
   Future<void> fetchUser() async {
@@ -64,6 +71,12 @@ class _MainHomePageState extends State<MainHomePage> {
         isLoading = false;
       });
     }
+  }
+
+  void _onPathChanged() {
+    setState(() {
+      path = widget.pathNotifier.value;
+    });
   }
 
   static List<Widget> _widgetOptions(String username, double x, double y, List<Offset> path) => <Widget>[

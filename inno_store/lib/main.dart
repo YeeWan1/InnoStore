@@ -7,6 +7,8 @@ import 'package:inno_store/features/user_auth/presentations/pages/login_page.dar
 import 'package:inno_store/features/user_auth/presentations/pages/sign_up_page.dart';
 import 'package:inno_store/Customer_Support/customer_support_screen.dart';  // Ensure correct import
 
+ValueNotifier<List<Offset>> pathNotifier = ValueNotifier<List<Offset>>([]);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => SplashScreen(),
         '/login': (context) => LoginPage(),
         '/signUp': (context) => SignUpPage(),
-        '/home': (context) => MainHomePage(),
+        '/home': (context) => MainHomePage(pathNotifier: pathNotifier), // Pass the pathNotifier here
         '/customerSupport': (context) => CustomerSupportScreen(),  // Add the route here
       },
     );

@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/login_page.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart';
 
+ValueNotifier<List<Offset>> pathNotifier = ValueNotifier<List<Offset>>([]);
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -28,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MainHomePage()),
+        MaterialPageRoute(builder: (context) => MainHomePage(pathNotifier: pathNotifier)),
       );
     }
   }

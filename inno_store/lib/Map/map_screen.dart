@@ -30,7 +30,7 @@ class MapScreen extends StatelessWidget {
     // Initialize BluetoothConnect controller if not already done
     final BluetoothConnect bluetoothConnect = Get.put(BluetoothConnect());
 
-    return Scaffold(
+    return Scaffold(      
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
