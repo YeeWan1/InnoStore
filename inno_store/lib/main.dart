@@ -5,8 +5,11 @@ import 'package:inno_store/features/app/splash_screen/splash_screen.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/login_page.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/sign_up_page.dart';
-import 'package:inno_store/Customer_Support/customer_support_screen.dart';  // Ensure correct import
+import 'package:inno_store/Customer_Support/customer_support_screen.dart';
+import 'package:inno_store/Cashier/pay.dart';  // Add this import
+import 'package:inno_store/my_account_page/purchase_history.dart';
 
+// Initialize the pathNotifier
 ValueNotifier<List<Offset>> pathNotifier = ValueNotifier<List<Offset>>([]);
 
 Future<void> main() async {
@@ -42,7 +45,9 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/signUp': (context) => SignUpPage(),
         '/home': (context) => MainHomePage(pathNotifier: pathNotifier), // Pass the pathNotifier here
-        '/customerSupport': (context) => CustomerSupportScreen(),  // Add the route here
+        '/customerSupport': (context) => CustomerSupportScreen(),
+        '/pay': (context) => PayScreen(cartItems: [], username: ''), // Add the route here
+        '/purchaseHistory': (context) => PurchaseHistoryPage(),
       },
     );
   }

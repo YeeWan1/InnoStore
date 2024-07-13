@@ -109,4 +109,11 @@ flutter:
     - assets/products/haircare/amino.jpg
     - assets/products/haircare/ryodamage.jpg
 
+    - assets/cashier/boost.png
+    - assets/cashier/grabpay.png
+    - assets/cashier/touch_n_go.png
+    - assets/cashier/visa.png
+    - assets/cashier/mastercard.png
+
+
     

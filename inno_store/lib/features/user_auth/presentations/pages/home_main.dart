@@ -6,6 +6,7 @@ import 'package:inno_store/Map/map_screen.dart';
 import 'package:inno_store/Category/category_screen.dart';
 import 'package:inno_store/Customer_Support/customer_support_screen.dart';
 import 'package:inno_store/my_account_page/my_account_screen.dart';
+import 'package:inno_store/Cashier/pay.dart';
 
 class MainHomePage extends StatefulWidget {
   final int initialIndex;
@@ -79,13 +80,27 @@ class _MainHomePageState extends State<MainHomePage> {
     });
   }
 
-  static List<Widget> _widgetOptions(String username, double x, double y, List<Offset> path) => <Widget>[
-    HomePage(username: username),
-    MapScreen(x: x, y: y, path: path), // Use the passed coordinates and path
-    CategoryScreen(),
-    CustomerSupportScreen(),
-    MyAccountPage(),
-  ];
+  List<Widget> _widgetOptions(String username, double x, double y, List<Offset> path) {
+    return <Widget>[
+      HomePage(username: username),
+      MapScreen(x: x, y: y, path: path),
+      CategoryScreen(
+        navigateToPayment: (cartItems) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PayScreen(
+                cartItems: cartItems,
+                username: username,
+              ),
+            ),
+          );
+        },
+      ),
+      CustomerSupportScreen(),
+      MyAccountPage(),
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {

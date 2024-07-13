@@ -13,22 +13,11 @@ import 'package:inno_store/category/products/petscare.dart';
 import 'package:inno_store/category/products/haircare.dart';
 import 'package:inno_store/category/locateitem.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Inno Store',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: CategoryScreen(),
-    );
-  }
-}
-
 class CategoryScreen extends StatefulWidget {
+  final Function(List<Map<String, String>>) navigateToPayment;
+
+  CategoryScreen({required this.navigateToPayment});
+
   @override
   _CategoryScreenState createState() => _CategoryScreenState();
 }
@@ -139,6 +128,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          widget.navigateToPayment(filteredProducts);
+        },
+        child: Icon(Icons.payment),
       ),
     );
   }
