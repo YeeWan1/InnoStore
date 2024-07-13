@@ -90,7 +90,7 @@ class _LocateItemState extends State<LocateItem> {
       redDotY = redDotY;
 
       Offset start = Offset(redDotX, redDotY); // Use clamped and adjusted coordinates
-      Offset goal = Offset(_goal!.dx, _goal!.dy); // Use consistent goal coordinates
+      Offset goal = Offset(_goal!.dx, 1 - _goal!.dy); // Use consistent goal coordinates
 
       PathFinder pathFinder = PathFinder(start: start, goal: goal, obstacles: obstacles);
       List<Offset> newPath = pathFinder.aStar();
