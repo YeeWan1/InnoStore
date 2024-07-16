@@ -6,7 +6,7 @@ import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart
 import 'package:inno_store/features/user_auth/presentations/pages/login_page.dart';
 import 'package:inno_store/features/user_auth/presentations/pages/sign_up_page.dart';
 import 'package:inno_store/Customer_Support/customer_support_screen.dart';
-import 'package:inno_store/Cashier/pay.dart';  // Add this import
+import 'package:inno_store/Cashier/pay.dart';
 import 'package:inno_store/my_account_page/purchase_history.dart';
 
 // Initialize the pathNotifier
@@ -46,7 +46,11 @@ class MyApp extends StatelessWidget {
         '/signUp': (context) => SignUpPage(),
         '/home': (context) => MainHomePage(pathNotifier: pathNotifier), // Pass the pathNotifier here
         '/customerSupport': (context) => CustomerSupportScreen(),
-        '/pay': (context) => PayScreen(cartItems: [], username: ''), // Add the route here
+        '/pay': (context) => PayScreen(
+          cartItems: [], 
+          username: '', 
+          onClearCart: () {}, // Pass an empty callback for now
+        ), // Add the route here
         '/purchaseHistory': (context) => PurchaseHistoryPage(),
       },
     );

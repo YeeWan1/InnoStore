@@ -7,6 +7,10 @@ class PurchaseHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Debug statement to print the current user details
+    print('Current user UID: ${user?.uid}');
+    print('Current user displayName: ${user?.displayName}');
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Purchase History'),
@@ -15,22 +19,30 @@ class PurchaseHistoryPage extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('purchase_history')
-            .where('username', isEqualTo: user?.displayName ?? 'User')
+            .where('userId', isEqualTo: user?.uid) // Query by userId
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          var purchaseHistory = snapshot.data!.docs;
+          if (snapshot.hasError) {
+            // Print the error for debugging
+            print('Error: ${snapshot.error}');
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
 
-          if (purchaseHistory.isEmpty) {
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return Center(
               child: Text('No purchase history available.'),
             );
           }
+
+          var purchaseHistory = snapshot.data!.docs;
 
           return ListView.builder(
             itemCount: purchaseHistory.length,

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:inno_store/category/products/all.dart';
-import 'package:inno_store/category/products/nutrition.dart';
-import 'package:inno_store/category/products/supplements.dart';
-import 'package:inno_store/category/products/tonic.dart';
-import 'package:inno_store/category/products/foot_treatment.dart';
-import 'package:inno_store/category/products/traditional_medicine.dart';
-import 'package:inno_store/category/products/groceries.dart';
-import 'package:inno_store/category/products/coffee.dart';
-import 'package:inno_store/category/products/dairy_product.dart';
-import 'package:inno_store/category/products/makeup.dart';
-import 'package:inno_store/category/products/petscare.dart';
-import 'package:inno_store/category/products/haircare.dart';
-import 'package:inno_store/category/locateitem.dart';
+import 'package:inno_store/Category/products/all.dart';
+import 'package:inno_store/Category/products/nutrition.dart';
+import 'package:inno_store/Category/products/supplements.dart';
+import 'package:inno_store/Category/products/tonic.dart';
+import 'package:inno_store/Category/products/foot_treatment.dart';
+import 'package:inno_store/Category/products/traditional_medicine.dart';
+import 'package:inno_store/Category/products/groceries.dart';
+import 'package:inno_store/Category/products/coffee.dart';
+import 'package:inno_store/Category/products/dairy_product.dart';
+import 'package:inno_store/Category/products/makeup.dart';
+import 'package:inno_store/Category/products/petscare.dart';
+import 'package:inno_store/Category/products/haircare.dart';
+import 'package:inno_store/Category/product_item.dart'; // Ensure this import
 
 class CategoryScreen extends StatefulWidget {
   final Function(List<Map<String, String>>) navigateToPayment;
@@ -25,6 +25,7 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   String selectedCategory = 'All';
   String searchText = '';
+  List<Map<String, String>> cartItems = [];
 
   final Map<String, List<Map<String, String>>> categoryProducts = {
     'All': allProducts,
@@ -111,7 +112,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     padding: const EdgeInsets.all(10.0),
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 200,
-                      childAspectRatio: 2/3,
+                      childAspectRatio: 2 / 3,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
@@ -121,6 +122,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       filteredProducts[i]["category"]!,
                       filteredProducts[i]["price"]!,
                       filteredProducts[i]["image"]!,
+                      onAddToCart: () {
+                        setState(() {
+                          cartItems.add(filteredProducts[i]);
+                          print('Added to cart: ${filteredProducts[i]["title"]}'); // Debug statement
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -131,7 +138,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          widget.navigateToPayment(filteredProducts);
+          widget.navigateToPayment(cartItems);
         },
         child: Icon(Icons.payment),
       ),
@@ -156,76 +163,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
               textAlign: TextAlign.center,
             ),
             Divider(height: 20, color: Colors.grey),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ProductItem extends StatelessWidget {
-  final String title;
-  final String category;
-  final String price;
-  final String imageUrl;
-
-  ProductItem(this.title, this.category, this.price, this.imageUrl);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LocateItem( // Update to LocateItem
-              title: title,
-              category: category,
-              price: price,
-              stockCount: 10, // Example: Assuming 10 items in stock
-              imageUrl: imageUrl, // Pass imageUrl to LocateItem
-            ),
-          ),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 1),
-        ),
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Image.asset(
-              imageUrl,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                    ),
-                    Text(
-                      category,
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    Text(
-                      price,
-                      style: TextStyle(fontSize: 12, color: Colors.red),
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),

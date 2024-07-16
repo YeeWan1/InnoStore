@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:inno_store/Cashier/make_payment.dart'; // Ensure this import is correct
 
 class PayScreen extends StatefulWidget {
   final List<Map<String, String>> cartItems;
   final String username;
+  final VoidCallback onClearCart; // Add this callback
 
   PayScreen({
     required this.cartItems,
     required this.username,
+    required this.onClearCart, // Ensure this is required
   });
 
   @override
@@ -41,6 +41,22 @@ class _PayScreenState extends State<PayScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
+            Text(
+              'Cart Items:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.cartItems.length,
+                itemBuilder: (context, index) {
+                  final item = widget.cartItems[index];
+                  return ListTile(
+                    title: Text(item['title']!),
+                    subtitle: Text(item['price']!),
+                  );
+                },
+              ),
+            ),
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -51,6 +67,9 @@ class _PayScreenState extends State<PayScreen> {
                         totalAmount: totalPrice,
                         cartItems: widget.cartItems,
                         username: widget.username,
+                        onPaymentSuccess: () {
+                          widget.onClearCart(); // Clear the cart after payment
+                        },
                       ),
                     ),
                   );

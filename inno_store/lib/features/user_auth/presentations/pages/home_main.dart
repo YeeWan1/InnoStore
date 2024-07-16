@@ -33,6 +33,7 @@ class _MainHomePageState extends State<MainHomePage> {
   late double x;
   late double y;
   late List<Offset> path;
+  List<Map<String, String>> cartItems = []; // Initialize an empty cart
 
   @override
   void initState() {
@@ -85,13 +86,17 @@ class _MainHomePageState extends State<MainHomePage> {
       HomePage(username: username),
       MapScreen(x: x, y: y, path: path),
       CategoryScreen(
-        navigateToPayment: (cartItems) {
+        navigateToPayment: (items) {
+          setState(() {
+            cartItems = items;
+          });
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => PayScreen(
                 cartItems: cartItems,
                 username: username,
+                onClearCart: _clearCart,
               ),
             ),
           );
@@ -100,6 +105,12 @@ class _MainHomePageState extends State<MainHomePage> {
       CustomerSupportScreen(),
       MyAccountPage(),
     ];
+  }
+
+  void _clearCart() {
+    setState(() {
+      cartItems.clear();
+    });
   }
 
   void _onItemTapped(int index) {
