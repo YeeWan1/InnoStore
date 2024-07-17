@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:inno_store/bluetooth/bluetooth.dart';
 import 'region.dart'; // Import the region.dart file
 import 'path.dart'; // Import the path.dart file
+import 'navigation_view.dart'; // Import the navigation_view.dart file
 
 class RedDotCoordinates {
   final double x;
@@ -30,7 +31,7 @@ class MapScreen extends StatelessWidget {
     // Initialize BluetoothConnect controller if not already done
     final BluetoothConnect bluetoothConnect = Get.put(BluetoothConnect());
 
-    return Scaffold(      
+    return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -164,6 +165,19 @@ class MapScreen extends StatelessWidget {
                           Positioned.fill(
                             child: CustomPaint(
                               painter: PathPainter(path, floorplanWidth, floorplanHeight, mapCoordinate),
+                            ),
+                          ),
+                          Positioned(
+                            top: 16,
+                            right: 16,
+                            child: FloatingActionButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => NavigationView(x: x, y: y, path: path)),
+                                );
+                              },
+                              child: Icon(Icons.camera_alt),
                             ),
                           ),
                         ],
