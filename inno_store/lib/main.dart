@@ -46,11 +46,7 @@ class MyApp extends StatelessWidget {
         '/signUp': (context) => SignUpPage(),
         '/home': (context) => MainHomePage(pathNotifier: pathNotifier), // Pass the pathNotifier here
         '/customerSupport': (context) => CustomerSupportScreen(),
-        '/pay': (context) => PayScreen(
-          cartItems: [], 
-          username: '', 
-          onClearCart: () {}, // Pass an empty callback for now
-        ), // Add the route here
+        '/pay': (context) => PayScreen(cartItems: [], username: '', onClearCart: () {}), // Add the route here
         '/purchaseHistory': (context) => PurchaseHistoryPage(),
       },
     );

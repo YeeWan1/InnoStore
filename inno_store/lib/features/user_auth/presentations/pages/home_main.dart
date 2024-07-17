@@ -7,6 +7,7 @@ import 'package:inno_store/Category/category_screen.dart';
 import 'package:inno_store/Customer_Support/customer_support_screen.dart';
 import 'package:inno_store/my_account_page/my_account_screen.dart';
 import 'package:inno_store/Cashier/pay.dart';
+import 'package:inno_store/Cashier/cart_item.dart'; // Import CartItem
 
 class MainHomePage extends StatefulWidget {
   final int initialIndex;
@@ -33,7 +34,7 @@ class _MainHomePageState extends State<MainHomePage> {
   late double x;
   late double y;
   late List<Offset> path;
-  List<Map<String, String>> cartItems = []; // Initialize an empty cart
+  List<CartItem> cartItems = []; // Initialize an empty cart
 
   @override
   void initState() {

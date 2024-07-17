@@ -1,55 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:inno_store/Cashier/cart_item.dart';
 
 class MakePaymentScreen extends StatelessWidget {
   final double totalAmount;
-  final List<Map<String, String>> cartItems;
+  final List<CartItem> cartItems;
   final String username;
-  final VoidCallback onPaymentSuccess; // Add this callback
+  final VoidCallback onPaymentSuccess;
 
   MakePaymentScreen({
     required this.totalAmount,
     required this.cartItems,
     required this.username,
-    required this.onPaymentSuccess, // Ensure this is required
+    required this.onPaymentSuccess,
   });
 
-  Future<void> _handlePayment(BuildContext context, String paymentMethod) async {
+  Future<void> _handlePayment(BuildContext context) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // Debug statement to print user details
-        print('Processing payment for user UID: ${user.uid}, Username: $username');
-        
-        print('Total Amount: $totalAmount');
-        print('Cart Items: $cartItems');
-
         await FirebaseFirestore.instance.collection('purchase_history').add({
           'userId': user.uid,
           'username': username,
-          'items': cartItems,
+          'items': cartItems.map((item) => item.toMap()).toList(),
           'totalPrice': totalAmount,
-          'paymentMethod': paymentMethod,
           'timestamp': FieldValue.serverTimestamp(),
         });
-
-        // Debug statement to confirm successful write operation
-        print('Purchase history successfully written to Firestore');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Payment successful! Thank you')),
         );
 
-        onPaymentSuccess(); // Call the callback to clear the cart
-
-        // Do not redirect to purchase history page
+        onPaymentSuccess();
       } else {
-        // Debug statement for null user
         print('User is null, unable to process payment');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('User is not logged in.')),
-        );
       }
     } catch (e) {
       print('Error processing payment: $e');
@@ -57,37 +42,6 @@ class MakePaymentScreen extends StatelessWidget {
         SnackBar(content: Text('Payment failed. Please try again.')),
       );
     }
-  }
-
-  void _showPaymentSummary(BuildContext context, String paymentMethod) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Payment Summary'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Payment Method: $paymentMethod'),
-            Text('Total Amount: RM ${totalAmount.toStringAsFixed(2)}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _handlePayment(context, paymentMethod);
-            },
-            child: Text('Pay'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -139,6 +93,37 @@ class MakePaymentScreen extends StatelessWidget {
             onTap: () {
               _showPaymentSummary(context, 'GrabPay');
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPaymentSummary(BuildContext context, String paymentMethod) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Payment Summary'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Payment Method: $paymentMethod'),
+            Text('Total Amount: RM ${totalAmount.toStringAsFixed(2)}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _handlePayment(context);
+            },
+            child: Text('Pay'),
           ),
         ],
       ),

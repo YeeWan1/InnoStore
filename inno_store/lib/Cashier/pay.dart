@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:inno_store/Cashier/make_payment.dart'; // Ensure this import is correct
+import 'package:inno_store/Cashier/make_payment.dart';
+import 'package:inno_store/Cashier/cart_item.dart';
 
 class PayScreen extends StatefulWidget {
-  final List<Map<String, String>> cartItems;
+  final List<CartItem> cartItems;
   final String username;
-  final VoidCallback onClearCart; // Add this callback
+  final VoidCallback onClearCart;
 
   PayScreen({
     required this.cartItems,
     required this.username,
-    required this.onClearCart, // Ensure this is required
+    required this.onClearCart,
   });
 
   @override
@@ -20,7 +21,7 @@ class _PayScreenState extends State<PayScreen> {
   double get totalPrice {
     double total = 0.0;
     widget.cartItems.forEach((item) {
-      total += double.parse(item['price']!.replaceAll('RM ', ''));
+      total += double.parse(item.price.replaceAll('RM ', '')) * item.quantity;
     });
     return total;
   }
@@ -51,8 +52,9 @@ class _PayScreenState extends State<PayScreen> {
                 itemBuilder: (context, index) {
                   final item = widget.cartItems[index];
                   return ListTile(
-                    title: Text(item['title']!),
-                    subtitle: Text(item['price']!),
+                    leading: Text('${index + 1}'),
+                    title: Text(item.title),
+                    subtitle: Text('${item.price} x ${item.quantity}'),
                   );
                 },
               ),
@@ -67,9 +69,7 @@ class _PayScreenState extends State<PayScreen> {
                         totalAmount: totalPrice,
                         cartItems: widget.cartItems,
                         username: widget.username,
-                        onPaymentSuccess: () {
-                          widget.onClearCart(); // Clear the cart after payment
-                        },
+                        onPaymentSuccess: widget.onClearCart,
                       ),
                     ),
                   );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inno_store/Cashier/cart_item.dart';
 import 'package:inno_store/Category/products/all.dart';
 import 'package:inno_store/Category/products/nutrition.dart';
 import 'package:inno_store/Category/products/supplements.dart';
@@ -11,10 +12,10 @@ import 'package:inno_store/Category/products/dairy_product.dart';
 import 'package:inno_store/Category/products/makeup.dart';
 import 'package:inno_store/Category/products/petscare.dart';
 import 'package:inno_store/Category/products/haircare.dart';
-import 'package:inno_store/Category/product_item.dart'; // Ensure this import
+import 'package:inno_store/Category/locateitem.dart';
 
 class CategoryScreen extends StatefulWidget {
-  final Function(List<Map<String, String>>) navigateToPayment;
+  final Function(List<CartItem>) navigateToPayment;
 
   CategoryScreen({required this.navigateToPayment});
 
@@ -25,7 +26,7 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   String selectedCategory = 'All';
   String searchText = '';
-  List<Map<String, String>> cartItems = [];
+  List<CartItem> cartItems = [];
 
   final Map<String, List<Map<String, String>>> categoryProducts = {
     'All': allProducts,
@@ -41,6 +42,23 @@ class _CategoryScreenState extends State<CategoryScreen> {
     'Pets Care': petsCareProducts,
     'Hair Care': hairCareProducts,
   };
+
+  void addToCart(Map<String, String> product) {
+    setState(() {
+      var existingItem = cartItems.firstWhere(
+          (item) => item.title == product['title'],
+          orElse: () => CartItem(title: '', price: '', category: ''));
+      if (existingItem.title.isNotEmpty) {
+        existingItem.quantity += 1;
+      } else {
+        cartItems.add(CartItem(
+          title: product['title']!,
+          price: product['price']!,
+          category: product['category']!,
+        ));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,12 +140,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       filteredProducts[i]["category"]!,
                       filteredProducts[i]["price"]!,
                       filteredProducts[i]["image"]!,
-                      onAddToCart: () {
-                        setState(() {
-                          cartItems.add(filteredProducts[i]);
-                          print('Added to cart: ${filteredProducts[i]["title"]}'); // Debug statement
-                        });
-                      },
+                      () => addToCart(filteredProducts[i]),
                     ),
                   ),
                 ),
@@ -163,6 +176,72 @@ class _CategoryScreenState extends State<CategoryScreen> {
               textAlign: TextAlign.center,
             ),
             Divider(height: 20, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProductItem extends StatelessWidget {
+  final String title;
+  final String category;
+  final String price;
+  final String imageUrl;
+  final VoidCallback onAddToCart;
+
+  ProductItem(this.title, this.category, this.price, this.imageUrl, this.onAddToCart);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onDoubleTap: onAddToCart,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: 1),
+        ),
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Image.asset(
+              imageUrl,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    Text(
+                      category,
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    Text(
+                      price,
+                      style: TextStyle(fontSize: 12, color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 5,
+              right: 5,
+              child: IconButton(
+                icon: Icon(Icons.add_circle, color: Colors.blue),
+                onPressed: onAddToCart,
+              ),
+            ),
           ],
         ),
       ),

@@ -57,7 +57,9 @@ class PurchaseHistoryPage extends StatelessWidget {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: items
-                        .map((item) => Text('${item['title']} - ${item['price']}'))
+                        .asMap()
+                        .entries
+                        .map((entry) => Text('${entry.key + 1}) ${entry.value['title']} - RM ${entry.value['price']} x ${entry.value['quantity']}'))
                         .toList(),
                   ),
                   trailing: Text('Total: RM ${purchase['totalPrice'].toStringAsFixed(2)}'),
