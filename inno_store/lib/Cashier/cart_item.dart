@@ -1,4 +1,3 @@
-// lib/Cashier/cart_item.dart
 class CartItem {
   final String title;
   final String price;

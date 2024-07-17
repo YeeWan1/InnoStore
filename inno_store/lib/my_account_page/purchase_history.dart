@@ -7,7 +7,6 @@ class PurchaseHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Debug statement to print the current user details
     print('Current user UID: ${user?.uid}');
     print('Current user displayName: ${user?.displayName}');
 
@@ -19,7 +18,7 @@ class PurchaseHistoryPage extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('purchase_history')
-            .where('userId', isEqualTo: user?.uid) // Query by userId
+            .where('userId', isEqualTo: user?.uid)
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -29,7 +28,6 @@ class PurchaseHistoryPage extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            // Print the error for debugging
             print('Error: ${snapshot.error}');
             return Center(
               child: Text('Error: ${snapshot.error}'),
@@ -49,6 +47,7 @@ class PurchaseHistoryPage extends StatelessWidget {
             itemBuilder: (context, index) {
               var purchase = purchaseHistory[index];
               var items = List<Map<String, dynamic>>.from(purchase['items']);
+              double totalPrice = purchase['totalPrice'];
 
               return Card(
                 margin: EdgeInsets.all(8.0),
@@ -62,7 +61,7 @@ class PurchaseHistoryPage extends StatelessWidget {
                         .map((entry) => Text('${entry.key + 1}) ${entry.value['title']} - RM ${entry.value['price']} x ${entry.value['quantity']}'))
                         .toList(),
                   ),
-                  trailing: Text('Total: RM ${purchase['totalPrice'].toStringAsFixed(2)}'),
+                  trailing: Text('Total: RM ${totalPrice.toStringAsFixed(2)}'),
                 ),
               );
             },

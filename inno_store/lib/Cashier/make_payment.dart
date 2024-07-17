@@ -20,6 +20,9 @@ class MakePaymentScreen extends StatelessWidget {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
+        // Debug statement to print user details
+        print('Processing payment for user UID: ${user.uid}, Username: $username');
+
         await FirebaseFirestore.instance.collection('purchase_history').add({
           'userId': user.uid,
           'username': username,
@@ -28,12 +31,16 @@ class MakePaymentScreen extends StatelessWidget {
           'timestamp': FieldValue.serverTimestamp(),
         });
 
+        // Debug statement to confirm successful write operation
+        print('Purchase history successfully written to Firestore');
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Payment successful! Thank you')),
         );
 
         onPaymentSuccess();
       } else {
+        // Debug statement for null user
         print('User is null, unable to process payment');
       }
     } catch (e) {
@@ -42,6 +49,37 @@ class MakePaymentScreen extends StatelessWidget {
         SnackBar(content: Text('Payment failed. Please try again.')),
       );
     }
+  }
+
+  void _showPaymentSummary(BuildContext context, String paymentMethod) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Payment Summary'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Payment Method: $paymentMethod'),
+            Text('Total Amount: RM ${totalAmount.toStringAsFixed(2)}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _handlePayment(context);
+            },
+            child: Text('Pay'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -96,36 +134,11 @@ class MakePaymentScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  void _showPaymentSummary(BuildContext context, String paymentMethod) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Payment Summary'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Payment Method: $paymentMethod'),
-            Text('Total Amount: RM ${totalAmount.toStringAsFixed(2)}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _handlePayment(context);
-            },
-            child: Text('Pay'),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed('/home');
+        },
+        child: Icon(Icons.home),
       ),
     );
   }

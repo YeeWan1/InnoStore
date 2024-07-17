@@ -7,7 +7,7 @@ import 'package:inno_store/Category/category_screen.dart';
 import 'package:inno_store/Customer_Support/customer_support_screen.dart';
 import 'package:inno_store/my_account_page/my_account_screen.dart';
 import 'package:inno_store/Cashier/pay.dart';
-import 'package:inno_store/Cashier/cart_item.dart'; // Import CartItem
+import 'package:inno_store/Cashier/cart_item.dart';
 
 class MainHomePage extends StatefulWidget {
   final int initialIndex;

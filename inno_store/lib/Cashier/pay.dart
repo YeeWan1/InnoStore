@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inno_store/Cashier/make_payment.dart';
-import 'package:inno_store/Cashier/cart_item.dart';
+import 'cart_item.dart';
 
 class PayScreen extends StatefulWidget {
   final List<CartItem> cartItems;
@@ -52,9 +52,8 @@ class _PayScreenState extends State<PayScreen> {
                 itemBuilder: (context, index) {
                   final item = widget.cartItems[index];
                   return ListTile(
-                    leading: Text('${index + 1}'),
-                    title: Text(item.title),
-                    subtitle: Text('${item.price} x ${item.quantity}'),
+                    title: Text('${index + 1}) ${item.title}'),
+                    subtitle: Text('RM ${item.price} x ${item.quantity}'),
                   );
                 },
               ),
