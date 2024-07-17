@@ -8,7 +8,6 @@ import 'package:inno_store/features/user_auth/presentations/pages/sign_up_page.d
 import 'package:inno_store/Customer_Support/customer_support_screen.dart';
 import 'package:inno_store/Cashier/pay.dart';
 import 'package:inno_store/my_account_page/purchase_history.dart';
-import 'package:inno_store/Cashier/cart_item.dart';
 
 // Initialize the pathNotifier
 ValueNotifier<List<Offset>> pathNotifier = ValueNotifier<List<Offset>>([]);
@@ -53,4 +52,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

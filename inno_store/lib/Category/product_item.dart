@@ -9,7 +9,13 @@ class ProductItem extends StatelessWidget {
   final String imageUrl;
   final VoidCallback onAddToCart;
 
-  ProductItem(this.title, this.category, this.price, this.imageUrl, {required this.onAddToCart});
+  ProductItem({
+    required this.title,
+    required this.category,
+    required this.price,
+    required this.imageUrl,
+    required this.onAddToCart,
+  });
 
   void _navigateToLocateItem(BuildContext context) {
     Navigator.push(

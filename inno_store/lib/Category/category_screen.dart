@@ -13,6 +13,7 @@ import 'package:inno_store/Category/products/makeup.dart';
 import 'package:inno_store/Category/products/petscare.dart';
 import 'package:inno_store/Category/products/haircare.dart';
 import 'package:inno_store/Category/locateitem.dart';
+import 'package:inno_store/Category/product_item.dart'; // Ensure this import is correct
 
 class CategoryScreen extends StatefulWidget {
   final Function(List<CartItem>) navigateToPayment;
@@ -136,11 +137,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     ),
                     itemCount: filteredProducts.length,
                     itemBuilder: (ctx, i) => ProductItem(
-                      filteredProducts[i]["title"]!,
-                      filteredProducts[i]["category"]!,
-                      filteredProducts[i]["price"]!,
-                      filteredProducts[i]["image"]!,
-                      () => addToCart(filteredProducts[i]),
+                      title: filteredProducts[i]["title"]!,
+                      category: filteredProducts[i]["category"]!,
+                      price: filteredProducts[i]["price"]!,
+                      imageUrl: filteredProducts[i]["image"]!,
+                      onAddToCart: () => addToCart(filteredProducts[i]),
                     ),
                   ),
                 ),
@@ -176,72 +177,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
               textAlign: TextAlign.center,
             ),
             Divider(height: 20, color: Colors.grey),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ProductItem extends StatelessWidget {
-  final String title;
-  final String category;
-  final String price;
-  final String imageUrl;
-  final VoidCallback onAddToCart;
-
-  ProductItem(this.title, this.category, this.price, this.imageUrl, this.onAddToCart);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onDoubleTap: onAddToCart,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 1),
-        ),
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Image.asset(
-              imageUrl,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                    ),
-                    Text(
-                      category,
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    Text(
-                      price,
-                      style: TextStyle(fontSize: 12, color: Colors.red),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: 5,
-              right: 5,
-              child: IconButton(
-                icon: Icon(Icons.add_circle, color: Colors.blue),
-                onPressed: onAddToCart,
-              ),
-            ),
           ],
         ),
       ),
