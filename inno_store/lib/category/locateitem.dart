@@ -117,6 +117,9 @@ class _LocateItemState extends State<LocateItem> {
               Image.network(
                 widget.imageUrl,
                 fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.error);
+                },
               ),
               SizedBox(height: 20),
               Text(

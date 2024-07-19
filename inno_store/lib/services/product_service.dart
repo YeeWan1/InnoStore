@@ -9,17 +9,16 @@ class ProductService {
         return [];
       } else {
         final List<Map<String, String>> products = [];
-        final productMaps = Map<dynamic, dynamic>.from(event.snapshot.value as Map<dynamic, dynamic>);
-        productMaps.forEach((key, value) {
+        final productList = List<dynamic>.from(event.snapshot.value as List<dynamic>);
+        for (var value in productList) {
           final Map<String, dynamic> product = Map<String, dynamic>.from(value);
           products.add({
-            "id": key.toString(),
             "title": product["title"],
             "category": product["category"],
             "price": product["price"],
             "image": product["image"],
           });
-        });
+        }
         return products;
       }
     });

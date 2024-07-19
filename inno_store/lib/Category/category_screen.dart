@@ -140,7 +140,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         padding: const EdgeInsets.all(10.0),
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                           maxCrossAxisExtent: 200,
-                          childAspectRatio: 2 / 3.5,
+                          childAspectRatio: 2 / 3,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
                         ),
@@ -180,10 +180,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
         });
       },
       child: Container(
+        padding: EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Icon(icon,
-                size: 40, color: isSelected ? Colors.blue : Colors.black),
+            Icon(icon, size: 40, color: isSelected ? Colors.blue : Colors.black),
             Text(
               title,
               style: TextStyle(
