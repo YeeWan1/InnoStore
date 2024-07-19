@@ -17,6 +17,7 @@ class ProductService {
             "category": product["category"],
             "price": product["price"],
             "image": product["image"],
+            "quantity": product["quantity"], // Add quantity field
           });
         }
         return products;

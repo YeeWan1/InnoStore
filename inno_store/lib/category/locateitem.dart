@@ -1,4 +1,5 @@
-import 'dart:async';
+import 'dart:async'; // Import this library for Timer
+
 import 'package:flutter/material.dart';
 import 'package:inno_store/Map/map_screen.dart';
 import 'package:inno_store/Map/path.dart';
@@ -14,7 +15,7 @@ class LocateItem extends StatefulWidget {
   final int stockCount;
   final String imageUrl;
 
-  LocateItem({
+  const LocateItem({
     required this.title,
     required this.category,
     required this.price,
@@ -35,6 +36,8 @@ class _LocateItemState extends State<LocateItem> {
   void initState() {
     super.initState();
     _goal = getCoordinatesForCategory(widget.category);
+    // Print the image URL to console for debugging
+    print("Image URL: ${widget.imageUrl}");
   }
 
   @override
@@ -45,28 +48,28 @@ class _LocateItemState extends State<LocateItem> {
   }
 
   Offset getCoordinatesForCategory(String category) {
-    switch (category) {
-      case 'Nutrition':
+    switch (category.toLowerCase()) {
+      case 'nutrition':
         return Offset(1.45, 0.55);
-      case 'Supplement':
+      case 'supplement':
         return Offset(1.2, 0.55);
-      case 'Tonic':
+      case 'tonic':
         return Offset(1.05, 0.55);
-      case 'Foot Treatment':
+      case 'foot treatment':
         return Offset(0.75, 0.55);
-      case 'Traditional Medicine':
+      case 'traditional medicine':
         return Offset(0.6, 0.55);
-      case 'Coffee':
+      case 'coffee':
         return Offset(0.3, 0.55);
-      case 'Dairy Product':
+      case 'dairy product':
         return Offset(0.15, 0.55);
-      case 'Groceries':
+      case 'groceries':
         return Offset(0.67, 0.9);
-      case 'Make Up':
+      case 'make up':
         return Offset(1.15, 0.9);
-      case 'Pets Care':
+      case 'pets care':
         return Offset(1.15, 0.05);
-      case 'Hair Care':
+      case 'hair care':
         return Offset(0.67, 0.05);
       default:
         return Offset(2.0, 2.0);
@@ -111,15 +114,33 @@ class _LocateItemState extends State<LocateItem> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.network(
-                widget.imageUrl,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.error);
-                },
+              Center(
+                child: Container(
+                  height: 250,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: Image.network(
+                    widget.imageUrl,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      print("Error loading image: $error"); // Print error for debugging
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.error),
+                            Text('Image not available'),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
               SizedBox(height: 20),
               Text(

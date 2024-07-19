@@ -28,21 +28,20 @@ class ProductItem extends StatelessWidget {
             Expanded(
               child: Stack(
                 children: [
-                  Container(
-                    width: double.infinity,
+                  Positioned.fill(
                     child: imageUrl.startsWith('http')
                         ? Image.network(
                             imageUrl,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
-                              return Icon(Icons.error);
+                              return Center(child: Icon(Icons.error));
                             },
                           )
                         : Image.asset(
                             imageUrl,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
-                              return Icon(Icons.error);
+                              return Center(child: Icon(Icons.error));
                             },
                           ),
                   ),
@@ -58,19 +57,25 @@ class ProductItem extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(4.0),
               child: Text(
                 title,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text('Category: $category'),
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Text(
+                category,
+                style: TextStyle(fontSize: 12),
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text('Price: $price'),
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Text(
+                'Price: $price',
+                style: TextStyle(fontSize: 12),
+              ),
             ),
           ],
         ),
