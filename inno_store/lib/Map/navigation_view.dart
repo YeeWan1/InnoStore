@@ -62,7 +62,7 @@ class _NavigationViewState extends State<NavigationView> {
       redDotY = redDotY.clamp(0.0, 1.0);
 
       // Update y value based on the condition
-      redDotY = 1 - redDotY;
+      redDotY = redDotY;
 
       Offset start = Offset(redDotX, redDotY); // Use clamped and adjusted coordinates
       Offset goal = Offset(widget.x, 1 - widget.y); // Use consistent goal coordinates
@@ -85,33 +85,6 @@ class _NavigationViewState extends State<NavigationView> {
       if (path1[i] != path2[i]) return false;
     }
     return true;
-  }
-
-  double _calculateRotation(Offset currentRedDotPosition) {
-    if (previousRedDotPosition == null || currentRedDotPosition == null) return 0.0;
-
-    double dx = currentRedDotPosition.dx - previousRedDotPosition!.dx;
-    double dy = currentRedDotPosition.dy - previousRedDotPosition!.dy;
-
-    if (dy.abs() > dx.abs()) {
-      return dy > 0 ? 0.0 : 180.0;
-    } else {
-      return dx > 0 ? 90.0 : -90.0;
-    }
-  }
-
-  Offset _rotateOffset(Offset offset, double angle, Offset center) {
-    double radians = angle * 3.14159 / 180; // Convert degrees to radians
-    double cosTheta = cos(radians);
-    double sinTheta = sin(radians);
-
-    double dx = offset.dx - center.dx;
-    double dy = offset.dy - center.dy;
-
-    double rotatedX = dx * cosTheta - dy * sinTheta + center.dx;
-    double rotatedY = dx * sinTheta + dy * cosTheta + center.dy;
-
-    return Offset(rotatedX, rotatedY);
   }
 
   @override
@@ -179,8 +152,6 @@ class _NavigationViewState extends State<NavigationView> {
 
                   RedDotCoordinates redDotCoordinates = RedDotCoordinates(x: redDotX, y: redDotY);
 
-                  double rotationAngle = _calculateRotation(Offset(redDotX, redDotY));
-
                   return LayoutBuilder(
                     builder: (context, constraints) {
                       // Define the aspect ratio of the floorplan image
@@ -204,74 +175,65 @@ class _NavigationViewState extends State<NavigationView> {
                       final redDotLeft = mapCoordinate(redDotCoordinates.x, -0.2, 1.7, 0.0, floorplanWidth);
                       final redDotBottom = mapCoordinate(redDotCoordinates.y, -0.2, 1.2, 0.0, floorplanHeight);
 
-                      // Center of the rotation, here we assume center of the floorplan
-                      Offset center = Offset(floorplanWidth / 2, floorplanHeight / 2);
-
-                      // Rotate the red dot coordinates along with the map
-                      Offset rotatedRedDot = _rotateOffset(Offset(redDotLeft, redDotBottom), rotationAngle, center);
-
-                      return Transform.rotate(
-                        angle: rotationAngle * 3.14159 / 180, // Convert degrees to radians
-                        child: InteractiveViewer(
-                          constrained: true,
-                          minScale: 0.5,
-                          maxScale: 1.5,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                width: floorplanWidth,
-                                height: floorplanHeight,
-                                child: Image.asset(
-                                  'assets/map/floorplan.jpg',
-                                  fit: BoxFit.cover,
+                      return InteractiveViewer(
+                        constrained: true,
+                        minScale: 0.5,
+                        maxScale: 1.5,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              width: floorplanWidth,
+                              height: floorplanHeight,
+                              child: Image.asset(
+                                'assets/map/floorplan.jpg',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              left: dotLeft - dotSize / 2,
+                              bottom: dotBottom - dotSize / 2,
+                              child: Container(
+                                width: dotSize,
+                                height: dotSize,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  shape: BoxShape.rectangle,
                                 ),
                               ),
-                              Positioned(
-                                left: dotLeft - dotSize / 2,
-                                bottom: dotBottom - dotSize / 2,
-                                child: Container(
-                                  width: dotSize,
-                                  height: dotSize,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    shape: BoxShape.rectangle,
+                            ),
+                            Positioned(
+                              left: redDotLeft - dotSize / 2,
+                              bottom: redDotBottom - dotSize / 2,
+                              child: Container(
+                                width: dotSize,
+                                height: dotSize,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ),
+                            ...getSelectableRegions(floorplanWidth, floorplanHeight, mapCoordinate, dotSize).map((region) {
+                              return Positioned(
+                                left: region.left,
+                                top: region.top,
+                                child: GestureDetector(
+                                  onTap: region.onTap,
+                                  child: Container(
+                                    width: region.width,
+                                    height: region.height,
+                                    color: region.color,
                                   ),
                                 ),
+                              );
+                            }).toList(),
+                            Positioned.fill(
+                              child: CustomPaint(
+                                painter: PathPainter(path, floorplanWidth, floorplanHeight, mapCoordinate),
                               ),
-                              Positioned(
-                                left: rotatedRedDot.dx - dotSize / 2,
-                                bottom: rotatedRedDot.dy - dotSize / 2,
-                                child: Container(
-                                  width: dotSize,
-                                  height: dotSize,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              ),
-                              ...getSelectableRegions(floorplanWidth, floorplanHeight, mapCoordinate, dotSize).map((region) {
-                                return Positioned(
-                                  left: region.left,
-                                  top: region.top,
-                                  child: GestureDetector(
-                                    onTap: region.onTap,
-                                    child: Container(
-                                      width: region.width,
-                                      height: region.height,
-                                      color: region.color,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                              Positioned.fill(
-                                child: CustomPaint(
-                                  painter: PathPainter(path, floorplanWidth, floorplanHeight, mapCoordinate),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     },
