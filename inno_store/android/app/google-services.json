@@ -1,18 +1,24 @@
 {
   "project_info": {
     "project_number": "396405032929",
+    "firebase_url": "https://smart-retail-app-4b6a5-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "smart-retail-app-4b6a5",
     "storage_bucket": "smart-retail-app-4b6a5.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:396405032929:android:fa7a9d2db91884af1434a0",
+        "mobilesdk_app_id": "1:396405032929:android:bb3b480ef064672c1434a0",
         "android_client_info": {
-          "package_name": "com.example.inno_store"
+          "package_name": "admin.webpage"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "396405032929-7fclcuhn8unv29qboa2dcokcrp3t0fjd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAFDPwZCsNSnckcq2jHvJcm7ejEhg5-2LU"
@@ -20,7 +26,63 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "396405032929-7fclcuhn8unv29qboa2dcokcrp3t0fjd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "396405032929-anvggs4enind9uiq68akfvb11qkrgd7q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myproject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396405032929:android:fa7a9d2db91884af1434a0",
+        "android_client_info": {
+          "package_name": "com.example.inno_store"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "396405032929-lv90aivlqqm0357eshmrq6orobc631rk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.inno_store",
+            "certificate_hash": "3b10a1d6776c30a7df74b159096ec415893572aa"
+          }
+        },
+        {
+          "client_id": "396405032929-7fclcuhn8unv29qboa2dcokcrp3t0fjd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFDPwZCsNSnckcq2jHvJcm7ejEhg5-2LU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "396405032929-7fclcuhn8unv29qboa2dcokcrp3t0fjd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "396405032929-anvggs4enind9uiq68akfvb11qkrgd7q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myproject"
+              }
+            }
+          ]
         }
       }
     }

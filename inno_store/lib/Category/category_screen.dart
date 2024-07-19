@@ -1,19 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:inno_store/Cashier/cart_item.dart';
-import 'package:inno_store/Category/products/all.dart';
-import 'package:inno_store/Category/products/nutrition.dart';
-import 'package:inno_store/Category/products/supplements.dart';
-import 'package:inno_store/Category/products/tonic.dart';
-import 'package:inno_store/Category/products/foot_treatment.dart';
-import 'package:inno_store/Category/products/traditional_medicine.dart';
-import 'package:inno_store/Category/products/groceries.dart';
-import 'package:inno_store/Category/products/coffee.dart';
-import 'package:inno_store/Category/products/dairy_product.dart';
-import 'package:inno_store/Category/products/makeup.dart';
-import 'package:inno_store/Category/products/petscare.dart';
-import 'package:inno_store/Category/products/haircare.dart';
+import 'package:inno_store/services/product_service.dart';
 import 'package:inno_store/Category/locateitem.dart';
-import 'package:inno_store/Category/product_item.dart'; // Ensure this import is correct
+import 'package:inno_store/Category/product_item.dart';
 
 class CategoryScreen extends StatefulWidget {
   final Function(List<CartItem>) navigateToPayment;
@@ -28,21 +17,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
   String selectedCategory = 'All';
   String searchText = '';
   List<CartItem> cartItems = [];
-
-  final Map<String, List<Map<String, String>>> categoryProducts = {
-    'All': allProducts,
-    'Nutrition': nutritionProducts,
-    'Supplements': supplementsProducts,
-    'Tonic': tonicProducts,
-    'Foot Treatment': footTreatmentProducts,
-    'Traditional Medicine': traditionalMedicineProducts,
-    'Groceries': groceriesProducts,
-    'Coffee': coffeeProducts,
-    'Dairy Product': dairyProductProducts,
-    'Make Up': makeupProducts,
-    'Pets Care': petsCareProducts,
-    'Hair Care': hairCareProducts,
-  };
 
   void addToCart(Map<String, String> product) {
     setState(() {
@@ -61,13 +35,23 @@ class _CategoryScreenState extends State<CategoryScreen> {
     });
   }
 
+  void navigateToLocateItem(Map<String, String> product) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => LocateItem(
+          title: product['title']!,
+          category: product['category']!,
+          price: product['price']!,
+          stockCount: 10, // Placeholder value, update with actual stock count
+          imageUrl: product['image']!,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> filteredProducts = categoryProducts[selectedCategory]!
-        .where((product) => product["title"]!.toLowerCase().contains(searchText.toLowerCase()))
-        .toList();
-
-    filteredProducts.sort((a, b) => a["title"]!.compareTo(b["title"]!));
+    ProductService productService = ProductService();
 
     return Scaffold(
       body: Row(
@@ -127,22 +111,50 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   ),
                 ),
                 Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.all(10.0),
-                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 200,
-                      childAspectRatio: 2 / 3,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemCount: filteredProducts.length,
-                    itemBuilder: (ctx, i) => ProductItem(
-                      title: filteredProducts[i]["title"]!,
-                      category: filteredProducts[i]["category"]!,
-                      price: filteredProducts[i]["price"]!,
-                      imageUrl: filteredProducts[i]["image"]!,
-                      onAddToCart: () => addToCart(filteredProducts[i]),
-                    ),
+                  child: StreamBuilder<List<Map<String, String>>>(
+                    stream: productService.fetchProducts(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text("Error: ${snapshot.error}"));
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text("No products available"));
+                      }
+
+                      List<Map<String, String>> filteredProducts = snapshot.data!
+                          .where((product) =>
+                              selectedCategory == 'All' ||
+                              product["category"] == selectedCategory)
+                          .where((product) => product["title"]!
+                              .toLowerCase()
+                              .contains(searchText.toLowerCase()))
+                          .toList();
+
+                      filteredProducts.sort((a, b) =>
+                          a["title"]!.compareTo(b["title"]!));
+
+                      return GridView.builder(
+                        padding: const EdgeInsets.all(10.0),
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          childAspectRatio: 2 / 3.5,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
+                        itemCount: filteredProducts.length,
+                        itemBuilder: (ctx, i) => ProductItem(
+                          title: filteredProducts[i]["title"]!,
+                          category: filteredProducts[i]["category"]!,
+                          price: filteredProducts[i]["price"]!,
+                          imageUrl: filteredProducts[i]["image"]!,
+                          onAddToCart: () => addToCart(filteredProducts[i]),
+                          onTap: () => navigateToLocateItem(filteredProducts[i]),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -170,10 +182,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
       child: Container(
         child: Column(
           children: [
-            Icon(icon, size: 40, color: isSelected ? Colors.blue : Colors.black), // Change icon color when selected
+            Icon(icon,
+                size: 40, color: isSelected ? Colors.blue : Colors.black),
             Text(
               title,
-              style: TextStyle(fontSize: 12, color: isSelected ? Colors.blue : Colors.black), // Change text color when selected
+              style: TextStyle(
+                  fontSize: 12,
+                  color: isSelected ? Colors.blue : Colors.black),
               textAlign: TextAlign.center,
             ),
             Divider(height: 20, color: Colors.grey),

@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:inno_store/Map/map_screen.dart';
 import 'package:inno_store/Map/path.dart';
-import 'package:inno_store/Map/region.dart'; // Import the region.dart file
-import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart'; // Import the MainHomePage
-import 'package:inno_store/bluetooth/bluetooth.dart'; // Import the BluetoothConnect
-import 'package:get/get.dart'; // Import the Get package
+import 'package:inno_store/Map/region.dart';
+import 'package:inno_store/features/user_auth/presentations/pages/home_main.dart';
+import 'package:inno_store/bluetooth/bluetooth.dart';
+import 'package:get/get.dart';
 
 class LocateItem extends StatefulWidget {
   final String title;
@@ -34,7 +34,6 @@ class _LocateItemState extends State<LocateItem> {
   @override
   void initState() {
     super.initState();
-    // Set the goal coordinates based on category
     _goal = getCoordinatesForCategory(widget.category);
   }
 
@@ -48,56 +47,46 @@ class _LocateItemState extends State<LocateItem> {
   Offset getCoordinatesForCategory(String category) {
     switch (category) {
       case 'Nutrition':
-        return Offset(1.45, 0.55); // Coordinates for Nutrition
+        return Offset(1.45, 0.55);
       case 'Supplement':
-        return Offset(1.2, 0.55); // Coordinates for Supplement
+        return Offset(1.2, 0.55);
       case 'Tonic':
-        return Offset(1.05, 0.55); // Coordinates for Tonic
+        return Offset(1.05, 0.55);
       case 'Foot Treatment':
-        return Offset(0.75, 0.55); // Coordinates for Foot Treatment
+        return Offset(0.75, 0.55);
       case 'Traditional Medicine':
-        return Offset(0.6, 0.55); // Coordinates for Traditional Medicine
+        return Offset(0.6, 0.55);
       case 'Coffee':
-        return Offset(0.3, 0.55); // Coordinates for Coffee
+        return Offset(0.3, 0.55);
       case 'Dairy Product':
-        return Offset(0.15, 0.55); // Coordinates for Dairy Product
+        return Offset(0.15, 0.55);
       case 'Groceries':
-        return Offset(0.67, 0.9); // Coordinates for Groceries
+        return Offset(0.67, 0.9);
       case 'Make Up':
-        return Offset(1.15, 0.9); // Coordinates for Make Up
+        return Offset(1.15, 0.9);
       case 'Pets Care':
-        return Offset(1.15, 0.05); // Coordinates for Pets Care
+        return Offset(1.15, 0.05);
       case 'Hair Care':
-        return Offset(0.67, 0.05); // Coordinates for Hair Care
+        return Offset(0.67, 0.05);
       default:
-        return Offset(2.0, 2.0); // Default coordinates if category is unknown
+        return Offset(2.0, 2.0);
     }
   }
 
   void _startPathFinding(BluetoothConnect bluetoothConnect, List<Rect> obstacles) {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      // Get the received data from Bluetooth and parse it
       String data = bluetoothConnect.receivedData.value;
       List<String> parts = data.split(',');
       double redDotX = parts.length > 0 ? double.tryParse(parts[0]) ?? 0.0 : 0.0;
       double redDotY = parts.length > 1 ? double.tryParse(parts[1]) ?? 0.0 : 0.0;
-
-      // Clamp the coordinates within the specified limits
       redDotX = redDotX.clamp(0.0, 1.5);
       redDotY = redDotY.clamp(0.0, 1.0);
-
-      // Update y value based on the condition
-      redDotY = redDotY;
-
-      Offset start = Offset(redDotX, redDotY); // Use clamped and adjusted coordinates
-      Offset goal = Offset(_goal!.dx, 1 - _goal!.dy); // Use consistent goal coordinates
-
+      Offset start = Offset(redDotX, redDotY);
+      Offset goal = Offset(_goal!.dx, 1 - _goal!.dy);
       PathFinder pathFinder = PathFinder(start: start, goal: goal, obstacles: obstacles);
       List<Offset> newPath = pathFinder.aStar();
-
-      // Only update the ValueNotifier if the path has changed
       if (!_arePathsEqual(pathNotifier.value, newPath)) {
-        pathNotifier.value = newPath; // Update the pathNotifier
+        pathNotifier.value = newPath;
       }
     });
   }
@@ -125,13 +114,13 @@ class _LocateItemState extends State<LocateItem> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(
+              Image.network(
                 widget.imageUrl,
-                fit: BoxFit.contain, // Show entire image without cropping
+                fit: BoxFit.contain,
               ),
               SizedBox(height: 20),
               Text(
-                widget.title, // Display title without "Title:"
+                widget.title,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               SizedBox(height: 10),
@@ -152,16 +141,11 @@ class _LocateItemState extends State<LocateItem> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  // Define obstacles
                   List<Rect> obstacles = [
-                    ...getSelectableRegions(1.5, 1.2, (v, min, max, minPixel, maxPixel) => v, 0) // Adjust these parameters as needed
+                    ...getSelectableRegions(1.5, 1.2, (v, min, max, minPixel, maxPixel) => v, 0)
                         .map((region) => Rect.fromLTWH(region.left, region.top, region.width, region.height)),
                   ];
-
-                  // Start periodic pathfinding
                   _startPathFinding(bluetoothConnect, obstacles);
-
-                  // Navigate to MainHomePage and pass the pathNotifier
                   _navigateToMainHomePage();
                 },
                 child: Text('Locate Item', style: TextStyle(fontSize: 18)),
@@ -177,10 +161,10 @@ class _LocateItemState extends State<LocateItem> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => MainHomePage(
-          initialIndex: 1, // Index of MapScreen
-          pathNotifier: pathNotifier, // Pass the pathNotifier
-          x: _goal!.dx, // Pass the x-coordinate of the goal
-          y: _goal!.dy, // Pass the y-coordinate of the goal
+          initialIndex: 1,
+          pathNotifier: pathNotifier,
+          x: _goal!.dx,
+          y: _goal!.dy,
         ),
       ),
     );
