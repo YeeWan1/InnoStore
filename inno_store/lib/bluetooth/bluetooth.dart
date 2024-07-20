@@ -26,13 +26,14 @@ class BluetoothConnect extends GetxController {
   var connectedDevice = Rx<BluetoothDevice?>(null);
   var receivedData = Rx<String>('');
   Timer? dataTimer;
+  StreamSubscription? scanSubscription;
 
   // MARK: Scan
   Future scanDevices() async {
     if (await Permission.bluetoothScan.request().isGranted) {
       if (await Permission.bluetoothConnect.request().isGranted) {
         // Listen to scan results
-        var subscription = FlutterBluePlus.onScanResults.listen((results) {
+        scanSubscription = FlutterBluePlus.onScanResults.listen((results) {
           if (results.isNotEmpty) {
             ScanResult r = results.last; // the most recently found device
             print('${r.device.remoteId}: "${r.advertisementData.advName}" found!');
@@ -45,9 +46,6 @@ class BluetoothConnect extends GetxController {
         onError: (e) => print(e),
         );
 
-        // Cleanup: cancel subscription when scanning stops
-        FlutterBluePlus.cancelWhenScanComplete(subscription);
-
         // Wait for Bluetooth enabled & permission granted
         await FlutterBluePlus.adapterState.where((val) => val == BluetoothAdapterState.on).first;
 
@@ -59,8 +57,19 @@ class BluetoothConnect extends GetxController {
 
         // Wait for scanning to stop
         await FlutterBluePlus.isScanning.where((val) => val == false).first;
+
+        // Cleanup: cancel subscription when scanning stops
+        if (scanSubscription != null) {
+          FlutterBluePlus.cancelWhenScanComplete(scanSubscription!);
+        }
       }
     } 
+  }
+
+  Future stopScanning() async {
+    await FlutterBluePlus.stopScan();
+    scanSubscription?.cancel();
+    print('Stopped scanning');
   }
 
   Stream<List<ScanResult>> scanResults = FlutterBluePlus.scanResults;
@@ -166,8 +175,26 @@ class BluetoothConnect extends GetxController {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final BluetoothConnect bluetoothConnect = Get.put(BluetoothConnect());
+  bool isScanning = false;
+
+  void _toggleScanning() async {
+    setState(() {
+      isScanning = !isScanning;
+    });
+
+    if (isScanning) {
+      await bluetoothConnect.scanDevices();
+    } else {
+      await bluetoothConnect.stopScanning();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,10 +208,8 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () async {
-                await bluetoothConnect.scanDevices();
-              },
-              child: Text('Start Scanning'),
+              onPressed: _toggleScanning,
+              child: Text(isScanning ? 'Stop Scanning' : 'Start Scanning'),
             ),
             SizedBox(height: 20),
             Text(

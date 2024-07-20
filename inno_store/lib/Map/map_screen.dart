@@ -15,7 +15,7 @@ class RedDotCoordinates {
   });
 }
 
-class MapScreen extends StatelessWidget {
+class MapScreen extends StatefulWidget {
   final double x;
   final double y;
   final List<Offset> path;
@@ -25,6 +25,25 @@ class MapScreen extends StatelessWidget {
     required this.y,
     required this.path,
   });
+
+  @override
+  _MapScreenState createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  bool isScanning = false;
+
+  void _toggleScanning(BluetoothConnect bluetoothConnect) {
+    setState(() {
+      isScanning = !isScanning;
+    });
+
+    if (isScanning) {
+      bluetoothConnect.scanDevices();
+    } else {
+      bluetoothConnect.stopScanning();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +57,8 @@ class MapScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () async {
-                  await bluetoothConnect.scanDevices();
-                },
-                child: Text('Start Scanning'),
+                onPressed: () => _toggleScanning(bluetoothConnect),
+                child: Text(isScanning ? 'Stop Scanning' : 'Start Scanning'),
               ),
               SizedBox(height: 16), // Add some spacing
               Obx(() {
@@ -105,8 +122,8 @@ class MapScreen extends StatelessWidget {
                           return (value - minValue) / (maxValue - minValue) * (maxPixel - minPixel) + minPixel;
                         }
 
-                        final dotLeft = mapCoordinate(x, -0.2, 1.7, 0.0, floorplanWidth);
-                        final dotBottom = mapCoordinate(y, -0.2, 1.2, 0.0, floorplanHeight);
+                        final dotLeft = mapCoordinate(widget.x, -0.2, 1.7, 0.0, floorplanWidth);
+                        final dotBottom = mapCoordinate(widget.y, -0.2, 1.2, 0.0, floorplanHeight);
 
                         final redDotLeft = mapCoordinate(redDotCoordinates.x, -0.2, 1.7, 0.0, floorplanWidth);
                         final redDotBottom = mapCoordinate(redDotCoordinates.y, -0.2, 1.2, 0.0, floorplanHeight);
@@ -166,7 +183,7 @@ class MapScreen extends StatelessWidget {
                               }).toList(),
                               Positioned.fill(
                                 child: CustomPaint(
-                                  painter: PathPainter(path, floorplanWidth, floorplanHeight, mapCoordinate),
+                                  painter: PathPainter(widget.path, floorplanWidth, floorplanHeight, mapCoordinate),
                                 ),
                               ),
                             ],
@@ -186,7 +203,7 @@ class MapScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NavigationView(x: x, y: y, path: path)),
+                  MaterialPageRoute(builder: (context) => NavigationView(x: widget.x, y: widget.y, path: widget.path)),
                 );
               },
               child: Icon(Icons.camera_alt),

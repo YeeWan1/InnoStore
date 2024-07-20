@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math'; // Import the dart:math library for mathematical functions
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:inno_store/bluetooth/bluetooth.dart';
 import 'region.dart'; // Import the region.dart file
@@ -27,6 +28,8 @@ class _NavigationViewState extends State<NavigationView> {
   ValueNotifier<List<Offset>> pathNotifier = ValueNotifier<List<Offset>>([]);
   Offset? previousRedDotPosition;
   double rotationAngle = 0;
+  bool isNavigating = false;
+  FlutterTts flutterTts = FlutterTts();
 
   @override
   void initState() {
@@ -77,6 +80,11 @@ class _NavigationViewState extends State<NavigationView> {
 
         // Determine the rotation angle based on the direction of the path
         _updateRotationAngle(newPath);
+
+        // Provide voice navigation
+        if (isNavigating) {
+          _provideVoiceNavigation(newPath);
+        }
       }
 
       previousRedDotPosition = start;
@@ -121,6 +129,67 @@ class _NavigationViewState extends State<NavigationView> {
     return true;
   }
 
+  void _toggleNavigation() {
+    setState(() {
+      isNavigating = !isNavigating;
+    });
+    if (!isNavigating) {
+      flutterTts.stop();
+    }
+  }
+
+  void _provideVoiceNavigation(List<Offset> path) async {
+    if (path.length < 2) return;
+
+    Offset first = path[0];
+    Offset second = path[1];
+
+    double dx = second.dx - first.dx;
+    double dy = second.dy - first.dy;
+
+    if (dx.abs() > dy.abs()) {
+      // Horizontal movement
+      if (dx > 0) {
+        // Moving right
+        await flutterTts.speak("Turn right and move forward");
+      } else {
+        // Moving left
+        await flutterTts.speak("Turn left and move forward");
+      }
+    } else {
+      // Vertical movement
+      if (dy > 0) {
+        // Moving down
+        await flutterTts.speak("Move backward");
+      } else {
+        // Moving up
+        await flutterTts.speak("Move forward");
+      }
+    }
+
+    if (path.length > 2) {
+      Offset third = path[2];
+      double nextDx = third.dx - second.dx;
+      double nextDy = third.dy - second.dy;
+
+      if (nextDx.abs() > nextDy.abs()) {
+        // Horizontal movement
+        if (nextDx > 0 && dx <= 0) {
+          await flutterTts.speak("Turn right ahead");
+        } else if (nextDx < 0 && dx >= 0) {
+          await flutterTts.speak("Turn left ahead");
+        }
+      } else {
+        // Vertical movement
+        if (nextDy > 0 && dy <= 0) {
+          await flutterTts.speak("Turn backward ahead");
+        } else if (nextDy < 0 && dy >= 0) {
+          await flutterTts.speak("Turn forward ahead");
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Initialize BluetoothConnect controller if not already done
@@ -134,10 +203,8 @@ class _NavigationViewState extends State<NavigationView> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
-            onPressed: () async {
-              await bluetoothConnect.scanDevices();
-            },
-            child: Text('Start Scanning'),
+            onPressed: _toggleNavigation,
+            child: Text(isNavigating ? 'Stop Navigation' : 'Sound Navigation'),
           ),
           SizedBox(height: 16), // Add some spacing
           Obx(() {
