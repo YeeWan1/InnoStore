@@ -18,7 +18,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
   String searchText = '';
   List<CartItem> cartItems = [];
 
-  void addToCart(Map<String, String> product) {
+  final ProductService productService = ProductService();
+
+  void addToCart(Map<String, dynamic> product) {
     setState(() {
       var existingItem = cartItems.firstWhere(
           (item) => item.title == product['title'],
@@ -27,25 +29,29 @@ class _CategoryScreenState extends State<CategoryScreen> {
         existingItem.quantity += 1;
       } else {
         cartItems.add(CartItem(
-          title: product['title']!,
-          price: product['price']!,
-          category: product['category']!,
+          title: product['title'],
+          price: product['price'],
+          category: product['category'],
           quantity: 1, // Add initial quantity
         ));
       }
+
+      int currentQuantity = product['quantity'];
+      int newQuantity = currentQuantity - 1;
+      productService.updateProductQuantity(product['title'], newQuantity);
     });
   }
 
-  void navigateToLocateItem(Map<String, String> product) {
+  void navigateToLocateItem(Map<String, dynamic> product) {
     print("Navigating to LocateItem with image URL: ${product['image']}");
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => LocateItem(
-          title: product['title']!,
-          category: product['category']!,
-          price: product['price']!,
-          stockCount: int.parse(product['quantity']!), // Update with actual stock count
-          imageUrl: product['image']!,
+          title: product['title'],
+          category: product['category'],
+          price: product['price'],
+          stockCount: product['quantity'], // Update with actual stock count
+          imageUrl: product['image'],
         ),
       ),
     );
@@ -53,8 +59,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ProductService productService = ProductService();
-
     return Scaffold(
       body: Row(
         children: [
@@ -113,7 +117,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   ),
                 ),
                 Expanded(
-                  child: StreamBuilder<List<Map<String, String>>>(
+                  child: StreamBuilder<List<Map<String, dynamic>>>(
                     stream: productService.fetchProducts(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -126,17 +130,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         return Center(child: Text("No products available"));
                       }
 
-                      List<Map<String, String>> filteredProducts = snapshot.data!
+                      List<Map<String, dynamic>> filteredProducts = snapshot.data!
                           .where((product) =>
                               selectedCategory == 'all' ||
                               product["category"]?.toLowerCase() == selectedCategory)
-                          .where((product) => product["title"]!
+                          .where((product) => product["title"]
                               .toLowerCase()
                               .contains(searchText.toLowerCase()))
                           .toList();
 
                       filteredProducts.sort((a, b) =>
-                          a["title"]!.compareTo(b["title"]!));
+                          a["title"].compareTo(b["title"]));
 
                       return GridView.builder(
                         padding: const EdgeInsets.all(10.0),
@@ -148,10 +152,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         ),
                         itemCount: filteredProducts.length,
                         itemBuilder: (ctx, i) => ProductItem(
-                          title: filteredProducts[i]["title"]!,
-                          category: filteredProducts[i]["category"]!,
-                          price: filteredProducts[i]["price"]!,
-                          imageUrl: filteredProducts[i]["image"]!,
+                          title: filteredProducts[i]["title"],
+                          category: filteredProducts[i]["category"],
+                          price: filteredProducts[i]["price"],
+                          imageUrl: filteredProducts[i]["image"],
+                          quantity: filteredProducts[i]["quantity"], // Pass quantity as int
                           onAddToCart: () => addToCart(filteredProducts[i]),
                           onTap: () => navigateToLocateItem(filteredProducts[i]),
                         ),

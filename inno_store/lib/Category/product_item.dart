@@ -5,6 +5,7 @@ class ProductItem extends StatelessWidget {
   final String category;
   final String price;
   final String imageUrl;
+  final int quantity;
   final VoidCallback onAddToCart;
   final VoidCallback onTap;
 
@@ -13,6 +14,7 @@ class ProductItem extends StatelessWidget {
     required this.category,
     required this.price,
     required this.imageUrl,
+    required this.quantity,
     required this.onAddToCart,
     required this.onTap,
   });
@@ -33,14 +35,18 @@ class ProductItem extends StatelessWidget {
                     child: imageUrl.startsWith('http')
                         ? Image.network(
                             imageUrl,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.cover, // Adjust the fit property here
+                            width: double.infinity, // Make sure the image takes full width
+                            height: double.infinity, // Make sure the image takes full height
                             errorBuilder: (context, error, stackTrace) {
                               return Center(child: Icon(Icons.error));
                             },
                           )
                         : Image.asset(
                             imageUrl,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.cover, // Adjust the fit property here
+                            width: double.infinity, // Make sure the image takes full width
+                            height: double.infinity, // Make sure the image takes full height
                             errorBuilder: (context, error, stackTrace) {
                               return Center(child: Icon(Icons.error));
                             },
@@ -74,7 +80,14 @@ class ProductItem extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: Text(
-                'Price: $price',
+                price,
+                style: TextStyle(fontSize: 12),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Text(
+                'Quantity: $quantity',
                 style: TextStyle(fontSize: 12),
               ),
             ),
