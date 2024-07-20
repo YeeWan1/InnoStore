@@ -58,10 +58,10 @@ class PurchaseHistoryPage extends StatelessWidget {
                     children: items
                         .asMap()
                         .entries
-                        .map((entry) => Text('${entry.key + 1}) ${entry.value['title']} - RM ${entry.value['price']} x ${entry.value['quantity']}'))
+                        .map((entry) => Text('${entry.key + 1}) ${entry.value['title']} -  ${entry.value['price']} x ${entry.value['quantity']}'))
                         .toList(),
                   ),
-                  trailing: Text('Total: RM ${totalPrice.toStringAsFixed(2)}'),
+                  trailing: Text('Total:  ${totalPrice.toStringAsFixed(2)}'),
                 ),
               );
             },
