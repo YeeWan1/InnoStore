@@ -17,14 +17,41 @@ class _CategoryScreenState extends State<CategoryScreen> {
   String selectedCategory = 'all';
   String searchText = '';
   List<CartItem> cartItems = [];
+  List<Map<String, dynamic>> allProducts = [];
+  List<Map<String, dynamic>> filteredProducts = [];
 
   final ProductService productService = ProductService();
+
+  @override
+  void initState() {
+    super.initState();
+    productService.fetchProducts().listen((products) {
+      setState(() {
+        allProducts = products;
+        filterProducts();
+      });
+    });
+  }
+
+  void filterProducts() {
+    filteredProducts = allProducts
+        .where((product) =>
+            selectedCategory == 'all' ||
+            product["category"]?.toLowerCase() == selectedCategory)
+        .where((product) => product["title"]
+            .toLowerCase()
+            .contains(searchText.toLowerCase()))
+        .toList();
+
+    filteredProducts.sort((a, b) => a["title"].compareTo(b["title"]));
+  }
 
   void addToCart(Map<String, dynamic> product) {
     setState(() {
       var existingItem = cartItems.firstWhere(
-          (item) => item.title == product['title'],
-          orElse: () => CartItem(title: '', price: '', category: '', quantity: 0));
+        (item) => item.title == product['title'],
+        orElse: () => CartItem(title: '', price: '', category: '', quantity: 0),
+      );
       if (existingItem.title.isNotEmpty) {
         existingItem.quantity += 1;
       } else {
@@ -38,6 +65,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
       int currentQuantity = product['quantity'];
       int newQuantity = currentQuantity - 1;
+      product['quantity'] = newQuantity;
       productService.updateProductQuantity(product['title'], newQuantity);
     });
   }
@@ -111,56 +139,30 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     onChanged: (value) {
                       setState(() {
                         searchText = value;
+                        filterProducts();
                       });
                     },
                   ),
                 ),
                 Expanded(
-                  child: StreamBuilder<List<Map<String, dynamic>>>(
-                    stream: productService.fetchProducts(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      if (snapshot.hasError) {
-                        return Center(child: Text("Error: ${snapshot.error}"));
-                      }
-                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(child: Text("No products available"));
-                      }
-
-                      List<Map<String, dynamic>> filteredProducts = snapshot.data!
-                          .where((product) =>
-                              selectedCategory == 'all' ||
-                              product["category"]?.toLowerCase() == selectedCategory)
-                          .where((product) => product["title"]
-                              .toLowerCase()
-                              .contains(searchText.toLowerCase()))
-                          .toList();
-
-                      filteredProducts.sort((a, b) =>
-                          a["title"].compareTo(b["title"]));
-
-                      return GridView.builder(
-                        padding: const EdgeInsets.all(10.0),
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 200,
-                          childAspectRatio: 2 / 3.2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                        ),
-                        itemCount: filteredProducts.length,
-                        itemBuilder: (ctx, i) => ProductItem(
-                          title: filteredProducts[i]["title"],
-                          category: filteredProducts[i]["category"],
-                          price: filteredProducts[i]["price"],
-                          imageUrl: filteredProducts[i]["image"],
-                          quantity: filteredProducts[i]["quantity"],
-                          onAddToCart: () => addToCart(filteredProducts[i]),
-                          onTap: () => navigateToLocateItem(filteredProducts[i]),
-                        ),
-                      );
-                    },
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(10.0),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      childAspectRatio: 2 / 3.2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                    itemCount: filteredProducts.length,
+                    itemBuilder: (ctx, i) => ProductItem(
+                      title: filteredProducts[i]["title"],
+                      category: filteredProducts[i]["category"],
+                      price: filteredProducts[i]["price"],
+                      imageUrl: filteredProducts[i]["image"],
+                      quantity: filteredProducts[i]["quantity"],
+                      onAddToCart: () => addToCart(filteredProducts[i]),
+                      onTap: () => navigateToLocateItem(filteredProducts[i]),
+                    ),
                   ),
                 ),
               ],
@@ -183,6 +185,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       onTap: () {
         setState(() {
           selectedCategory = category;
+          filterProducts();
         });
       },
       child: Container(

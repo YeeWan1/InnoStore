@@ -29,16 +29,16 @@ class ProductService {
           products.add({
             "title": product["title"],
             "category": product["category"],
-            "price": product["price"],
-            "image": product["image"],
-            "quantity": product["quantity"] is int ? product["quantity"] : int.tryParse(product["quantity"].toString()) ?? 0,
+              "price": product["price"],
+              "image": product["image"],
+              "quantity": product["quantity"] is int ? product["quantity"] : int.tryParse(product["quantity"].toString()) ?? 0,
+            });
           });
-        });
-      }
+        }
 
-      return products;
-    });
-  }
+        return products;
+      });
+    }
 
   Future<void> updateProductQuantity(String title, int newQuantity) async {
     final query = _productsRef.orderByChild('title').equalTo(title);
