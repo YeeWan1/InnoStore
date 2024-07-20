@@ -50,6 +50,10 @@ class _MapScreenState extends State<MapScreen> {
     // Initialize BluetoothConnect controller if not already done
     final BluetoothConnect bluetoothConnect = Get.put(BluetoothConnect());
 
+    // Calculate the path length
+    PathFinder pathFinder = PathFinder(start: Offset(widget.x, widget.y), goal: Offset(0, 0), obstacles: []);
+    double pathLength = pathFinder.calculatePathLength(widget.path);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -76,14 +80,14 @@ class _MapScreenState extends State<MapScreen> {
                 double redDotY = parts.length > 1 ? double.tryParse(parts[1]) ?? 0.0 : 0.0;
 
                 // Clamp the coordinates within the specified limits
-                redDotX = redDotX.clamp(0.0, 1.5);
-                redDotY = redDotY.clamp(0.0, 1.0);
+                redDotX = double.parse(redDotX.clamp(0.0, 1.5).toStringAsFixed(2));
+                redDotY = double.parse(redDotY.clamp(0.0, 1.0).toStringAsFixed(2));
 
                 // Update y value based on the condition
-                redDotY = 1 - redDotY;
+                redDotY = double.parse((1 - redDotY).toStringAsFixed(2));
 
                 return Text(
-                  'Red Dot Coordinates: ($redDotX, $redDotY)',
+                  'Red Dot Coordinates: (${redDotX.toStringAsFixed(2)}, ${redDotY.toStringAsFixed(2)})',
                   style: TextStyle(fontSize: 16, color: Colors.black),
                 );
               }),
@@ -97,11 +101,11 @@ class _MapScreenState extends State<MapScreen> {
                     double redDotY = parts.length > 1 ? double.tryParse(parts[1]) ?? 0.0 : 0.0;
 
                     // Clamp the coordinates within the specified limits
-                    redDotX = redDotX.clamp(0.0, 1.5);
-                    redDotY = redDotY.clamp(0.0, 1.0);
+                    redDotX = double.parse(redDotX.clamp(0.0, 1.5).toStringAsFixed(2));
+                    redDotY = double.parse(redDotY.clamp(0.0, 1.0).toStringAsFixed(2));
 
                     // Update y value based on the condition
-                    redDotY = 1 - redDotY;
+                    redDotY = double.parse((1 - redDotY).toStringAsFixed(2));
 
                     RedDotCoordinates redDotCoordinates = RedDotCoordinates(x: redDotX, y: redDotY);
 
@@ -194,19 +198,28 @@ class _MapScreenState extends State<MapScreen> {
                   }),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Path Length: ${pathLength.toStringAsFixed(2)} meters',
+                  style: TextStyle(fontSize: 16, color: Colors.black),
+                ),
+              ),
             ],
           ),
-          Positioned(
-            top: 16,
-            right: 16,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NavigationView(x: widget.x, y: widget.y, path: widget.path)),
-                );
-              },
-              child: Icon(Icons.camera_alt),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NavigationView(x: widget.x, y: widget.y, path: widget.path)),
+                  );
+                },
+                child: Icon(Icons.camera_alt),
+              ),
             ),
           ),
         ],

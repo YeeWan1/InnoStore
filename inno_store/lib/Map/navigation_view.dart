@@ -83,7 +83,7 @@ class _NavigationViewState extends State<NavigationView> {
 
         // Provide voice navigation
         if (isNavigating) {
-          _provideVoiceNavigation(newPath);
+          _provideVoiceNavigation(newPath, pathFinder);
         }
       }
 
@@ -138,7 +138,7 @@ class _NavigationViewState extends State<NavigationView> {
     }
   }
 
-  void _provideVoiceNavigation(List<Offset> path) async {
+  void _provideVoiceNavigation(List<Offset> path, PathFinder pathFinder) async {
     if (path.length < 2) return;
 
     Offset first = path[0];
@@ -167,7 +167,11 @@ class _NavigationViewState extends State<NavigationView> {
       }
     }
 
-    if (path.length > 2) {
+    // Calculate the path length
+    double pathLength = pathFinder.calculatePathLength(path);
+    if (pathLength < 0.1) {
+      await flutterTts.speak("Reached destination");
+    } else if (path.length > 2) {
       Offset third = path[2];
       double nextDx = third.dx - second.dx;
       double nextDy = third.dy - second.dy;
@@ -207,32 +211,6 @@ class _NavigationViewState extends State<NavigationView> {
             child: Text(isNavigating ? 'Stop Navigation' : 'Sound Navigation'),
           ),
           SizedBox(height: 16), // Add some spacing
-          Obx(() {
-            // Display the received data as text
-            return Text(
-              'Received Data: ${bluetoothConnect.receivedData.value}',
-              style: TextStyle(fontSize: 16, color: Colors.black),
-            );
-          }),
-          Obx(() {
-            // Parse the received data to get x and y values
-            String data = bluetoothConnect.receivedData.value;
-            List<String> parts = data.split(',');
-            double redDotX = parts.length > 0 ? double.tryParse(parts[0]) ?? 0.0 : 0.0;
-            double redDotY = parts.length > 1 ? double.tryParse(parts[1]) ?? 0.0 : 0.0;
-
-            // Clamp the coordinates within the specified limits
-            redDotX = redDotX.clamp(0.0, 1.5);
-            redDotY = redDotY.clamp(0.0, 1.0);
-
-            // Update y value based on the condition
-            redDotY = 1 - redDotY;
-
-            return Text(
-              'Red Dot Coordinates: ($redDotX, $redDotY)',
-              style: TextStyle(fontSize: 16, color: Colors.black),
-            );
-          }),
           Expanded(
             child: Center(
               child: ValueListenableBuilder<List<Offset>>(
@@ -244,22 +222,26 @@ class _NavigationViewState extends State<NavigationView> {
                   double redDotX = parts.length > 0 ? double.tryParse(parts[0]) ?? 0.0 : 0.0;
                   double redDotY = parts.length > 1 ? double.tryParse(parts[1]) ?? 0.0 : 0.0;
 
-                  // Clamp the coordinates within the specified limits
-                  redDotX = redDotX.clamp(0.0, 1.5);
-                  redDotY = redDotY.clamp(0.0, 1.0);
+                  // Clamp the coordinates within the specified limits and format to 2 decimal places
+                  redDotX = double.parse(redDotX.clamp(0.0, 1.5).toStringAsFixed(2));
+                  redDotY = double.parse(redDotY.clamp(0.0, 1.0).toStringAsFixed(2));
 
                   // Update y value based on the condition
-                  redDotY = 1 - redDotY;
+                  redDotY = double.parse((1 - redDotY).toStringAsFixed(2));
 
                   RedDotCoordinates redDotCoordinates = RedDotCoordinates(x: redDotX, y: redDotY);
+
+                  // Calculate the path length
+                  PathFinder pathFinder = PathFinder(start: Offset(widget.x, widget.y), goal: Offset(0, 0), obstacles: []);
+                  double pathLength = pathFinder.calculatePathLength(path);
 
                   return LayoutBuilder(
                     builder: (context, constraints) {
                       // Define the aspect ratio of the floorplan image
-                      final aspectRatio = rotationAngle == 0 || rotationAngle == pi ? 1.5 / 1.0 : 1.0 / 1.5; // Width / Height
+                      final aspectRatio = 1.5 / 1.0; // Width / Height
 
-                      // Calculate the dimensions of the floorplan
-                      final floorplanWidth = constraints.maxWidth * 1.0;
+                      // Calculate the dimensions of the floorplan to maintain aspect ratio
+                      final floorplanWidth = min(constraints.maxWidth, constraints.maxHeight * aspectRatio);
                       final floorplanHeight = floorplanWidth / aspectRatio;
 
                       // Calculate the size of the red dot
@@ -339,6 +321,22 @@ class _NavigationViewState extends State<NavigationView> {
                   );
                 },
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ValueListenableBuilder<List<Offset>>(
+              valueListenable: pathNotifier,
+              builder: (context, path, child) {
+                // Calculate the path length
+                PathFinder pathFinder = PathFinder(start: Offset(widget.x, widget.y), goal: Offset(0, 0), obstacles: []);
+                double pathLength = pathFinder.calculatePathLength(path);
+
+                return Text(
+                  'Path Length: ${pathLength.toStringAsFixed(2)} meters',
+                  style: TextStyle(fontSize: 16, color: Colors.black),
+                );
+              },
             ),
           ),
         ],

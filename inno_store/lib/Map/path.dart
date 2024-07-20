@@ -12,7 +12,7 @@ class PathFinder {
     required this.start,
     required this.goal,
     required this.obstacles,
-    this.gridSize = 0.05, // Define grid size for pathfinding
+    this.gridSize = 0.05, // Define grid size for pathfinding in meters
   });
 
   double heuristic(Offset a, Offset b) {
@@ -89,5 +89,13 @@ class PathFinder {
       totalPath.add(current);
     }
     return totalPath.reversed.toList();
+  }
+
+  double calculatePathLength(List<Offset> path) {
+    double totalLength = 0.0;
+    for (int i = 0; i < path.length - 1; i++) {
+      totalLength += (path[i + 1] - path[i]).distance;
+    }
+    return totalLength;
   }
 }
