@@ -30,7 +30,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           title: product['title']!,
           price: product['price']!,
           category: product['category']!,
-          quantity: int.parse(product['quantity']!), // Add initial quantity
+          quantity: 1, // Add initial quantity
         ));
       }
     });

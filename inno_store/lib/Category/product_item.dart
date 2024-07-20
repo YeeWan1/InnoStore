@@ -28,7 +28,8 @@ class ProductItem extends StatelessWidget {
             Expanded(
               child: Stack(
                 children: [
-                  Positioned.fill(
+                  Hero(
+                    tag: title, // Ensure this tag is unique
                     child: imageUrl.startsWith('http')
                         ? Image.network(
                             imageUrl,

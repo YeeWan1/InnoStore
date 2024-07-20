@@ -124,21 +124,41 @@ class _LocateItemState extends State<LocateItem> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                   ),
-                  child: Image.network(
-                    widget.imageUrl,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      print("Error loading image: $error"); // Print error for debugging
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.error),
-                            Text('Image not available'),
-                          ],
-                        ),
-                      );
-                    },
+                  child: Hero(
+                    tag: widget.title, // Ensure this tag is unique
+                    child: widget.imageUrl.startsWith('http')
+                        ? Image.network(
+                            widget.imageUrl,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              print("Error loading image: $error"); // Print error for debugging
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.error),
+                                    Text('Image not available'),
+                                  ],
+                                ),
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            widget.imageUrl,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              print("Error loading image: $error"); // Print error for debugging
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.error),
+                                    Text('Image not available'),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                   ),
                 ),
               ),
