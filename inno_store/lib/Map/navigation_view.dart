@@ -26,6 +26,7 @@ class _NavigationViewState extends State<NavigationView> {
   Timer? _timer;
   ValueNotifier<List<Offset>> pathNotifier = ValueNotifier<List<Offset>>([]);
   Offset? previousRedDotPosition;
+  double rotationAngle = 0;
 
   @override
   void initState() {
@@ -73,10 +74,43 @@ class _NavigationViewState extends State<NavigationView> {
       // Only update the ValueNotifier if the path has changed
       if (!_arePathsEqual(pathNotifier.value, newPath)) {
         pathNotifier.value = newPath; // Update the pathNotifier
+
+        // Determine the rotation angle based on the direction of the path
+        _updateRotationAngle(newPath);
       }
 
       previousRedDotPosition = start;
     });
+  }
+
+  void _updateRotationAngle(List<Offset> path) {
+    if (path.length < 2) return;
+
+    Offset first = path[0];
+    Offset second = path[1];
+
+    double dx = second.dx - first.dx;
+    double dy = second.dy - first.dy;
+
+    if (dx.abs() > dy.abs()) {
+      // Horizontal movement
+      if (dx > 0) {
+        // Moving right
+        rotationAngle = -pi / 2;
+      } else {
+        // Moving left
+        rotationAngle = pi / 2;
+      }
+    } else {
+      // Vertical movement
+      if (dy > 0) {
+        // Moving down
+        rotationAngle = pi;
+      } else {
+        // Moving up
+        rotationAngle = 0;
+      }
+    }
   }
 
   bool _arePathsEqual(List<Offset> path1, List<Offset> path2) {
@@ -155,7 +189,7 @@ class _NavigationViewState extends State<NavigationView> {
                   return LayoutBuilder(
                     builder: (context, constraints) {
                       // Define the aspect ratio of the floorplan image
-                      final aspectRatio = 1.5 / 1.0; // Width / Height
+                      final aspectRatio = rotationAngle == 0 || rotationAngle == pi ? 1.5 / 1.0 : 1.0 / 1.5; // Width / Height
 
                       // Calculate the dimensions of the floorplan
                       final floorplanWidth = constraints.maxWidth * 1.0;
@@ -175,10 +209,8 @@ class _NavigationViewState extends State<NavigationView> {
                       final redDotLeft = mapCoordinate(redDotCoordinates.x, -0.2, 1.7, 0.0, floorplanWidth);
                       final redDotBottom = mapCoordinate(redDotCoordinates.y, -0.2, 1.2, 0.0, floorplanHeight);
 
-                      return InteractiveViewer(
-                        constrained: true,
-                        minScale: 0.5,
-                        maxScale: 1.5,
+                      return Transform.rotate(
+                        angle: rotationAngle,
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
