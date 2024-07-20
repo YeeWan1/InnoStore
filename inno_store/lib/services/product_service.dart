@@ -5,23 +5,38 @@ class ProductService {
 
   Stream<List<Map<String, dynamic>>> fetchProducts() {
     return _productsRef.onValue.map((event) {
-      if (event.snapshot.value == null) {
-        return [];
-      } else {
-        final List<Map<String, dynamic>> products = [];
-        final productList = List<dynamic>.from(event.snapshot.value as List<dynamic>);
-        for (var value in productList) {
+      final data = event.snapshot.value;
+      final List<Map<String, dynamic>> products = [];
+
+      if (data is List) {
+        // Handle case where data is a List
+        for (var value in data) {
+          if (value != null) {
+            final Map<String, dynamic> product = Map<String, dynamic>.from(value);
+            products.add({
+              "title": product["title"],
+              "category": product["category"],
+              "price": product["price"],
+              "image": product["image"],
+              "quantity": product["quantity"] is int ? product["quantity"] : int.tryParse(product["quantity"].toString()) ?? 0,
+            });
+          }
+        }
+      } else if (data is Map) {
+        // Handle case where data is a Map
+        data.forEach((key, value) {
           final Map<String, dynamic> product = Map<String, dynamic>.from(value);
           products.add({
             "title": product["title"],
             "category": product["category"],
             "price": product["price"],
             "image": product["image"],
-            "quantity": product["quantity"] is int ? product["quantity"] : int.tryParse(product["quantity"].toString()) ?? 0, // Ensure quantity is handled as int
+            "quantity": product["quantity"] is int ? product["quantity"] : int.tryParse(product["quantity"].toString()) ?? 0,
           });
-        }
-        return products;
+        });
       }
+
+      return products;
     });
   }
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
 class ProductItem extends StatelessWidget {
   final String title;
@@ -19,6 +21,50 @@ class ProductItem extends StatelessWidget {
     required this.onTap,
   });
 
+  bool _isBase64(String str) {
+    try {
+      base64Decode(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Widget _getImageWidget(String imagePath) {
+    if (_isBase64(imagePath)) {
+      Uint8List bytes = base64Decode(imagePath);
+      return Image.memory(
+        bytes,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          return Center(child: Icon(Icons.error));
+        },
+      );
+    } else if (imagePath.startsWith('http')) {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          return Center(child: Icon(Icons.error));
+        },
+      );
+    } else {
+      return Image.asset(
+        imagePath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          return Center(child: Icon(Icons.error));
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -31,26 +77,8 @@ class ProductItem extends StatelessWidget {
               child: Stack(
                 children: [
                   Hero(
-                    tag: title, // Ensure this tag is unique
-                    child: imageUrl.startsWith('http')
-                        ? Image.network(
-                            imageUrl,
-                            fit: BoxFit.cover, // Adjust the fit property here
-                            width: double.infinity, // Make sure the image takes full width
-                            height: double.infinity, // Make sure the image takes full height
-                            errorBuilder: (context, error, stackTrace) {
-                              return Center(child: Icon(Icons.error));
-                            },
-                          )
-                        : Image.asset(
-                            imageUrl,
-                            fit: BoxFit.cover, // Adjust the fit property here
-                            width: double.infinity, // Make sure the image takes full width
-                            height: double.infinity, // Make sure the image takes full height
-                            errorBuilder: (context, error, stackTrace) {
-                              return Center(child: Icon(Icons.error));
-                            },
-                          ),
+                    tag: title,
+                    child: _getImageWidget(imageUrl),
                   ),
                   Positioned(
                     top: 8,

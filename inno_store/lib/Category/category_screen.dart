@@ -32,7 +32,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           title: product['title'],
           price: product['price'],
           category: product['category'],
-          quantity: 1, // Add initial quantity
+          quantity: 1,
         ));
       }
 
@@ -43,14 +43,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void navigateToLocateItem(Map<String, dynamic> product) {
-    print("Navigating to LocateItem with image URL: ${product['image']}");
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => LocateItem(
           title: product['title'],
           category: product['category'],
           price: product['price'],
-          stockCount: product['quantity'], // Update with actual stock count
+          stockCount: product['quantity'],
           imageUrl: product['image'],
         ),
       ),
@@ -156,7 +155,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           category: filteredProducts[i]["category"],
                           price: filteredProducts[i]["price"],
                           imageUrl: filteredProducts[i]["image"],
-                          quantity: filteredProducts[i]["quantity"], // Pass quantity as int
+                          quantity: filteredProducts[i]["quantity"],
                           onAddToCart: () => addToCart(filteredProducts[i]),
                           onTap: () => navigateToLocateItem(filteredProducts[i]),
                         ),
