@@ -1,4 +1,6 @@
-import 'dart:async'; // Import this library for Timer
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:inno_store/Map/map_screen.dart';
@@ -36,7 +38,6 @@ class _LocateItemState extends State<LocateItem> {
   void initState() {
     super.initState();
     _goal = getCoordinatesForCategory(widget.category);
-    // Print the image URL to console for debugging
     print("Image URL: ${widget.imageUrl}");
   }
 
@@ -102,6 +103,68 @@ class _LocateItemState extends State<LocateItem> {
     return true;
   }
 
+  bool _isBase64(String str) {
+    try {
+      base64Decode(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Widget _getImageWidget(String imagePath) {
+    if (_isBase64(imagePath)) {
+      Uint8List bytes = base64Decode(imagePath);
+      return Image.memory(
+        bytes,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error),
+                Text('Image not available'),
+              ],
+            ),
+          );
+        },
+      );
+    } else if (imagePath.startsWith('http')) {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error),
+                Text('Image not available'),
+              ],
+            ),
+          );
+        },
+      );
+    } else {
+      return Image.asset(
+        imagePath,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error),
+                Text('Image not available'),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final BluetoothConnect bluetoothConnect = Get.find<BluetoothConnect>();
@@ -125,40 +188,8 @@ class _LocateItemState extends State<LocateItem> {
                     border: Border.all(color: Colors.grey),
                   ),
                   child: Hero(
-                    tag: widget.title, // Ensure this tag is unique
-                    child: widget.imageUrl.startsWith('http')
-                        ? Image.network(
-                            widget.imageUrl,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              print("Error loading image: $error"); // Print error for debugging
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.error),
-                                    Text('Image not available'),
-                                  ],
-                                ),
-                              );
-                            },
-                          )
-                        : Image.asset(
-                            widget.imageUrl,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              print("Error loading image: $error"); // Print error for debugging
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.error),
-                                    Text('Image not available'),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
+                    tag: widget.title,
+                    child: _getImageWidget(widget.imageUrl),
                   ),
                 ),
               ),
