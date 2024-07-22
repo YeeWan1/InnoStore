@@ -6,7 +6,7 @@ import 'coupon_voucher.dart';
 import 'purchase_history.dart';
 import 'notification.dart';
 import 'rating_review.dart';
-import 'password.dart';
+import 'password.dart'; 
 
 class MyAccountPage extends StatefulWidget {
   @override
