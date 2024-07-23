@@ -3,6 +3,10 @@ import 'package:inno_store/Cashier/cart_item.dart';
 import 'package:inno_store/services/product_service.dart';
 import 'package:inno_store/Category/locateitem.dart';
 import 'package:inno_store/Category/product_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:inno_store/my_account_page/voucher_details.dart';
+import 'package:inno_store/my_account_page/coupon_voucher.dart';
 
 class CategoryScreen extends StatefulWidget {
   final Function(List<CartItem>) navigateToPayment;
@@ -82,6 +86,116 @@ class _CategoryScreenState extends State<CategoryScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> checkForVoucherNotification() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
+      final gender = userDoc['gender']?.toLowerCase() ?? '';
+      final age = int.tryParse(userDoc['age'] ?? '0') ?? 0;
+      final occupation = userDoc['occupation']?.toLowerCase() ?? '';
+      final redeemedVouchers = List<String>.from(userDoc['redeemedVouchers'] ?? []);
+
+      if (selectedCategory == 'make up' && gender == 'female' && !redeemedVouchers.contains('Make Up Discount')) {
+        showVoucherNotification(
+          'Make Up Discount',
+          'You have a special discount for Make Up products!',
+          FemaleVoucher(
+            category: 'Make Up Discount',
+            discount: 'Buy 2 Free 1',
+            expiryDate: 'Expires on 31 Jul 2024',
+            isExpiringSoon: false,
+            description: 'Special to Female. Valid from 1/7/2024 to 31/7/2024 only.',
+            terms: 'Limited redemption for order made via Inno Store App.'
+                   'Selected products only. '
+                   'Inno Store reserves the right to amend the Terms & Conditions of this promotion '
+                   'at any time without any prior notice.',
+          ),
+        );
+      } else if (selectedCategory == 'groceries' && occupation == 'student' && !redeemedVouchers.contains('Student Special Offer')) {
+        showVoucherNotification(
+          'Student Special Offer',
+          'You have a special discount for Groceries!',
+          StudentVoucher(
+            category: 'Student Special Offer',
+            discount: '25% for All Groceries',
+            expiryDate: 'Expires on 15 Aug 2024',
+            isExpiringSoon: false,
+            description: 'Special to Student. Valid from 16/7/2024 to 15/8/2024 only.',
+            terms: 'Limited redemption for order made via Inno Store App.'
+                   'Selected products only. '
+                   'Inno Store reserves the right to amend the Terms & Conditions of this promotion '
+                   'at any time without any prior notice.',
+          ),
+        );
+      } else if (selectedCategory == 'supplement' && age > 59 && !redeemedVouchers.contains('Brand Coupon')) {
+        showVoucherNotification(
+          'Senior Citizen Discount',
+          'You have a special discount for Supplement products!',
+          SeniorCitizenVoucher(
+            category: 'Brand Coupon',
+            discount: 'RM30 Off Supplement (Blackmores)',
+            expiryDate: 'Expires on 06 Aug 2024',
+            isExpiringSoon: false,
+            description: 'Special to Senior Citizen. Valid from 7/7/2024 to 6/8/2024 only.',
+            terms: 'Limited redemption for order made via Inno Store App.'
+                   'Selected products only. '
+                   'Inno Store reserves the right to amend the Terms & Conditions of this promotion '
+                   'at any time without any prior notice.',
+          ),
+        );
+      }
+    }
+  }
+
+  void showVoucherNotification(String title, String message, Voucher voucher) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Column(
+          children: [
+            Text("Your Voucher", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Divider(),
+            Text(title, style: TextStyle(fontSize: 18)),
+          ],
+        ),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Close'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => VoucherDetailScreen(
+                    voucher: voucher,
+                    removeVoucher: (v) async {
+                      await markVoucherAsRedeemed(v);
+                    },
+                  ),
+                ),
+              );
+            },
+            child: Text('View'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> markVoucherAsRedeemed(Voucher voucher) async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
+        'redeemedVouchers': FieldValue.arrayUnion([voucher.category])
+      });
+    }
   }
 
   @override
@@ -186,6 +300,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         setState(() {
           selectedCategory = category;
           filterProducts();
+          checkForVoucherNotification();
         });
       },
       child: Container(
