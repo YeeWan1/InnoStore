@@ -95,9 +95,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
       final gender = userDoc['gender']?.toLowerCase() ?? '';
       final age = int.tryParse(userDoc['age'] ?? '0') ?? 0;
       final occupation = userDoc['occupation']?.toLowerCase() ?? '';
-      final redeemedVouchers = List<String>.from(userDoc['redeemedVouchers'] ?? []);
 
-      if (selectedCategory == 'make up' && gender == 'female' && !redeemedVouchers.contains('Make Up Discount')) {
+      if (selectedCategory == 'make up' && gender == 'female') {
         showVoucherNotification(
           'Make Up Discount',
           'You have a special discount for Make Up products!',
@@ -113,7 +112,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                    'at any time without any prior notice.',
           ),
         );
-      } else if (selectedCategory == 'groceries' && occupation == 'student' && !redeemedVouchers.contains('Student Special Offer')) {
+      } else if (selectedCategory == 'groceries' && occupation == 'student') {
         showVoucherNotification(
           'Student Special Offer',
           'You have a special discount for Groceries!',
@@ -129,7 +128,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                    'at any time without any prior notice.',
           ),
         );
-      } else if (selectedCategory == 'supplement' && age > 59 && !redeemedVouchers.contains('Brand Coupon')) {
+      } else if (selectedCategory == 'supplement' && age > 59) {
         showVoucherNotification(
           'Senior Citizen Discount',
           'You have a special discount for Supplement products!',
@@ -300,7 +299,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         setState(() {
           selectedCategory = category;
           filterProducts();
-          checkForVoucherNotification();
+          checkForVoucherNotification(); // Ensure notification check runs when category is changed
         });
       },
       child: Container(
