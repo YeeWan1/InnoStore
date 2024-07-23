@@ -48,9 +48,13 @@ class _NavigationViewState extends State<NavigationView> {
 
   List<Rect> getObstacles() {
     // Define obstacles based on selectable regions
-    return getSelectableRegions(1.5, 1.2, (v, min, max, minPixel, maxPixel) => v, 0)
-        .map((region) => Rect.fromLTWH(region.left, region.top, region.width, region.height))
-        .toList();
+    return getSelectableRegions(
+      1.5,
+      1.2,
+      (v, min, max, minPixel, maxPixel) => v,
+      0,
+      (category) {}, // Provide an empty callback for the onRegionTap
+    ).map((region) => Rect.fromLTWH(region.left, region.top, region.width, region.height)).toList();
   }
 
   void _startPathFinding(BluetoothConnect bluetoothConnect, List<Rect> obstacles) {
@@ -295,7 +299,13 @@ class _NavigationViewState extends State<NavigationView> {
                                 ),
                               ),
                             ),
-                            ...getSelectableRegions(floorplanWidth, floorplanHeight, mapCoordinate, dotSize).map((region) {
+                            ...getSelectableRegions(
+                              floorplanWidth,
+                              floorplanHeight,
+                              mapCoordinate,
+                              dotSize,
+                              (category) {}, // Provide an empty callback for the onRegionTap
+                            ).map((region) {
                               return Positioned(
                                 left: region.left,
                                 top: region.top,

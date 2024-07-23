@@ -19,7 +19,7 @@ class SelectableRegion {
 }
 
 List<SelectableRegion> getSelectableRegions(
-    double floorplanWidth, double floorplanHeight, double Function(double, double, double, double, double) mapCoordinate, double dotSize) {
+    double floorplanWidth, double floorplanHeight, double Function(double, double, double, double, double) mapCoordinate, double dotSize, Function(String) onRegionTap) {
   return [
     SelectableRegion(
       left: mapCoordinate(1.0, -0.2, 1.7, 0.0, floorplanWidth) - dotSize / 2,
@@ -28,7 +28,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(1.1, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(1.0, -0.2, 1.2, 0.0, floorplanHeight),
       color: Colors.orange.withOpacity(0.7),
       onTap: () {
-        print('First selectable region tapped!');
+        print('Tapped on Pets Care region');
+        onRegionTap('Pets Care');
       },
     ),
     SelectableRegion(
@@ -38,7 +39,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(1.1, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(1.0, -0.2, 1.2, 0.0, floorplanHeight),
       color: Colors.blue.withOpacity(0.7),
       onTap: () {
-        print('Second selectable region tapped!');
+        print('Tapped on Hair Care region');
+        onRegionTap('Hair Care');
       },
     ),
     SelectableRegion(
@@ -48,7 +50,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(0.1, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.0, -0.2, 1.2, 0.0, floorplanHeight),
       color: Colors.yellow.withOpacity(0.7),
       onTap: () {
-        print('Third selectable region tapped!');
+        print('Tapped on Groceries region');
+        onRegionTap('Groceries');
       },
     ),
     SelectableRegion(
@@ -58,7 +61,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(0.1, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.0, -0.2, 1.2, 0.0, floorplanHeight),
       color: Colors.green.withOpacity(0.7),
       onTap: () {
-        print('Fourth selectable region tapped!');
+        print('Tapped on Make Up region');
+        onRegionTap('Make Up');
       },
     ),
     SelectableRegion(
@@ -68,7 +72,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight),
       color: Color.fromARGB(255, 223, 5, 111).withOpacity(0.7),
       onTap: () {
-        print('Fifth selectable region tapped!');
+        print('Tapped on Nutrition region');
+        onRegionTap('Nutrition');
       },
     ),
     SelectableRegion(
@@ -78,7 +83,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight),
       color: Colors.grey.withOpacity(0.7),
       onTap: () {
-        print('Sixth selectable region tapped!');
+        print('Tapped on Supplement region');
+        onRegionTap('Supplement');
       },
     ),
     SelectableRegion(
@@ -88,7 +94,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight),
       color: Color.fromARGB(255, 16, 180, 202).withOpacity(0.7),
       onTap: () {
-        print('Seventh selectable region tapped!');
+        print('Tapped on Tonic region');
+        onRegionTap('Tonic');
       },
     ),
     SelectableRegion(
@@ -98,7 +105,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight),
       color: const Color.fromARGB(255, 176, 39, 55).withOpacity(0.7),
       onTap: () {
-        print('Eighth selectable region tapped!');
+        print('Tapped on Foot Treatment region');
+        onRegionTap('Foot Treatment');
       },
     ),
     SelectableRegion(
@@ -108,7 +116,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight),
       color: Color.fromARGB(255, 43, 205, 28).withOpacity(0.7),
       onTap: () {
-        print('Ninth selectable region tapped!');
+        print('Tapped on Traditional Medicine region');
+        onRegionTap('Traditional Medicine');
       },
     ),
     SelectableRegion(
@@ -118,7 +127,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight),
       color: const Color.fromARGB(255, 176, 128, 39).withOpacity(0.7),
       onTap: () {
-        print('Tenth selectable region tapped!');
+        print('Tapped on Coffee region');
+        onRegionTap('Coffee');
       },
     ),
     SelectableRegion(
@@ -128,7 +138,8 @@ List<SelectableRegion> getSelectableRegions(
       height: mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight),
       color: Color.fromARGB(255, 39, 41, 176).withOpacity(0.7),
       onTap: () {
-        print('Eleventh selectable region tapped!');
+        print('Tapped on Dairy Product region');
+        onRegionTap('Dairy Product');
       },
     ),
   ];

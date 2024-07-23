@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:inno_store/bluetooth/bluetooth.dart';
-import 'region.dart'; // Import the region.dart file
+import 'region.dart' as myRegion; // Import the region.dart file with a prefix
 import 'path.dart'; // Import the path.dart file
 import 'navigation_view.dart'; // Import the navigation_view.dart file
 
@@ -32,6 +32,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   bool isScanning = false;
+  String selectedCategory = '';
 
   void _toggleScanning(BluetoothConnect bluetoothConnect) {
     setState(() {
@@ -43,6 +44,14 @@ class _MapScreenState extends State<MapScreen> {
     } else {
       bluetoothConnect.stopScanning();
     }
+  }
+
+  void _onRegionTap(String category) {
+    print('Category tapped: $category');
+    setState(() {
+      selectedCategory = category;
+      print('setState called: $selectedCategory');
+    });
   }
 
   @override
@@ -121,6 +130,9 @@ class _MapScreenState extends State<MapScreen> {
                         // Calculate the size of the red dot
                         final dotSize = 10.0; // Size of the red dot
 
+                        // Calculate the vertical offset to center the floorplan
+                        final verticalOffset = 0;
+
                         // Map the coordinates to the new coordinate system
                         double mapCoordinate(double value, double minValue, double maxValue, double minPixel, double maxPixel) {
                           return (value - minValue) / (maxValue - minValue) * (maxPixel - minPixel) + minPixel;
@@ -136,61 +148,90 @@ class _MapScreenState extends State<MapScreen> {
                           constrained: true,
                           minScale: 0.5,
                           maxScale: 1.5,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                width: floorplanWidth,
-                                height: floorplanHeight,
-                                child: Image.asset(
-                                  'assets/map/floorplan.jpg',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Positioned(
-                                left: dotLeft - dotSize / 2,
-                                bottom: dotBottom - dotSize / 2,
-                                child: Container(
-                                  width: dotSize,
-                                  height: dotSize,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    shape: BoxShape.rectangle,
+                          child: GestureDetector(
+                            onTapDown: (details) {
+                              // Get the tap position relative to the widget
+                              final RenderBox box = context.findRenderObject() as RenderBox;
+                              final localOffset = box.globalToLocal(details.globalPosition);
+                              final tapX = localOffset.dx;
+                              final tapY = localOffset.dy;
+
+                              // Map the tap coordinates to the original coordinate system
+                              final mappedX = (tapX / floorplanWidth) * 1.7 - 0.2;
+                              final mappedY = ((tapY - verticalOffset) / floorplanHeight) * 1.2 - 0.1;
+
+                              print('Tap position: $mappedX, $mappedY');
+
+                              // Determine which region was tapped
+                              for (myRegion.SelectableRegion region in myRegion.getSelectableRegions(floorplanWidth, floorplanHeight, mapCoordinate, dotSize, _onRegionTap)) {
+                                final regionLeft = mapCoordinate(region.left, 0.0, floorplanWidth, -0.2, 1.7);
+                                final regionTop = mapCoordinate(region.top, 0.0, floorplanHeight, -0.2, 1.2);
+                                final regionRight = regionLeft + region.width;
+                                final regionBottom = regionTop + region.height;
+
+                                if (mappedX >= regionLeft && mappedX <= regionRight &&
+                                    mappedY >= regionTop && mappedY <= regionBottom) {
+                                  region.onTap();
+                                  break;
+                                }
+                              }
+                            },
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  width: floorplanWidth,
+                                  height: floorplanHeight,
+                                  child: Image.asset(
+                                    'assets/map/floorplan.jpg',
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                              ),
-                              Positioned(
-                                left: redDotLeft - dotSize / 2,
-                                bottom: redDotBottom - dotSize / 2,
-                                child: Container(
-                                  width: dotSize,
-                                  height: dotSize,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              ),
-                              ...getSelectableRegions(floorplanWidth, floorplanHeight, mapCoordinate, dotSize).map((region) {
-                                return Positioned(
-                                  left: region.left,
-                                  top: region.top,
-                                  child: GestureDetector(
-                                    onTap: region.onTap,
-                                    child: Container(
-                                      width: region.width,
-                                      height: region.height,
-                                      color: region.color,
+                                Positioned(
+                                  left: dotLeft - dotSize / 2,
+                                  bottom: dotBottom - dotSize / 2,
+                                  child: Container(
+                                    width: dotSize,
+                                    height: dotSize,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      shape: BoxShape.rectangle,
                                     ),
                                   ),
-                                );
-                              }).toList(),
-                              Positioned.fill(
-                                child: CustomPaint(
-                                  painter: PathPainter(widget.path, floorplanWidth, floorplanHeight, mapCoordinate),
                                 ),
-                              ),
-                            ],
+                                Positioned(
+                                  left: redDotLeft - dotSize / 2,
+                                  bottom: redDotBottom - dotSize / 2,
+                                  child: Container(
+                                    width: dotSize,
+                                    height: dotSize,
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ),
+                                ...myRegion.getSelectableRegions(floorplanWidth, floorplanHeight, mapCoordinate, dotSize, _onRegionTap).map((region) {
+                                  return Positioned(
+                                    left: region.left,
+                                    top: region.top,
+                                    child: GestureDetector(
+                                      onTap: region.onTap,
+                                      child: Container(
+                                        width: region.width,
+                                        height: region.height,
+                                        color: region.color,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                Positioned.fill(
+                                  child: CustomPaint(
+                                    painter: PathPainter(widget.path, floorplanWidth, floorplanHeight, mapCoordinate),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -200,9 +241,18 @@ class _MapScreenState extends State<MapScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Path Length: ${pathLength.toStringAsFixed(2)} meters',
-                  style: TextStyle(fontSize: 16, color: Colors.black),
+                child: Column(
+                  children: [
+                    Text(
+                      'Selected Category: $selectedCategory', // Display the selected category
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Path Length: ${pathLength.toStringAsFixed(2)} meters',
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ),
+                  ],
                 ),
               ),
             ],

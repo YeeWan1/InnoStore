@@ -38,6 +38,7 @@ class _LocateItemState extends State<LocateItem> {
   void initState() {
     super.initState();
     _goal = getCoordinatesForCategory(widget.category);
+    print("Goal Coordinates: $_goal");
     print("Image URL: ${widget.imageUrl}");
   }
 
@@ -91,6 +92,7 @@ class _LocateItemState extends State<LocateItem> {
       List<Offset> newPath = pathFinder.aStar();
       if (!_arePathsEqual(pathNotifier.value, newPath)) {
         pathNotifier.value = newPath;
+        print("New path found: $newPath");
       }
     });
   }
@@ -217,8 +219,13 @@ class _LocateItemState extends State<LocateItem> {
               ElevatedButton(
                 onPressed: () {
                   List<Rect> obstacles = [
-                    ...getSelectableRegions(1.5, 1.2, (v, min, max, minPixel, maxPixel) => v, 0)
-                        .map((region) => Rect.fromLTWH(region.left, region.top, region.width, region.height)),
+                    ...getSelectableRegions(
+                      1.5,
+                      1.2,
+                      (v, min, max, minPixel, maxPixel) => v,
+                      0,
+                      (category) {},
+                    ).map((region) => Rect.fromLTWH(region.left, region.top, region.width, region.height)),
                   ];
                   _startPathFinding(bluetoothConnect, obstacles);
                   _navigateToMainHomePage();
