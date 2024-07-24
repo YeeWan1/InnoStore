@@ -33,6 +33,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   bool isScanning = false;
   String selectedCategory = '';
+  Rx<RedDotCoordinates> redDotCoordinates = RedDotCoordinates(x: 0.0, y: 0.0).obs; // Use Rx to observe changes
 
   void _toggleScanning(BluetoothConnect bluetoothConnect) {
     setState(() {
@@ -93,6 +94,9 @@ class _MapScreenState extends State<MapScreen> {
                 // Update y value based on the condition
                 redDotY = double.parse((1 - redDotY).toStringAsFixed(2));
 
+                // Update the red dot coordinates
+                redDotCoordinates.value = RedDotCoordinates(x: redDotX, y: redDotY);
+
                 return Text(
                   'Red Dot Coordinates: (${redDotX.toStringAsFixed(2)}, ${redDotY.toStringAsFixed(2)})',
                   style: TextStyle(fontSize: 16, color: Colors.black),
@@ -114,7 +118,7 @@ class _MapScreenState extends State<MapScreen> {
                     // Update y value based on the condition
                     redDotY = double.parse((1 - redDotY).toStringAsFixed(2));
 
-                    RedDotCoordinates redDotCoordinates = RedDotCoordinates(x: redDotX, y: redDotY);
+                    redDotCoordinates.value = RedDotCoordinates(x: redDotX, y: redDotY);
 
                     return LayoutBuilder(
                       builder: (context, constraints) {
@@ -139,8 +143,8 @@ class _MapScreenState extends State<MapScreen> {
                         final dotLeft = mapCoordinate(widget.x, -0.2, 1.7, 0.0, floorplanWidth);
                         final dotBottom = mapCoordinate(widget.y, -0.2, 1.2, 0.0, floorplanHeight);
 
-                        final redDotLeft = mapCoordinate(redDotCoordinates.x, -0.2, 1.7, 0.0, floorplanWidth);
-                        final redDotBottom = mapCoordinate(redDotCoordinates.y, -0.2, 1.2, 0.0, floorplanHeight);
+                        final redDotLeft = mapCoordinate(redDotCoordinates.value.x, -0.2, 1.7, 0.0, floorplanWidth);
+                        final redDotBottom = mapCoordinate(redDotCoordinates.value.y, -0.2, 1.2, 0.0, floorplanHeight);
 
                         return InteractiveViewer(
                           constrained: true,

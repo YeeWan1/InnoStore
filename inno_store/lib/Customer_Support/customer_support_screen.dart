@@ -1,6 +1,9 @@
+// customer_support_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:inno_store/bluetooth/bluetooth.dart';
 
 class CustomerSupportScreen extends StatefulWidget {
   @override
@@ -72,13 +75,37 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
     }
   }
 
+  Future<void> updateCoordinateInFirestore(Offset redDotCoordinates) async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final coordinateString = '(${redDotCoordinates.dx.toStringAsFixed(2)}, ${(1 - redDotCoordinates.dy).toStringAsFixed(2)})';
+      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
+        'Coordinate': coordinateString,
+      });
+    }
+  }
+
   Future<void> _sendMessage() async {
     if (_messageController.text.isNotEmpty && _requestId != null) {
       try {
+        // Retrieve the latest red dot coordinates from BluetoothConnect
+        final BluetoothConnect bluetoothConnect = Get.find<BluetoothConnect>();
+        final Offset redDotCoordinates = bluetoothConnect.getRedDotCoordinates();
+
+        // Format the coordinate string
+        final coordinateString = '(${redDotCoordinates.dx.toStringAsFixed(2)}, ${(1 - redDotCoordinates.dy).toStringAsFixed(2)})';
+
+        // Update the Coordinate field in Firestore
+        await updateCoordinateInFirestore(redDotCoordinates);
+
         await _helpRequests.doc(_requestId).collection('messages').add({
           'sender': _username,
           'text': _messageController.text,
           'timestamp': Timestamp.now(),
+          'redDotCoordinates': {
+            'x': redDotCoordinates.dx.toStringAsFixed(2),
+            'y': (1 - redDotCoordinates.dy).toStringAsFixed(2),
+          },
         });
         _messageController.clear();
       } catch (e) {
@@ -100,7 +127,12 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
           color: isUserMessage ? Colors.blue[100] : Colors.grey[300],
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(data['text']),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(data['text']),
+          ],
+        ),
       ),
     );
   }
