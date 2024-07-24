@@ -47,10 +47,8 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _onRegionTap(String category) {
-    print('Category tapped: $category');
     setState(() {
       selectedCategory = category;
-      print('setState called: $selectedCategory');
     });
   }
 
@@ -157,20 +155,20 @@ class _MapScreenState extends State<MapScreen> {
                               final tapY = localOffset.dy;
 
                               // Map the tap coordinates to the original coordinate system
-                              final mappedX = (tapX / floorplanWidth) * 1.7 - 0.2;
-                              final mappedY = ((tapY - verticalOffset) / floorplanHeight) * 1.2 - 0.1;
+                              final mappedX = (tapX / floorplanWidth) * 1.7 - 0.1;
+                              final mappedY = ((tapY - verticalOffset) / floorplanHeight) * 1.2;
 
                               print('Tap position: $mappedX, $mappedY');
 
                               // Determine which region was tapped
                               for (myRegion.SelectableRegion region in myRegion.getSelectableRegions(floorplanWidth, floorplanHeight, mapCoordinate, dotSize, _onRegionTap)) {
-                                final regionLeft = mapCoordinate(region.left, 0.0, floorplanWidth, -0.2, 1.7);
-                                final regionTop = mapCoordinate(region.top, 0.0, floorplanHeight, -0.2, 1.2);
+                                final regionLeft = region.left;
+                                final regionTop = region.top;
                                 final regionRight = regionLeft + region.width;
                                 final regionBottom = regionTop + region.height;
 
-                                if (mappedX >= regionLeft && mappedX <= regionRight &&
-                                    mappedY >= regionTop && mappedY <= regionBottom) {
+                                if (tapX >= regionLeft && tapX <= regionRight &&
+                                    tapY >= regionTop && tapY <= regionBottom) {
                                   region.onTap();
                                   break;
                                 }
