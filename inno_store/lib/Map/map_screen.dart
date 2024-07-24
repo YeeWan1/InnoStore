@@ -145,7 +145,7 @@ class _MapScreenState extends State<MapScreen> {
                         return InteractiveViewer(
                           constrained: true,
                           minScale: 0.5,
-                          maxScale: 1.5,
+                          maxScale: 1.0,
                           child: GestureDetector(
                             onTapDown: (details) {
                               // Get the tap position relative to the widget
