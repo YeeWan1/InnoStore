@@ -81,7 +81,7 @@ List<SelectableRegion> getSelectableRegions(
       top: mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight) - dotSize / 2,
       width: mapCoordinate(1.2, -0.2, 1.7, 0.0, floorplanWidth) - mapCoordinate(1.15, -0.2, 1.7, 0.0, floorplanWidth),
       height: mapCoordinate(0.7, -0.2, 1.2, 0.0, floorplanHeight) - mapCoordinate(0.3, -0.2, 1.2, 0.0, floorplanHeight),
-      color: Colors.grey.withOpacity(0.7),
+      color: Color.fromARGB(255, 67, 55, 67).withOpacity(0.7),
       onTap: () {
         print('Tapped on Supplement region');
         onRegionTap('Supplement');
