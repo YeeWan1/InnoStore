@@ -1,4 +1,3 @@
-// customer_support_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -122,15 +121,28 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
       alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        margin: EdgeInsets.symmetric(vertical: 4),
+        margin: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
         decoration: BoxDecoration(
           color: isUserMessage ? Colors.blue[100] : Colors.grey[300],
           borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(data['text']),
+            Text(
+              data['text'],
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
           ],
         ),
       ),
@@ -162,6 +174,7 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
       return Scaffold(
         appBar: AppBar(
           title: Text('Customer Support'),
+          centerTitle: true,
         ),
         body: Center(child: CircularProgressIndicator()),
       );
@@ -171,6 +184,7 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
       return Scaffold(
         appBar: AppBar(
           title: Text('Customer Support'),
+          centerTitle: true,
         ),
         body: Center(child: Text('Error loading chat. Please try again later.')),
       );
@@ -179,6 +193,7 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Customer Support'),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -192,13 +207,16 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
                     controller: _messageController,
                     decoration: InputDecoration(
                       hintText: 'Type a message',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     ),
                   ),
                 ),
                 SizedBox(width: 8),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: Icon(Icons.send, color: Colors.blue),
                   onPressed: _sendMessage,
                 ),
               ],
