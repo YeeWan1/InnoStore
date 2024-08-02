@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'coupon_voucher.dart'; // Import the coupon_voucher.dart file
+import 'package:inno_store/Cashier/voucher.dart' as cashier;
 
 class VoucherDetailsScreen extends StatelessWidget {
-  final List<Voucher> vouchers;
-  final Function(Voucher) removeVoucher;
+  final List<cashier.Voucher> vouchers;
+  final Function(cashier.Voucher) removeVoucher;
 
   VoucherDetailsScreen({required this.vouchers, required this.removeVoucher});
 
@@ -40,98 +41,8 @@ class VoucherDetailsScreen extends StatelessWidget {
   }
 }
 
-abstract class Voucher {
-  final String category;
-  final String discount;
-  final String expiryDate;
-  final bool isExpiringSoon;
-  final String description;
-  final String terms;
-
-  Voucher({
-    required this.category,
-    required this.discount,
-    required this.expiryDate,
-    required this.isExpiringSoon,
-    required this.description,
-    required this.terms,
-  });
-}
-
-class BasicVoucher extends Voucher {
-  BasicVoucher({
-    required String category,
-    required String discount,
-    required String expiryDate,
-    required bool isExpiringSoon,
-    required String description,
-    required String terms,
-  }) : super(
-          category: category,
-          discount: discount,
-          expiryDate: expiryDate,
-          isExpiringSoon: isExpiringSoon,
-          description: description,
-          terms: terms,
-        );
-}
-
-class FemaleVoucher extends Voucher {
-  FemaleVoucher({
-    required String category,
-    required String discount,
-    required String expiryDate,
-    required bool isExpiringSoon,
-    required String description,
-    required String terms,
-  }) : super(
-          category: category,
-          discount: discount,
-          expiryDate: expiryDate,
-          isExpiringSoon: isExpiringSoon,
-          description: description,
-          terms: terms,
-        );
-}
-
-class SeniorCitizenVoucher extends Voucher {
-  SeniorCitizenVoucher({
-    required String category,
-    required String discount,
-    required String expiryDate,
-    required bool isExpiringSoon,
-    required String description,
-    required String terms,
-  }) : super(
-          category: category,
-          discount: discount,
-          expiryDate: expiryDate,
-          isExpiringSoon: isExpiringSoon,
-          description: description,
-          terms: terms,
-        );
-}
-
-class StudentVoucher extends Voucher {
-  StudentVoucher({
-    required String category,
-    required String discount,
-    required String expiryDate,
-    required bool isExpiringSoon,
-    required String description,
-    required String terms,
-  }) : super(
-          category: category,
-          discount: discount,
-          expiryDate: expiryDate,
-          isExpiringSoon: isExpiringSoon,
-          description: description,
-          terms: terms,
-        );
-}
-
 class VoucherCard extends StatelessWidget {
-  final Voucher voucher;
+  final cashier.Voucher voucher;
 
   const VoucherCard({required this.voucher});
 
@@ -179,8 +90,8 @@ class VoucherCard extends StatelessWidget {
 }
 
 class VoucherDetailScreen extends StatelessWidget {
-  final Voucher voucher;
-  final Function(Voucher) removeVoucher;
+  final cashier.Voucher voucher;
+  final Function(cashier.Voucher) removeVoucher;
 
   const VoucherDetailScreen({required this.voucher, required this.removeVoucher});
 

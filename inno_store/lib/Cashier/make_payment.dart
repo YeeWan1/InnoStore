@@ -2,49 +2,66 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:inno_store/Cashier/cart_item.dart';
+import 'package:inno_store/Cashier/voucher.dart' as cashier;
 
 class MakePaymentScreen extends StatelessWidget {
   final double totalAmount;
   final List<CartItem> cartItems;
   final String username;
   final VoidCallback onPaymentSuccess;
+  final cashier.Voucher? appliedVoucher;
 
   MakePaymentScreen({
     required this.totalAmount,
     required this.cartItems,
     required this.username,
     required this.onPaymentSuccess,
+    this.appliedVoucher,
   });
+
+  double calculateTotalAmount() {
+    double total = 0.0;
+    double discount = 0.0;
+
+    for (var item in cartItems) {
+      double itemPrice = double.parse(item.price.replaceAll('RM ', ''));
+      double itemTotal = itemPrice * item.quantity;
+
+      if (appliedVoucher != null) {
+        if (appliedVoucher!.category == 'New User Discount') {
+          discount += itemTotal * 0.3;
+        } else if (appliedVoucher!.category == 'Student Special Offer' &&
+            item.category.toLowerCase() == 'groceries') {
+          discount += itemTotal * 0.25;
+        }
+      }
+
+      total += itemTotal;
+    }
+
+    return total - discount;
+  }
 
   Future<void> _handlePayment(BuildContext context) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // Debug statement to print user details
-        print('Processing payment for user UID: ${user.uid}, Username: $username');
-
         await FirebaseFirestore.instance.collection('purchase_history').add({
           'userId': user.uid,
           'username': username,
           'items': cartItems.map((item) => item.toMap()).toList(),
-          'totalPrice': totalAmount,
+          'totalPrice': calculateTotalAmount(),
+          'appliedVoucher': appliedVoucher?.toMap(),
           'timestamp': FieldValue.serverTimestamp(),
         });
-
-        // Debug statement to confirm successful write operation
-        print('Purchase history successfully written to Firestore');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Payment successful! Thank you')),
         );
 
         onPaymentSuccess();
-      } else {
-        // Debug statement for null user
-        print('User is null, unable to process payment');
       }
     } catch (e) {
-      print('Error processing payment: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Payment failed. Please try again.')),
       );
@@ -60,7 +77,9 @@ class MakePaymentScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Payment Method: $paymentMethod'),
-            Text('Total Amount: RM ${totalAmount.toStringAsFixed(2)}'),
+            Text('Total Amount: RM ${calculateTotalAmount().toStringAsFixed(2)}'),
+            if (appliedVoucher != null)
+              Text('Voucher Applied: ${appliedVoucher!.discount}'),
           ],
         ),
         actions: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inno_store/Cashier/cart_item.dart';
+import 'package:inno_store/Cashier/voucher.dart' as cashier;
 import 'package:inno_store/services/product_service.dart';
 import 'package:inno_store/Category/locateitem.dart';
 import 'package:inno_store/Category/product_item.dart';
@@ -9,7 +10,7 @@ import 'package:inno_store/my_account_page/voucher_details.dart';
 import 'package:inno_store/my_account_page/coupon_voucher.dart';
 
 class CategoryScreen extends StatefulWidget {
-  final Function(List<CartItem>) navigateToPayment;
+  final Function(List<CartItem>, cashier.Voucher?) navigateToPayment;
 
   const CategoryScreen({required this.navigateToPayment});
 
@@ -23,6 +24,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   List<CartItem> cartItems = [];
   List<Map<String, dynamic>> allProducts = [];
   List<Map<String, dynamic>> filteredProducts = [];
+  cashier.Voucher? redeemedVoucher;
 
   final ProductService productService = ProductService();
 
@@ -100,7 +102,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         showVoucherNotification(
           'Make Up Discount',
           'You have a special discount for Make Up products!',
-          FemaleVoucher(
+          cashier.FemaleVoucher(
             category: 'Make Up Discount',
             discount: 'Buy 2 Free 1',
             expiryDate: 'Expires on 31 Jul 2024',
@@ -116,7 +118,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         showVoucherNotification(
           'Student Special Offer',
           'You have a special discount for Groceries!',
-          StudentVoucher(
+          cashier.StudentVoucher(
             category: 'Student Special Offer',
             discount: '25% for All Groceries',
             expiryDate: 'Expires on 15 Aug 2024',
@@ -132,7 +134,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         showVoucherNotification(
           'Senior Citizen Discount',
           'You have a special discount for Supplement products!',
-          SeniorCitizenVoucher(
+          cashier.SeniorCitizenVoucher(
             category: 'Brand Coupon',
             discount: 'RM30 Off Supplement (Blackmores)',
             expiryDate: 'Expires on 06 Aug 2024',
@@ -148,7 +150,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
   }
 
-  void showVoucherNotification(String title, String message, Voucher voucher) {
+  void showVoucherNotification(String title, String message, cashier.Voucher voucher) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -170,6 +172,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
+              setState(() {
+                redeemedVoucher = voucher;
+              });
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => VoucherDetailScreen(
@@ -188,7 +193,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-  Future<void> markVoucherAsRedeemed(Voucher voucher) async {
+  Future<void> markVoucherAsRedeemed(cashier.Voucher voucher) async {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
@@ -285,7 +290,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          widget.navigateToPayment(cartItems);
+          widget.navigateToPayment(cartItems, redeemedVoucher);
         },
         child: Icon(Icons.payment),
       ),

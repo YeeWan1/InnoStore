@@ -3,6 +3,7 @@ import 'profile.dart'; // Import the profile.dart file
 import 'voucher_details.dart'; // Import the voucher_details.dart file
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:inno_store/Cashier/voucher.dart' as cashier;
 
 class CouponVoucherPage extends StatefulWidget {
   @override
@@ -10,17 +11,17 @@ class CouponVoucherPage extends StatefulWidget {
 }
 
 class _CouponVoucherPageState extends State<CouponVoucherPage> {
-  List<Voucher> vouchers = [];
+  List<cashier.Voucher> vouchers = [];
   bool _initialized = false; // Track if vouchers have been initialized
 
-  void removeVoucher(Voucher voucher) async {
+  void removeVoucher(cashier.Voucher voucher) async {
     setState(() {
       vouchers.remove(voucher);
     });
     await markVoucherAsRedeemed(voucher);
   }
 
-  Future<void> markVoucherAsRedeemed(Voucher voucher) async {
+  Future<void> markVoucherAsRedeemed(cashier.Voucher voucher) async {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
@@ -63,7 +64,7 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
             final redeemedVouchers = List<String>.from(profile['redeemedVouchers'] ?? []);
 
             vouchers = [
-              BasicVoucher(
+              cashier.BasicVoucher(
                 category: 'Free Parking Voucher',
                 discount: 'Free 2-Hour Parking',
                 expiryDate: 'Expires on 05 Aug 2024',
@@ -75,7 +76,7 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
                        'Inno Store reserves the right to amend the Terms & Conditions of this promotion '
                        'at any time without any prior notice.',
               ),
-              BasicVoucher(
+              cashier.BasicVoucher(
                 category: 'New User Discount',
                 discount: '30% OFF Coupon',
                 expiryDate: 'Expires on 15 Jul 2024',
@@ -88,7 +89,7 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
             ];
 
             if (gender == 'female') {
-              vouchers.add(FemaleVoucher(
+              vouchers.add(cashier.FemaleVoucher(
                 category: 'Make Up Discount',
                 discount: 'Buy 2 Free 1',
                 expiryDate: 'Expires on 31 Jul 2024',
@@ -102,7 +103,7 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
             }
 
             if (age > 59) {
-              vouchers.add(SeniorCitizenVoucher(
+              vouchers.add(cashier.SeniorCitizenVoucher(
                 category: 'Brand Coupon',
                 discount: 'RM30 Off Supplement (Blackmores)',
                 expiryDate: 'Expires on 06 Aug 2024',
@@ -116,7 +117,7 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
             }
 
             if (occupation == 'student') {
-              vouchers.add(StudentVoucher(
+              vouchers.add(cashier.StudentVoucher(
                 category: 'Student Special Offer',
                 discount: '25% for All Groceries',
                 expiryDate: 'Expires on 15 Aug 2024',
@@ -156,4 +157,3 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
     return {};
   }
 }
- 
