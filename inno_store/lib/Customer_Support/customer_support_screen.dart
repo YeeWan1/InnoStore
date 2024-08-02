@@ -54,6 +54,7 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
             'message': 'Initial help request',
             'timestamp': Timestamp.now(),
             'status': 'Pending',
+            'unread_count': 0, // Initialize unread_count
           });
           setState(() {
             _requestId = newRequest.id;
@@ -65,12 +66,14 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
           _loading = false;
           _error = true;
         });
+        print('Error initializing chat: $e');
       }
     } else {
       setState(() {
         _loading = false;
         _error = true;
       });
+      print('Error: No current user.');
     }
   }
 
@@ -87,9 +90,12 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
   Future<void> _sendMessage() async {
     if (_messageController.text.isNotEmpty && _requestId != null) {
       try {
+        print('Sending message...');
+
         // Retrieve the latest red dot coordinates from BluetoothConnect
         final BluetoothConnect bluetoothConnect = Get.find<BluetoothConnect>();
         final Offset redDotCoordinates = bluetoothConnect.getRedDotCoordinates();
+        print('Red dot coordinates: $redDotCoordinates');
 
         // Format the coordinate string
         final coordinateString = '(${redDotCoordinates.dx.toStringAsFixed(2)}, ${(1 - redDotCoordinates.dy).toStringAsFixed(2)})';
@@ -97,6 +103,7 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
         // Update the Coordinate field in Firestore
         await updateCoordinateInFirestore(redDotCoordinates);
 
+        // Add the message to Firestore
         await _helpRequests.doc(_requestId).collection('messages').add({
           'sender': _username,
           'text': _messageController.text,
@@ -106,6 +113,14 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
             'y': (1 - redDotCoordinates.dy).toStringAsFixed(2),
           },
         });
+        print('Message added.');
+
+        // Increment the unread_count field
+        await _helpRequests.doc(_requestId).update({
+          'unread_count': FieldValue.increment(1),
+        });
+        print('Unread count incremented.');
+
         _messageController.clear();
       } catch (e) {
         print('Error sending message: $e');
@@ -121,28 +136,15 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
       alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        margin: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+        margin: EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
           color: isUserMessage ? Colors.blue[100] : Colors.grey[300],
           borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 3,
-              offset: Offset(0, 2),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              data['text'],
-              style: TextStyle(
-                fontSize: 16,
-              ),
-            ),
+            Text(data['text']),
           ],
         ),
       ),
@@ -174,7 +176,6 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
       return Scaffold(
         appBar: AppBar(
           title: Text('Customer Support'),
-          centerTitle: true,
         ),
         body: Center(child: CircularProgressIndicator()),
       );
@@ -184,7 +185,6 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
       return Scaffold(
         appBar: AppBar(
           title: Text('Customer Support'),
-          centerTitle: true,
         ),
         body: Center(child: Text('Error loading chat. Please try again later.')),
       );
@@ -193,7 +193,6 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Customer Support'),
-        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -207,16 +206,13 @@ class _CustomerSupportScreenState extends State<CustomerSupportScreen> {
                     controller: _messageController,
                     decoration: InputDecoration(
                       hintText: 'Type a message',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      border: OutlineInputBorder(),
                     ),
                   ),
                 ),
                 SizedBox(width: 8),
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.blue),
+                  icon: Icon(Icons.send),
                   onPressed: _sendMessage,
                 ),
               ],
