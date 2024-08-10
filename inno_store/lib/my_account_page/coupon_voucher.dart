@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'profile.dart'; // Import the profile.dart file
-import 'voucher_details.dart'; // Import the voucher_details.dart file
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:inno_store/Cashier/voucher.dart' as cashier;
+import 'package:inno_store/my_account_page/voucher_details.dart';
 
 class CouponVoucherPage extends StatefulWidget {
   @override
@@ -12,11 +11,11 @@ class CouponVoucherPage extends StatefulWidget {
 
 class _CouponVoucherPageState extends State<CouponVoucherPage> {
   List<cashier.Voucher> vouchers = [];
-  bool _initialized = false; // Track if vouchers have been initialized
+  bool _initialized = false;
 
   void removeVoucher(cashier.Voucher voucher) async {
     setState(() {
-      vouchers.remove(voucher);
+      vouchers.removeWhere((v) => v.category == voucher.category);
     });
     await markVoucherAsRedeemed(voucher);
   }
@@ -61,13 +60,13 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
             final gender = profile['gender']?.toLowerCase() ?? '';
             final age = int.tryParse(profile['age'] ?? '0') ?? 0;
             final occupation = profile['occupation']?.toLowerCase() ?? '';
-            final redeemedVouchers = List<String>.from(profile['redeemedVouchers'] ?? []);
+            final redeemedVouchersList = List<String>.from(profile['redeemedVouchers'] ?? []);
 
             vouchers = [
               cashier.BasicVoucher(
                 category: 'Free Parking Voucher',
                 discount: 'Free 2-Hour Parking',
-                expiryDate: 'Expires on 05 Aug 2024',
+                expiryDate: 'Expires on 1 Dec 2024',
                 isExpiringSoon: false,
                 description: 'Valid with parking ticket or Touch n\' Go. ',
                 terms: 'Ticket and Touch n\'Go card validation at Inno Store carpark. '
@@ -79,7 +78,7 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
               cashier.BasicVoucher(
                 category: 'New User Discount',
                 discount: '30% OFF Coupon',
-                expiryDate: 'Expires on 15 Jul 2024',
+                expiryDate: 'Expires on 1 Dec 2024',
                 isExpiringSoon: true,
                 description: 'Valid for new user only.',
                 terms: 'Coupon is valid for one-time use only. '
@@ -91,10 +90,10 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
             if (gender == 'female') {
               vouchers.add(cashier.FemaleVoucher(
                 category: 'Make Up Discount',
-                discount: 'Buy 2 Free 1',
-                expiryDate: 'Expires on 31 Jul 2024',
+                discount: '15% OFF',
+                expiryDate: 'Expires on 1 Dec 2024',
                 isExpiringSoon: false,
-                description: 'Special to Female. Valid from 1/7/2024 to 31/7/2024 only.',
+                description: 'Special to Female. Valid from 10/8/2024 to 1/12/2024 only.',
                 terms: 'Limited redemption for order made via Inno Store App.'
                        'Selected products only. '
                        'Inno Store reserves the right to amend the Terms & Conditions of this promotion '
@@ -104,11 +103,11 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
 
             if (age > 59) {
               vouchers.add(cashier.SeniorCitizenVoucher(
-                category: 'Brand Coupon',
-                discount: 'RM30 Off Supplement (Blackmores)',
-                expiryDate: 'Expires on 06 Aug 2024',
+                category: 'Supplement Discount',
+                discount: 'RM30 Off Supplements',
+                expiryDate: 'Expires on 1 Dec 2024',
                 isExpiringSoon: false,
-                description: 'Special to Senior Citizen. Valid from 7/7/2024 to 6/8/2024 only.',
+                description: 'Special to Senior Citizen. Valid from 10/8/2024 to 1/12/2024 only.',
                 terms: 'Limited redemption for order made via Inno Store App.'
                        'Selected products only. '
                        'Inno Store reserves the right to amend the Terms & Conditions of this promotion '
@@ -120,9 +119,9 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
               vouchers.add(cashier.StudentVoucher(
                 category: 'Student Special Offer',
                 discount: '25% for All Groceries',
-                expiryDate: 'Expires on 15 Aug 2024',
+                expiryDate: 'Expires on 1 Dec 2024',
                 isExpiringSoon: false,
-                description: 'Special to Student. Valid from 16/7/2024 to 15/8/2024 only.',
+                description: 'Special to Student. Valid from 10/8/2024 to 1/12/2024 only.',
                 terms: 'Limited redemption for order made via Inno Store App.'
                        'Selected products only. '
                        'Inno Store reserves the right to amend the Terms & Conditions of this promotion '
@@ -130,9 +129,7 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
               ));
             }
 
-            // Filter out redeemed vouchers
-            vouchers = vouchers.where((voucher) => !redeemedVouchers.contains(voucher.category)).toList();
-
+            vouchers = vouchers.where((voucher) => !redeemedVouchersList.contains(voucher.category)).toList();
             _initialized = true;
           }
         }
@@ -142,7 +139,7 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
             title: Text('Coupon & Vouchers'),
             backgroundColor: Colors.blue,
           ),
-          body: VoucherDetailsScreen(vouchers: vouchers, removeVoucher: removeVoucher), // Pass filtered vouchers to the screen
+          body: VoucherDetailsScreen(vouchers: vouchers, removeVoucher: removeVoucher),
         );
       },
     );

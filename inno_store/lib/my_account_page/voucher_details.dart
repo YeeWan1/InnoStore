@@ -6,7 +6,7 @@ class VoucherDetailsScreen extends StatelessWidget {
   final List<cashier.Voucher> vouchers;
   final Function(cashier.Voucher) removeVoucher;
 
-  VoucherDetailsScreen({required this.vouchers, required this.removeVoucher});
+  const VoucherDetailsScreen({Key? key, required this.vouchers, required this.removeVoucher}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class VoucherDetailsScreen extends StatelessWidget {
 class VoucherCard extends StatelessWidget {
   final cashier.Voucher voucher;
 
-  const VoucherCard({required this.voucher});
+  const VoucherCard({Key? key, required this.voucher}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,31 +56,24 @@ class VoucherCard extends StatelessWidget {
           children: [
             Text(
               voucher.category,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               voucher.discount,
-              style: TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14),
             ),
             if (voucher.isExpiringSoon)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  'Expiring Soon',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
               ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               voucher.expiryDate,
-              style: TextStyle(color: Colors.red),
+              style: const TextStyle(color: Colors.red),
             ),
           ],
         ),
@@ -93,7 +86,7 @@ class VoucherDetailScreen extends StatelessWidget {
   final cashier.Voucher voucher;
   final Function(cashier.Voucher) removeVoucher;
 
-  const VoucherDetailScreen({required this.voucher, required this.removeVoucher});
+  const VoucherDetailScreen({Key? key, required this.voucher, required this.removeVoucher}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -106,63 +99,63 @@ class VoucherDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
+            const Center(
               child: Icon(
                 Icons.card_giftcard,
                 size: 80,
                 color: Colors.blue,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Center(
               child: Text(
                 voucher.discount,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Center(
               child: Text(
                 voucher.expiryDate,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.red,
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Description',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               voucher.description,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
               ),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Terms and Conditions',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               voucher.terms,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -170,15 +163,15 @@ class VoucherDetailScreen extends StatelessWidget {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Redeem Voucher'),
-                        content: Text('Once you redeem, the voucher will be used.'),
+                        title: const Text('Redeem Voucher'),
+                        content: const Text('Once you redeem, the voucher will be used.'),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
                               Navigator.pop(context); // Navigate back without removing the voucher
                             },
-                            child: Text('Cancel'),
+                            child: const Text('Cancel'),
                           ),
                           TextButton(
                             onPressed: () {
@@ -186,14 +179,14 @@ class VoucherDetailScreen extends StatelessWidget {
                               Navigator.pop(context); // Close the dialog
                               Navigator.pop(context); // Navigate back and remove the voucher
                             },
-                            child: Text('OK'),
+                            child: const Text('OK'),
                           ),
                         ],
                       );
                     },
                   );
                 },
-                child: Text('Redeem'),
+                child: const Text('Redeem'),
               ),
             ),
           ],

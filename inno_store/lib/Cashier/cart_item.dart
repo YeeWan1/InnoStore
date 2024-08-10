@@ -5,14 +5,14 @@ class CartItem {
   final String price;
   final String category;
   int quantity;
-  cashier.Voucher? appliedVoucher;
+  List<cashier.Voucher> appliedVouchers;
 
   CartItem({
     required this.title,
     required this.price,
     required this.category,
     this.quantity = 1,
-    this.appliedVoucher,
+    this.appliedVouchers = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -21,7 +21,7 @@ class CartItem {
       'price': price,
       'category': category,
       'quantity': quantity,
-      'appliedVoucher': appliedVoucher?.toMap(),
+      'appliedVouchers': appliedVouchers.map((voucher) => voucher.toMap()).toList(),
     };
   }
 
@@ -31,9 +31,10 @@ class CartItem {
       price: map['price'],
       category: map['category'],
       quantity: map['quantity'],
-      appliedVoucher: map['appliedVoucher'] != null
-          ? cashier.Voucher.fromMap(map['appliedVoucher'])
-          : null,
+      appliedVouchers: (map['appliedVouchers'] as List<dynamic>?)
+              ?.map((voucherMap) => cashier.Voucher.fromMap(voucherMap))
+              .toList() ??
+          [],
     );
   }
 }

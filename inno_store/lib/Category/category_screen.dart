@@ -10,7 +10,7 @@ import 'package:inno_store/my_account_page/voucher_details.dart';
 import 'package:inno_store/my_account_page/coupon_voucher.dart';
 
 class CategoryScreen extends StatefulWidget {
-  final Function(List<CartItem>, cashier.Voucher?) navigateToPayment;
+  final Function(List<CartItem>, List<cashier.Voucher>) navigateToPayment;
 
   const CategoryScreen({required this.navigateToPayment});
 
@@ -24,7 +24,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   List<CartItem> cartItems = [];
   List<Map<String, dynamic>> allProducts = [];
   List<Map<String, dynamic>> filteredProducts = [];
-  cashier.Voucher? redeemedVoucher;
+  List<cashier.Voucher> redeemedVouchers = [];
 
   final ProductService productService = ProductService();
 
@@ -37,6 +37,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         filterProducts();
       });
     });
+    fetchRedeemedVouchers();
   }
 
   void filterProducts() {
@@ -90,6 +91,54 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
+  Future<void> fetchRedeemedVouchers() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.uid)
+            .get();
+        setState(() {
+            List<String> redeemedVoucherCategories = (userDoc['redeemedVouchers'] as List<dynamic>?)
+                ?.map((item) => item as String)
+                .toList() ?? [];
+            redeemedVouchers = redeemedVoucherCategories.toSet().map<cashier.Voucher>((category) {
+                switch (category) {
+                    case 'Make Up Discount':
+                        return cashier.FemaleVoucher(
+                            category: 'Make Up Discount',
+                            discount: '15% OFF',
+                            expiryDate: 'Expires on 1 Dec 2024', // Updated date
+                            isExpiringSoon: false,
+                            description: 'Special to Female. Valid from 10/8/2024 to 1/12/2024 only.',
+                            terms: 'Limited redemption for order made via Inno Store App. Selected products only. Inno Store reserves the right to amend the Terms & Conditions of this promotion at any time without any prior notice.',
+                        );
+                    case 'Student Special Offer':
+                        return cashier.StudentVoucher(
+                            category: 'Student Special Offer',
+                            discount: '25% for All Groceries',
+                            expiryDate: 'Expires on 1 Dec 2024', // Updated date
+                            isExpiringSoon: false,
+                            description: 'Special to Student. Valid from 10/8/2024 to 1/12/2024 only.',
+                            terms: 'Limited redemption for order made via Inno Store App. Selected products only. Inno Store reserves the right to amend the Terms & Conditions of this promotion at any time without any prior notice.',
+                        );
+                    case 'Supplement Discount':
+                        return cashier.SeniorCitizenVoucher(
+                            category: 'Supplement Discount',
+                            discount: 'RM30 Off Supplements',
+                            expiryDate: 'Expires on 1 Dec 2024', // Updated date
+                            isExpiringSoon: false,
+                            description: 'Special to Senior Citizen. Valid from 10/8/2024 to 1/12/2024 only.',
+                            terms: 'Limited redemption for order made via Inno Store App. Selected products only. Inno Store reserves the right to amend the Terms & Conditions of this promotion at any time without any prior notice.',
+                        );
+                    default:
+                        throw Exception('Unknown voucher category');
+                }
+            }).toList();
+        });
+    }
+  }
+
   Future<void> checkForVoucherNotification() async {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
@@ -97,49 +146,50 @@ class _CategoryScreenState extends State<CategoryScreen> {
       final gender = userDoc['gender']?.toLowerCase() ?? '';
       final age = int.tryParse(userDoc['age'] ?? '0') ?? 0;
       final occupation = userDoc['occupation']?.toLowerCase() ?? '';
+      final redeemedVouchersList = List<String>.from(userDoc['redeemedVouchers'] ?? []);
 
-      if (selectedCategory == 'make up' && gender == 'female') {
+      if (selectedCategory == 'make up' && gender == 'female' && !redeemedVouchersList.contains('Make Up Discount')) {
         showVoucherNotification(
           'Make Up Discount',
           'You have a special discount for Make Up products!',
           cashier.FemaleVoucher(
             category: 'Make Up Discount',
-            discount: 'Buy 2 Free 1',
-            expiryDate: 'Expires on 31 Jul 2024',
+            discount: '15% OFF',
+            expiryDate: 'Expires on 1 Dec 2024',
             isExpiringSoon: false,
-            description: 'Special to Female. Valid from 1/7/2024 to 31/7/2024 only.',
+            description: 'Special to Female. Valid from 10/8/2024 to 1/12/2024 only.',
             terms: 'Limited redemption for order made via Inno Store App.'
                    'Selected products only. '
                    'Inno Store reserves the right to amend the Terms & Conditions of this promotion '
                    'at any time without any prior notice.',
           ),
         );
-      } else if (selectedCategory == 'groceries' && occupation == 'student') {
+      } else if (selectedCategory == 'groceries' && occupation == 'student' && !redeemedVouchersList.contains('Student Special Offer')) {
         showVoucherNotification(
           'Student Special Offer',
           'You have a special discount for Groceries!',
           cashier.StudentVoucher(
             category: 'Student Special Offer',
             discount: '25% for All Groceries',
-            expiryDate: 'Expires on 15 Aug 2024',
+            expiryDate: 'Expires on 1 Dec 2024',
             isExpiringSoon: false,
-            description: 'Special to Student. Valid from 16/7/2024 to 15/8/2024 only.',
+            description: 'Special to Student. Valid from 10/8/2024 to 1/12/2024 only.',
             terms: 'Limited redemption for order made via Inno Store App.'
                    'Selected products only. '
                    'Inno Store reserves the right to amend the Terms & Conditions of this promotion '
                    'at any time without any prior notice.',
           ),
         );
-      } else if (selectedCategory == 'supplement' && age > 59) {
+      } else if (selectedCategory == 'supplement' && age > 59 && !redeemedVouchersList.contains('Supplement Discount')) {
         showVoucherNotification(
-          'Senior Citizen Discount',
+          'Supplement Discount',
           'You have a special discount for Supplement products!',
           cashier.SeniorCitizenVoucher(
-            category: 'Brand Coupon',
-            discount: 'RM30 Off Supplement (Blackmores)',
-            expiryDate: 'Expires on 06 Aug 2024',
+            category: 'Supplement Discount',
+            discount: 'RM30 Off Supplements',
+            expiryDate: 'Expires on 1 Dec 2024',
             isExpiringSoon: false,
-            description: 'Special to Senior Citizen. Valid from 7/7/2024 to 6/8/2024 only.',
+            description: 'Special to Senior Citizen. Valid from 10/8/2024 to 1/12/2024 only.',
             terms: 'Limited redemption for order made via Inno Store App.'
                    'Selected products only. '
                    'Inno Store reserves the right to amend the Terms & Conditions of this promotion '
@@ -151,46 +201,48 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void showVoucherNotification(String title, String message, cashier.Voucher voucher) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Column(
-          children: [
-            Text("Your Voucher", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Divider(),
-            Text(title, style: TextStyle(fontSize: 18)),
+    if (!redeemedVouchers.any((v) => v.category == voucher.category)) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Column(
+            children: [
+              Text("Your Voucher", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Divider(),
+              Text(title, style: TextStyle(fontSize: 18)),
+            ],
+          ),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  redeemedVouchers.add(voucher);
+                });
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => VoucherDetailScreen(
+                      voucher: voucher,
+                      removeVoucher: (v) async {
+                        await markVoucherAsRedeemed(v);
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: Text('View'),
+            ),
           ],
         ),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Close'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              setState(() {
-                redeemedVoucher = voucher;
-              });
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => VoucherDetailScreen(
-                    voucher: voucher,
-                    removeVoucher: (v) async {
-                      await markVoucherAsRedeemed(v);
-                    },
-                  ),
-                ),
-              );
-            },
-            child: Text('View'),
-          ),
-        ],
-      ),
-    );
+      );
+    }
   }
 
   Future<void> markVoucherAsRedeemed(cashier.Voucher voucher) async {
@@ -200,6 +252,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
         'redeemedVouchers': FieldValue.arrayUnion([voucher.category])
       });
     }
+    setState(() {
+      redeemedVouchers.add(voucher); // Ensure local state is also updated
+    });
   }
 
   @override
@@ -290,7 +345,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          widget.navigateToPayment(cartItems, redeemedVoucher);
+          widget.navigateToPayment(cartItems, redeemedVouchers);
         },
         child: Icon(Icons.payment),
       ),

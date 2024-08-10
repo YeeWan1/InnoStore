@@ -26,16 +26,20 @@ abstract class Voucher {
     };
   }
 
-  factory Voucher.fromMap(Map<String, dynamic> map) {
-    switch (map['category']) {
-      case 'Make Up Discount':
-        return FemaleVoucher.fromMap(map);
-      case 'Student Special Offer':
-        return StudentVoucher.fromMap(map);
-      case 'Brand Coupon':
-        return SeniorCitizenVoucher.fromMap(map);
-      default:
+  static Voucher fromMap(Map<String, dynamic> map) {
+    switch (map['type']) {
+      case 'BasicVoucher':
         return BasicVoucher.fromMap(map);
+      case 'FemaleVoucher':
+        return FemaleVoucher.fromMap(map);
+      case 'SeniorCitizenVoucher':
+        return SeniorCitizenVoucher.fromMap(map);
+      case 'StudentVoucher':
+        return StudentVoucher.fromMap(map);
+      case 'NewUserVoucher':
+        return NewUserVoucher.fromMap(map);
+      default:
+        throw Exception('Unknown voucher type');
     }
   }
 }
@@ -51,17 +55,24 @@ class BasicVoucher extends Voucher {
   }) : super(
           category: category,
           discount: discount,
-          expiryDate: expiryDate,
+          expiryDate: 'Expires on 1 Dec 2024',
           isExpiringSoon: isExpiringSoon,
           description: description,
           terms: terms,
         );
 
+  @override
+  Map<String, dynamic> toMap() {
+    var map = super.toMap();
+    map['type'] = 'BasicVoucher';
+    return map;
+  }
+
   factory BasicVoucher.fromMap(Map<String, dynamic> map) {
     return BasicVoucher(
       category: map['category'],
       discount: map['discount'],
-      expiryDate: map['expiryDate'],
+      expiryDate: 'Expires on 1 Dec 2024',
       isExpiringSoon: map['isExpiringSoon'],
       description: map['description'],
       terms: map['terms'],
@@ -80,17 +91,24 @@ class FemaleVoucher extends Voucher {
   }) : super(
           category: category,
           discount: discount,
-          expiryDate: expiryDate,
+          expiryDate: 'Expires on 1 Dec 2024',
           isExpiringSoon: isExpiringSoon,
           description: description,
           terms: terms,
         );
 
+  @override
+  Map<String, dynamic> toMap() {
+    var map = super.toMap();
+    map['type'] = 'FemaleVoucher';
+    return map;
+  }
+
   factory FemaleVoucher.fromMap(Map<String, dynamic> map) {
     return FemaleVoucher(
       category: map['category'],
       discount: map['discount'],
-      expiryDate: map['expiryDate'],
+      expiryDate: 'Expires on 1 Dec 2024',
       isExpiringSoon: map['isExpiringSoon'],
       description: map['description'],
       terms: map['terms'],
@@ -109,17 +127,24 @@ class SeniorCitizenVoucher extends Voucher {
   }) : super(
           category: category,
           discount: discount,
-          expiryDate: expiryDate,
+          expiryDate: 'Expires on 1 Dec 2024',
           isExpiringSoon: isExpiringSoon,
           description: description,
           terms: terms,
         );
 
+  @override
+  Map<String, dynamic> toMap() {
+    var map = super.toMap();
+    map['type'] = 'SeniorCitizenVoucher';
+    return map;
+  }
+
   factory SeniorCitizenVoucher.fromMap(Map<String, dynamic> map) {
     return SeniorCitizenVoucher(
       category: map['category'],
       discount: map['discount'],
-      expiryDate: map['expiryDate'],
+      expiryDate: 'Expires on 1 Dec 2024',
       isExpiringSoon: map['isExpiringSoon'],
       description: map['description'],
       terms: map['terms'],
@@ -138,17 +163,60 @@ class StudentVoucher extends Voucher {
   }) : super(
           category: category,
           discount: discount,
-          expiryDate: expiryDate,
+          expiryDate: 'Expires on 1 Dec 2024',
           isExpiringSoon: isExpiringSoon,
           description: description,
           terms: terms,
         );
 
+  @override
+  Map<String, dynamic> toMap() {
+    var map = super.toMap();
+    map['type'] = 'StudentVoucher';
+    return map;
+  }
+
   factory StudentVoucher.fromMap(Map<String, dynamic> map) {
     return StudentVoucher(
       category: map['category'],
       discount: map['discount'],
-      expiryDate: map['expiryDate'],
+      expiryDate: 'Expires on 1 Dec 2024',
+      isExpiringSoon: map['isExpiringSoon'],
+      description: map['description'],
+      terms: map['terms'],
+    );
+  }
+}
+
+class NewUserVoucher extends Voucher {
+  NewUserVoucher({
+    required String category,
+    required String discount,
+    required String expiryDate,
+    required bool isExpiringSoon,
+    required String description,
+    required String terms,
+  }) : super(
+          category: category,
+          discount: discount,
+          expiryDate: 'Expires on 1 Dec 2024',
+          isExpiringSoon: isExpiringSoon,
+          description: description,
+          terms: terms,
+        );
+
+  @override
+  Map<String, dynamic> toMap() {
+    var map = super.toMap();
+    map['type'] = 'NewUserVoucher';
+    return map;
+  }
+
+  factory NewUserVoucher.fromMap(Map<String, dynamic> map) {
+    return NewUserVoucher(
+      category: map['category'],
+      discount: map['discount'],
+      expiryDate: 'Expires on 1 Dec 2024',
       isExpiringSoon: map['isExpiringSoon'],
       description: map['description'],
       terms: map['terms'],

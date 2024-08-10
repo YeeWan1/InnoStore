@@ -2,45 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:inno_store/Cashier/cart_item.dart';
-import 'package:inno_store/Cashier/voucher.dart' as cashier;
 
 class MakePaymentScreen extends StatelessWidget {
   final double totalAmount;
   final List<CartItem> cartItems;
   final String username;
   final VoidCallback onPaymentSuccess;
-  final cashier.Voucher? appliedVoucher;
+  final List<Map<String, dynamic>> appliedDiscounts; // Added
 
-  MakePaymentScreen({
+  const MakePaymentScreen({
+    Key? key,
     required this.totalAmount,
     required this.cartItems,
     required this.username,
     required this.onPaymentSuccess,
-    this.appliedVoucher,
-  });
-
-  double calculateTotalAmount() {
-    double total = 0.0;
-    double discount = 0.0;
-
-    for (var item in cartItems) {
-      double itemPrice = double.parse(item.price.replaceAll('RM ', ''));
-      double itemTotal = itemPrice * item.quantity;
-
-      if (appliedVoucher != null) {
-        if (appliedVoucher!.category == 'New User Discount') {
-          discount += itemTotal * 0.3;
-        } else if (appliedVoucher!.category == 'Student Special Offer' &&
-            item.category.toLowerCase() == 'groceries') {
-          discount += itemTotal * 0.25;
-        }
-      }
-
-      total += itemTotal;
-    }
-
-    return total - discount;
-  }
+    required this.appliedDiscounts, // Added
+  }) : super(key: key);
 
   Future<void> _handlePayment(BuildContext context) async {
     try {
@@ -50,18 +27,36 @@ class MakePaymentScreen extends StatelessWidget {
           'userId': user.uid,
           'username': username,
           'items': cartItems.map((item) => item.toMap()).toList(),
-          'totalPrice': calculateTotalAmount(),
-          'appliedVoucher': appliedVoucher?.toMap(),
+          'totalPrice': totalAmount,
           'timestamp': FieldValue.serverTimestamp(),
+          'discounts': appliedDiscounts, // Added
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Payment successful! Thank you')),
+        // Show a payment success message and navigate to home
+        showDialog(
+          context: context,
+          barrierDismissible: false, // Prevent dialog from being dismissed
+          builder: (context) => AlertDialog(
+            title: Text('Payment Successful'),
+            content: Text('Thank you for your purchase!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
         );
 
         onPaymentSuccess();
+      } else {
+        print('User is null, unable to process payment');
       }
     } catch (e) {
+      print('Error processing payment: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Payment failed. Please try again.')),
       );
@@ -77,9 +72,7 @@ class MakePaymentScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Payment Method: $paymentMethod'),
-            Text('Total Amount: RM ${calculateTotalAmount().toStringAsFixed(2)}'),
-            if (appliedVoucher != null)
-              Text('Voucher Applied: ${appliedVoucher!.discount}'),
+            Text('Total Amount: RM ${totalAmount.toStringAsFixed(2)}'),
           ],
         ),
         actions: [

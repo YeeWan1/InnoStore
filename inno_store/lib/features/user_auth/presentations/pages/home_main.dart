@@ -36,7 +36,7 @@ class _MainHomePageState extends State<MainHomePage> {
   late double y;
   late List<Offset> path;
   List<CartItem> cartItems = []; // Initialize an empty cart
-  cashier.Voucher? redeemedVoucher; // Track the redeemed voucher
+  List<cashier.Voucher> redeemedVouchers = []; // Track the redeemed vouchers
 
   @override
   void initState() {
@@ -89,10 +89,10 @@ class _MainHomePageState extends State<MainHomePage> {
       HomePage(username: username),
       MapScreen(x: x, y: y, path: path),
       CategoryScreen(
-        navigateToPayment: (items, voucher) {
+        navigateToPayment: (items, vouchers) {
           setState(() {
             cartItems = items;
-            redeemedVoucher = voucher;
+            redeemedVouchers = vouchers;
           });
           Navigator.push(
             context,
@@ -101,7 +101,7 @@ class _MainHomePageState extends State<MainHomePage> {
                 cartItems: cartItems,
                 username: username,
                 onClearCart: _clearCart,
-                appliedVoucher: redeemedVoucher, // Pass the voucher
+                redeemedVouchers: redeemedVouchers, // Pass the vouchers
               ),
             ),
           );
@@ -115,7 +115,7 @@ class _MainHomePageState extends State<MainHomePage> {
   void _clearCart() {
     setState(() {
       cartItems.clear();
-      redeemedVoucher = null; // Clear the voucher when the cart is cleared
+      redeemedVouchers = []; // Clear the vouchers when the cart is cleared
     });
   }
 
