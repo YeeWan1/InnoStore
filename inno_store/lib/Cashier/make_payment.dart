@@ -32,8 +32,8 @@ class MakePaymentScreen extends StatelessWidget {
           'discounts': appliedDiscounts, // Added
         });
 
-        // Show a payment success message and navigate to home
-        showDialog(
+        // Show Payment Successful dialog immediately after payment processing
+        await showDialog(
           context: context,
           barrierDismissible: false, // Prevent dialog from being dismissed
           builder: (context) => AlertDialog(
@@ -42,7 +42,7 @@ class MakePaymentScreen extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // Close the Payment Successful dialog
                   Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
                 },
                 child: Text('OK'),
@@ -63,8 +63,8 @@ class MakePaymentScreen extends StatelessWidget {
     }
   }
 
-  void _showPaymentSummary(BuildContext context, String paymentMethod) {
-    showDialog(
+  void _showPaymentSummary(BuildContext context, String paymentMethod) async {
+    final shouldProceed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Payment Summary'),
@@ -78,20 +78,23 @@ class MakePaymentScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(false); // User cancels payment
             },
             child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
-              _handlePayment(context);
+              Navigator.of(context).pop(true); // User confirms payment
             },
             child: Text('Pay'),
           ),
         ],
       ),
     );
+
+    if (shouldProceed == true) {
+      _handlePayment(context);
+    }
   }
 
   @override
