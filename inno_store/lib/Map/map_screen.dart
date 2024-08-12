@@ -73,13 +73,13 @@ class _MapScreenState extends State<MapScreen> {
                 child: Text(isScanning ? 'Stop Scanning' : 'Start Scanning'),
               ),
               SizedBox(height: 16), // Add some spacing
-              Obx(() {
+              //Obx(() {
                 // Display the received data as text
-                return Text(
-                  'Received Data: ${bluetoothConnect.receivedData.value}',
-                  style: TextStyle(fontSize: 16, color: Colors.black),
-                );
-              }),
+                //return Text(
+                //  'Received Data: ${bluetoothConnect.receivedData.value}',
+                //  style: TextStyle(fontSize: 16, color: Colors.black),
+              //  );
+              //}),
               Obx(() {
                 // Parse the received data to get x and y values
                 String data = bluetoothConnect.receivedData.value;
@@ -98,7 +98,7 @@ class _MapScreenState extends State<MapScreen> {
                 redDotCoordinates.value = RedDotCoordinates(x: redDotX, y: redDotY);
 
                 return Text(
-                  'Red Dot Coordinates: (${redDotX.toStringAsFixed(2)}, ${redDotY.toStringAsFixed(2)})',
+                  'User Location: (${redDotX.toStringAsFixed(2)}, ${redDotY.toStringAsFixed(2)})',
                   style: TextStyle(fontSize: 16, color: Colors.black),
                 );
               }),
@@ -251,7 +251,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Path Length: ${pathLength.toStringAsFixed(2)} meters',
+                      'Distance: ${pathLength.toStringAsFixed(2)} meters',
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ],
