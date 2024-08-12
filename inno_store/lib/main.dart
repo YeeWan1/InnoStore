@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Firebase',
+      initialRoute: '/signUp',  // Set the initial route to the sign-up page
       routes: {
         '/': (context) => SplashScreen(),
         '/login': (context) => LoginPage(),
