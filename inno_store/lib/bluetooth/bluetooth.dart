@@ -109,7 +109,7 @@ class BluetoothConnect extends GetxController {
           await discoverServices(device);
 
           // Start the timer to read data every 2 seconds
-          dataTimer = Timer.periodic(Duration(seconds: 2), (timer) {
+          dataTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
             readData(device);
           });
 
