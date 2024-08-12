@@ -343,7 +343,7 @@ class _NavigationViewState extends State<NavigationView> {
                 double pathLength = pathFinder.calculatePathLength(path);
 
                 return Text(
-                  'Path Length: ${pathLength.toStringAsFixed(2)} meters',
+                  'Distance: ${pathLength.toStringAsFixed(2)} meters',
                   style: TextStyle(fontSize: 16, color: Colors.black),
                 );
               },
