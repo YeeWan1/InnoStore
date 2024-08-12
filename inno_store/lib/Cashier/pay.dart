@@ -48,18 +48,17 @@ class _PayScreenState extends State<PayScreen> {
     for (var item in widget.cartItems) {
       double itemPrice = double.parse(item.price.replaceAll('RM ', '')) * item.quantity;
 
-      // Apply discount based on voucher type
       if (voucher is cashier.NewUserVoucher) {
-        discount += itemPrice * 0.30; // 30% off total
+        discount += itemPrice * 0.30; 
       } 
       else if (voucher is cashier.FemaleVoucher && item.category.toLowerCase() == 'make up') {
-        discount += itemPrice * 0.15; // 15% off Make Up products
+        discount += itemPrice * 0.15; 
       } 
       else if (voucher is cashier.SeniorCitizenVoucher && item.category.toLowerCase() == 'supplement') {
-        discount += itemPrice > 30.0 ? 30.0 : itemPrice; // RM 30 off Supplement products or full price if less
+        discount += itemPrice > 30.0 ? 30.0 : itemPrice;
       } 
       else if (voucher is cashier.StudentVoucher && item.category.toLowerCase() == 'groceries') {
-        discount += itemPrice * 0.25; // 25% off Groceries products
+        discount += itemPrice * 0.25;
       }
     }
   
@@ -68,7 +67,7 @@ class _PayScreenState extends State<PayScreen> {
 
   double get discountAmount {
     double totalDiscount = 0.0;
-    appliedDiscounts.clear();  // Clear previous applied discounts
+    appliedDiscounts.clear();  
     
     for (var voucher in selectedVouchers) {
       double discount = calculateDiscountAmount(voucher);
@@ -201,7 +200,6 @@ class _PayScreenState extends State<PayScreen> {
         );
       },
     ).then((_) {
-      // Ensures UI update after dialog is closed
       setState(() {});
     });
   }
@@ -279,11 +277,12 @@ class _PayScreenState extends State<PayScreen> {
                         cartItems: widget.cartItems,
                         username: widget.username,
                         appliedDiscounts: appliedDiscounts,
-                        onPaymentSuccess: () {
+                        onPaymentSuccess: () async {
                           widget.onClearCart();
+                          await removeUsedVouchers(); // Remove used vouchers after payment
                           setState(() {
                             availableVouchers = availableVouchers.where((voucher) => !selectedVouchers.contains(voucher)).toList();
-                            selectedVouchers.clear(); // Clear selected vouchers after payment
+                            selectedVouchers.clear(); 
                           });
                         },
                       ),
@@ -297,5 +296,16 @@ class _PayScreenState extends State<PayScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> removeUsedVouchers() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      for (var voucher in selectedVouchers) {
+        await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
+          'redeemedVouchers': FieldValue.arrayRemove([voucher.category])
+        });
+      }
+    }
   }
 }
