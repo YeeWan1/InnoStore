@@ -13,22 +13,6 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
   List<cashier.Voucher> vouchers = [];
   bool _initialized = false;
 
-  void removeVoucher(cashier.Voucher voucher) async {
-    setState(() {
-      vouchers.removeWhere((v) => v.category == voucher.category);
-    });
-    await markVoucherAsRedeemed(voucher);
-  }
-
-  Future<void> markVoucherAsRedeemed(cashier.Voucher voucher) async {
-    User? currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
-        'redeemedVouchers': FieldValue.arrayUnion([voucher.category])
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -61,6 +45,7 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
             final age = int.tryParse(profile['age'] ?? '0') ?? 0;
             final occupation = profile['occupation']?.toLowerCase() ?? '';
             final redeemedVouchersList = List<String>.from(profile['redeemedVouchers'] ?? []);
+            final usedVouchersList = List<String>.from(profile['usedVouchers'] ?? []);
 
             vouchers = [
               cashier.BasicVoucher(
@@ -129,7 +114,12 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
               ));
             }
 
-            vouchers = vouchers.where((voucher) => !redeemedVouchersList.contains(voucher.category)).toList();
+            // Filter out vouchers that have been redeemed or used
+            vouchers = vouchers.where((voucher) => 
+              !redeemedVouchersList.contains(voucher.category) &&
+              !usedVouchersList.contains(voucher.category)
+            ).toList();
+
             _initialized = true;
           }
         }
@@ -152,5 +142,21 @@ class _CouponVoucherPageState extends State<CouponVoucherPage> {
       return userDoc.data() as Map<String, dynamic>;
     }
     return {};
+  }
+
+  void removeVoucher(cashier.Voucher voucher) async {
+    setState(() {
+      vouchers.removeWhere((v) => v.category == voucher.category);
+    });
+    await markVoucherAsRedeemed(voucher); // Correctly store in redeemedVouchers
+  }
+
+  Future<void> markVoucherAsRedeemed(cashier.Voucher voucher) async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
+        'redeemedVouchers': FieldValue.arrayUnion([voucher.category]) // Corrected field
+      });
+    }
   }
 }

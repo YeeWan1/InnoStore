@@ -44,31 +44,35 @@ class _PayScreenState extends State<PayScreen> {
 
   double calculateDiscountAmount(cashier.Voucher voucher) {
     double discount = 0.0;
-  
-    for (var item in widget.cartItems) {
-      double itemPrice = double.parse(item.price.replaceAll('RM ', '')) * item.quantity;
 
-      if (voucher is cashier.NewUserVoucher) {
-        discount += itemPrice * 0.30; 
-      } 
-      else if (voucher is cashier.FemaleVoucher && item.category.toLowerCase() == 'make up') {
-        discount += itemPrice * 0.15; 
-      } 
-      else if (voucher is cashier.SeniorCitizenVoucher && item.category.toLowerCase() == 'supplement') {
-        discount += itemPrice > 30.0 ? 30.0 : itemPrice;
-      } 
-      else if (voucher is cashier.StudentVoucher && item.category.toLowerCase() == 'groceries') {
-        discount += itemPrice * 0.25;
+    if (voucher is cashier.SeniorCitizenVoucher) {
+      double totalSupplementPrice = 0.0;
+      for (var item in widget.cartItems) {
+        if (item.category.toLowerCase() == 'supplement') {
+          totalSupplementPrice += double.parse(item.price.replaceAll('RM ', '')) * item.quantity;
+        }
+      }
+      discount = totalSupplementPrice > 30.0 ? 30.0 : totalSupplementPrice;
+    } else {
+      for (var item in widget.cartItems) {
+        double itemPrice = double.parse(item.price.replaceAll('RM ', '')) * item.quantity;
+        if (voucher is cashier.NewUserVoucher) {
+          discount += itemPrice * 0.30;
+        } else if (voucher is cashier.FemaleVoucher && item.category.toLowerCase() == 'make up') {
+          discount += itemPrice * 0.15;
+        } else if (voucher is cashier.StudentVoucher && item.category.toLowerCase() == 'groceries') {
+          discount += itemPrice * 0.25;
+        }
       }
     }
-  
+
     return discount;
   }
 
   double get discountAmount {
     double totalDiscount = 0.0;
-    appliedDiscounts.clear();  
-    
+    appliedDiscounts.clear();
+
     for (var voucher in selectedVouchers) {
       double discount = calculateDiscountAmount(voucher);
       totalDiscount += discount;
@@ -77,7 +81,7 @@ class _PayScreenState extends State<PayScreen> {
         'amount': discount,
       });
     }
-    
+
     return totalDiscount;
   }
 
@@ -282,7 +286,7 @@ class _PayScreenState extends State<PayScreen> {
                           await removeUsedVouchers(); // Remove used vouchers after payment
                           setState(() {
                             availableVouchers = availableVouchers.where((voucher) => !selectedVouchers.contains(voucher)).toList();
-                            selectedVouchers.clear(); 
+                            selectedVouchers.clear();
                           });
                         },
                       ),
@@ -303,7 +307,8 @@ class _PayScreenState extends State<PayScreen> {
     if (currentUser != null) {
       for (var voucher in selectedVouchers) {
         await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
-          'redeemedVouchers': FieldValue.arrayRemove([voucher.category])
+          'redeemedVouchers': FieldValue.arrayRemove([voucher.category]),
+          'usedVouchers': FieldValue.arrayUnion([voucher.category]) // Ensure the voucher is marked as used
         });
       }
     }
