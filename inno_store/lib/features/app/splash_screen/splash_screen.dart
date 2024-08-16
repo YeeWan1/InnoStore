@@ -30,7 +30,10 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MainHomePage(pathNotifier: pathNotifier)),
+        MaterialPageRoute(builder: (context) => MainHomePage(
+          pathNotifier: pathNotifier,
+          destinationCategory: '', // Provide a default category here
+        )),
       );
     }
   }

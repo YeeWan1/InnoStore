@@ -46,7 +46,10 @@ class MyApp extends StatelessWidget {
         '/': (context) => SplashScreen(),
         '/login': (context) => LoginPage(),
         '/signUp': (context) => SignUpPage(),
-        '/home': (context) => MainHomePage(pathNotifier: pathNotifier),
+        '/home': (context) => MainHomePage(
+          pathNotifier: pathNotifier,
+          destinationCategory: '', // Provide a default category
+        ),
         '/customerSupport': (context) => CustomerSupportScreen(),
         '/pay': (context) => PayScreen(cartItems: [], username: '', onClearCart: () {}),
         '/purchaseHistory': (context) => PurchaseHistoryPage(),

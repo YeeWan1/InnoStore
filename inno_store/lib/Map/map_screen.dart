@@ -19,11 +19,13 @@ class MapScreen extends StatefulWidget {
   final double x;
   final double y;
   final List<Offset> path;
+  final String destinationCategory; // Add destination category field
 
   MapScreen({
     required this.x,
     required this.y,
     required this.path,
+    required this.destinationCategory, // Add destination category parameter
   });
 
   @override
@@ -73,13 +75,6 @@ class _MapScreenState extends State<MapScreen> {
                 child: Text(isScanning ? 'Stop Scanning' : 'Start Scanning'),
               ),
               SizedBox(height: 16), // Add some spacing
-              //Obx(() {
-                // Display the received data as text
-                //return Text(
-                //  'Received Data: ${bluetoothConnect.receivedData.value}',
-                //  style: TextStyle(fontSize: 16, color: Colors.black),
-              //  );
-              //}),
               Obx(() {
                 // Parse the received data to get x and y values
                 String data = bluetoothConnect.receivedData.value;
@@ -97,9 +92,19 @@ class _MapScreenState extends State<MapScreen> {
                 // Update the red dot coordinates
                 redDotCoordinates.value = RedDotCoordinates(x: redDotX, y: redDotY);
 
-                return Text(
-                  'User Location: (${redDotX.toStringAsFixed(2)}, ${redDotY.toStringAsFixed(2)})',
-                  style: TextStyle(fontSize: 16, color: Colors.black),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'User Location: (${redDotX.toStringAsFixed(2)}, ${redDotY.toStringAsFixed(2)})',
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Destination Location: ${widget.destinationCategory}', // Display destination location
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ),
+                  ],
                 );
               }),
               Expanded(

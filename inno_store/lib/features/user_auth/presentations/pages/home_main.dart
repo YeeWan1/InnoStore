@@ -15,12 +15,14 @@ class MainHomePage extends StatefulWidget {
   final ValueNotifier<List<Offset>> pathNotifier;
   final double x;
   final double y;
+  final String destinationCategory; // Add this line
 
   MainHomePage({
     this.initialIndex = 0,
     required this.pathNotifier,
     this.x = 2.0,
     this.y = 2.0,
+    required this.destinationCategory, // Add this line
   });
 
   @override
@@ -87,7 +89,12 @@ class _MainHomePageState extends State<MainHomePage> {
   List<Widget> _widgetOptions(String username, double x, double y, List<Offset> path) {
     return <Widget>[
       HomePage(username: username),
-      MapScreen(x: x, y: y, path: path),
+      MapScreen(
+        x: x,
+        y: y,
+        path: path,
+        destinationCategory: widget.destinationCategory, // Pass the destinationCategory here
+      ),
       CategoryScreen(
         navigateToPayment: (items, vouchers) {
           setState(() {

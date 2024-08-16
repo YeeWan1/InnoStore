@@ -247,6 +247,7 @@ class _LocateItemState extends State<LocateItem> {
           pathNotifier: pathNotifier,
           x: _goal!.dx,
           y: _goal!.dy,
+          destinationCategory: widget.category, // Pass the category here
         ),
       ),
     );
