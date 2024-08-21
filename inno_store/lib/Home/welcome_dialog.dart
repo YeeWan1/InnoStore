@@ -26,7 +26,14 @@ class WelcomeDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Welcome!'),
-      content: Text('Are you currently in the INNO store?'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Are you currently in the INNO store?'),
+          SizedBox(height: 10),
+          Text('Do you want to start purchasing?'), // Additional statement
+        ],
+      ),
       actions: [
         TextButton(
           child: Text('No'),
@@ -38,7 +45,7 @@ class WelcomeDialog extends StatelessWidget {
           child: Text('Yes'),
           onPressed: () async {
             await _recordInTime(); // Record in-time when the user presses "Yes"
-            Navigator.of(context).pop(true); // Return true to indicate in store
+            Navigator.of(context).pop(true); // Return true to indicate in store and ready to purchase
           },
         ),
       ],
