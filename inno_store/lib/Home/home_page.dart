@@ -15,14 +15,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentPoints = 778; // Initialize with your starting points
-  final List<Map<String, String>> imgList = [
-    {'path': 'assets/40%.jpg', 'title': '40% Off'},
-    {'path': 'assets/20%.jpg', 'title': '20% Off'},
-    {'path': 'assets/member.jpg', 'title': 'Member Discount'},
+
+  final List<Map<String, String>> mostPopularList = [
+    {'path': 'assets/products/nutrition/birdnest.jpg'},
+    {'path': 'assets/products/groceries/kitkat.jpg'},
+    {'path': 'assets/products/supplements/krilloil.png'},
+    {'path': 'assets/products/makeup/dryfoundation.jpg'},
+    {'path': 'assets/products/supplements/bioaceplus.jpg'},
   ];
 
-  final List<Map<String, String>> voucherList = [];
-  final Set<String> redeemedVouchers = {};
+  final List<Map<String, String>> bestSellerList = [
+    {'path': 'assets/products/coffee/oldtownhazelnut.jpg'},
+    {'path': 'assets/products/traditional_medicine/kapak.jpg'},
+    {'path': 'assets/products/supplements/bufferedc.jpg'},
+    {'path': 'assets/products/coffee/oldtown.jpg'},
+    {'path': 'assets/products/groceries/kokokrunch.jpg'},
+  ];
 
   @override
   void initState() {
@@ -52,65 +60,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _redeemVoucher(Map<String, String> voucher) {
-    setState(() {
-      voucherList.add(voucher);
-      redeemedVouchers.add(voucher['path']!);
-    });
-    Navigator.pop(context);
-  }
-
-  void _showRedeemDialog(Map<String, String> voucher) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Redeem Voucher"),
-          content: Text("Do you want to redeem this voucher?"),
-          actions: [
-            TextButton(
-              child: Text("Cancel"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            TextButton(
-              child: Text("Redeem"),
-              onPressed: () {
-                _redeemVoucher(voucher);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showAlreadyRedeemedDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Text(
-            "This voucher has already been redeemed.",
-            style: TextStyle(fontSize: 18),
-            textAlign: TextAlign.center,
-          ),
-          actions: [
-            Center(
-              child: TextButton(
-                child: Text("OK"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _updatePoints(int newPoints) {
     setState(() {
       _currentPoints = newPoints;
@@ -120,219 +69,244 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.orangeAccent,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Hello, ${widget.username}!',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.account_circle, size: 40, color: Colors.white),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/profile');
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-              padding: EdgeInsets.all(16),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color.fromARGB(255, 54, 181, 244), Color.fromARGB(255, 167, 175, 76)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'MEMBER DAY',
-                    style: TextStyle(color: Colors.black, fontSize: 38, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    '30% OFF',
-                    style: TextStyle(color: Colors.yellow, fontSize: 48, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'min spend RM100',
-                    style: TextStyle(color: Color.fromARGB(255, 2, 66, 118), fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
+            _buildHeader(),
             SizedBox(height: 8),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.2,
-              child: CarouselSlider(
-                options: CarouselOptions(
-                  height: double.infinity,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                ),
-                items: imgList.map((item) => GestureDetector(
-                  onTap: () {
-                    if (redeemedVouchers.contains(item['path'])) {
-                      _showAlreadyRedeemedDialog();
-                    } else {
-                      _showRedeemDialog(item);
-                    }
-                  },
-                  child: Container(
-                    margin: EdgeInsets.all(5.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      child: Stack(
-                        children: <Widget>[
-                          Image.asset(item['path']!, fit: BoxFit.cover, width: 1000),
-                          Positioned(
-                            bottom: 0.0,
-                            left: 0.0,
-                            right: 0.0,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color.fromARGB(200, 0, 0, 0),
-                                    Color.fromARGB(0, 0, 0, 0)
-                                  ],
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                ),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                              child: Text(
-                                item['title']!,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )).toList(),
-              ),
-            ),
-            SizedBox(height: 8),
-            Container(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('Vouchers'),
-                  ...voucherList.map((voucher) => _buildVoucherCard(voucher['title']!, voucher['path']!)).toList(),
-                  SizedBox(height: 8),
-                  _buildSectionTitle('Points'),
-                  _buildPointsInfo(context),
-                ],
-              ),
-            ),
+            _buildSection('MOST POPULAR', mostPopularList),
+            SizedBox(height: 16),
+            _buildSection('BEST SELLER', bestSellerList),
+            SizedBox(height: 16),
+            _buildPointsSection(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildHeader() {
     return Container(
-      alignment: Alignment.centerLeft,
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        title,
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.orange),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.orangeAccent,
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 3,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Hello, ${widget.username}!',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          IconButton(
+            icon: Icon(Icons.account_circle, size: 40, color: Colors.white),
+            onPressed: () {
+              Navigator.pushNamed(context, '/profile');
+            },
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildVoucherCard(String title, String imagePath) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      elevation: 4,
-      child: ListTile(
-        leading: Image.asset(imagePath, fit: BoxFit.contain, width: 50),
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+  Widget _buildSection(String title, List<Map<String, String>> productList) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle(title),
+          SizedBox(height: 8),
+          _buildProductCarousel(productList),
+        ],
       ),
     );
   }
 
-  Widget _buildPointsInfo(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          leading: Image.asset('assets/point.png', width: 40),
-          title: Text('Your Points', style: TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text('You have $_currentPoints points'),
-          onTap: () async {
-            final updatedPoints = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PointPage(
-                  currentPoints: _currentPoints,
-                  onPointsUpdated: _updatePoints,
-                ),
-              ),
-            );
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        color: Colors.black87,
+      ),
+    );
+  }
 
-            if (updatedPoints != null) {
-              setState(() {
-                _currentPoints = updatedPoints;
-              });
-            }
-          },
+  Widget _buildProductCarousel(List<Map<String, String>> productList) {
+    return Container(
+      height: 200,
+      child: CarouselSlider.builder(
+        options: CarouselOptions(
+          height: double.infinity,
+          autoPlay: true,
+          enlargeCenterPage: true,
+          viewportFraction: 0.5,
+          aspectRatio: 2.0,
+          autoPlayInterval: Duration(seconds: 3),
         ),
-        SizedBox(height: 8),
-        ElevatedButton(
-          onPressed: () async {
-            final updatedPoints = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PointPage(
-                  currentPoints: _currentPoints,
-                  onPointsUpdated: _updatePoints,
-                ),
-              ),
-            );
+        itemCount: productList.length,
+        itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
+          return Stack(
+            children: [
+              _buildProductCard(productList[itemIndex]['path']!),
+              _buildRankBadge(itemIndex + 1),
+            ],
+          );
+        },
+      ),
+    );
+  }
 
-            if (updatedPoints != null) {
-              setState(() {
-                _currentPoints = updatedPoints;
-              });
-            }
-          },
-          child: Text('Redeem Points'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange, // Button color
-            foregroundColor: Colors.white, // Text color
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  Widget _buildProductCard(String imagePath) {
+    return Container(
+      width: 140,
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 3,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: Image.asset(
+          imagePath,
+          height: 200,
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRankBadge(int rank) {
+    String assetPath;
+    if (rank == 1) {
+      assetPath = 'assets/goldcrown.png';
+    } else if (rank == 2) {
+      assetPath = 'assets/silvercrown.png';
+    } else if (rank == 3) {
+      assetPath = 'assets/bronzecrown.png';
+    } else {
+      return Positioned(
+        top: 8,
+        left: 8,
+        child: CircleAvatar(
+          backgroundColor: Colors.black54,
+          child: Text(
+            '$rank',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
-      ],
+      );
+    }
+    return Positioned(
+      top: 8,
+      left: 8,
+      child: Image.asset(
+        assetPath,
+        width: 40,
+        height: 40,
+      ),
+    );
+  }
+
+  Widget _buildPointsSection() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle('Points'),
+          SizedBox(height: 8),
+          _buildPointsInfo(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPointsInfo() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.orangeAccent),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Image.asset('assets/point.png', width: 40),
+            title: Text('Your Points', style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text('You have $_currentPoints points'),
+            onTap: () async {
+              final updatedPoints = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PointPage(
+                    currentPoints: _currentPoints,
+                    onPointsUpdated: _updatePoints,
+                  ),
+                ),
+              );
+
+              if (updatedPoints != null) {
+                setState(() {
+                  _currentPoints = updatedPoints;
+                });
+              }
+            },
+          ),
+          SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: () async {
+              final updatedPoints = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PointPage(
+                    currentPoints: _currentPoints,
+                    onPointsUpdated: _updatePoints,
+                  ),
+                ),
+              );
+
+              if (updatedPoints != null) {
+                setState(() {
+                  _currentPoints = updatedPoints;
+                });
+              }
+            },
+            child: Text('Redeem Points'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orangeAccent, // Button color
+              foregroundColor: Colors.white, // Text color
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

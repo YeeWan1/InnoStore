@@ -117,5 +117,8 @@ flutter:
     - assets/cashier/visa.png
     - assets/cashier/mastercard.png
 
+    - assets/goldcrown.png
+    - assets/silvercrown.png
+    - assets/bronzecrown.png
 
     
