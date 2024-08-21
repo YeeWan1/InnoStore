@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:inno_store/Home/point.dart';
+import 'package:inno_store/Home/welcome_dialog.dart'; // Import the welcome dialog
 
 class HomePage extends StatefulWidget {
   final String username;
+  final String userId; // Add userId to pass to WelcomeDialog
 
-  HomePage({required this.username});
+  const HomePage({required this.username, required this.userId, Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -21,6 +23,34 @@ class _HomePageState extends State<HomePage> {
 
   final List<Map<String, String>> voucherList = [];
   final Set<String> redeemedVouchers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showWelcomeDialog();
+    });
+  }
+
+  void _showWelcomeDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing the dialog by tapping outside
+      builder: (BuildContext context) {
+        return WelcomeDialog(username: widget.username, userId: widget.userId);
+      },
+    ).then((isInStore) {
+      if (isInStore != null && isInStore) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Welcome to INNO store!'),
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Feel free to visit us at INNO store!'),
+        ));
+      }
+    });
+  }
 
   void _redeemVoucher(Map<String, String> voucher) {
     setState(() {
@@ -146,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            SizedBox(height: 8), // Add space between the sections
+            SizedBox(height: 8),
             Container(
               height: MediaQuery.of(context).size.height * 0.2,
               child: CarouselSlider(
@@ -203,7 +233,7 @@ class _HomePageState extends State<HomePage> {
                 )).toList(),
               ),
             ),
-            SizedBox(height: 8), // Add space between the sections
+            SizedBox(height: 8),
             Container(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -251,7 +281,7 @@ class _HomePageState extends State<HomePage> {
     return Column(
       children: [
         ListTile(
-          leading: Image.asset('assets/point.png', width: 40), // Update the icon path
+          leading: Image.asset('assets/point.png', width: 40),
           title: Text('Your Points', style: TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text('You have $_currentPoints points'),
           onTap: () async {
@@ -303,16 +333,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Profile')),
-      body: Center(child: Text('Profile Page')),
     );
   }
 }

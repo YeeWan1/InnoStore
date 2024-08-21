@@ -8,7 +8,7 @@ class MakePaymentScreen extends StatelessWidget {
   final List<CartItem> cartItems;
   final String username;
   final VoidCallback onPaymentSuccess;
-  final List<Map<String, dynamic>> appliedDiscounts; // Added
+  final List<Map<String, dynamic>> appliedDiscounts;
 
   const MakePaymentScreen({
     Key? key,
@@ -16,33 +16,56 @@ class MakePaymentScreen extends StatelessWidget {
     required this.cartItems,
     required this.username,
     required this.onPaymentSuccess,
-    required this.appliedDiscounts, // Added
+    required this.appliedDiscounts,
   }) : super(key: key);
 
   Future<void> _handlePayment(BuildContext context) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
+        // Get the in-time from Firestore
+        DocumentSnapshot<Map<String, dynamic>> timeDoc = await FirebaseFirestore.instance
+            .collection('time_spent_in_store')
+            .doc(user.uid)
+            .get();
+
+        Timestamp inTime = timeDoc.data()?['in_time'];
+        Timestamp outTime = Timestamp.now();
+
+        // Calculate time spent in minutes
+        int timeSpentMinutes = outTime.seconds - inTime.seconds;
+        timeSpentMinutes = (timeSpentMinutes / 60).round();
+
+        // Update Firestore with out-time and time spent
+        await FirebaseFirestore.instance
+            .collection('time_spent_in_store')
+            .doc(user.uid)
+            .update({
+          'out_time': outTime,
+          'time_spent_minutes': timeSpentMinutes,
+        });
+
+        // Add purchase history to Firestore
         await FirebaseFirestore.instance.collection('purchase_history').add({
           'userId': user.uid,
           'username': username,
           'items': cartItems.map((item) => item.toMap()).toList(),
           'totalPrice': totalAmount,
           'timestamp': FieldValue.serverTimestamp(),
-          'discounts': appliedDiscounts, // Added
+          'discounts': appliedDiscounts,
         });
 
-        // Show Payment Successful dialog immediately after payment processing
+        // Show Payment Successful dialog
         await showDialog(
           context: context,
-          barrierDismissible: false, // Prevent dialog from being dismissed
+          barrierDismissible: false,
           builder: (context) => AlertDialog(
             title: Text('Payment Successful'),
             content: Text('Thank you for your purchase!'),
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the Payment Successful dialog
+                  Navigator.of(context).pop();
                   Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
                 },
                 child: Text('OK'),

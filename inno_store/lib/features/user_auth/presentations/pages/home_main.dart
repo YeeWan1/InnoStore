@@ -15,14 +15,14 @@ class MainHomePage extends StatefulWidget {
   final ValueNotifier<List<Offset>> pathNotifier;
   final double x;
   final double y;
-  final String destinationCategory; // Add this line
+  final String destinationCategory;
 
   MainHomePage({
     this.initialIndex = 0,
     required this.pathNotifier,
     this.x = 2.0,
     this.y = 2.0,
-    required this.destinationCategory, // Add this line
+    required this.destinationCategory,
   });
 
   @override
@@ -33,12 +33,13 @@ class _MainHomePageState extends State<MainHomePage> {
   int _selectedIndex = 0;
   User? user;
   String? username;
+  String? userId;
   bool isLoading = true;
   late double x;
   late double y;
   late List<Offset> path;
-  List<CartItem> cartItems = []; // Initialize an empty cart
-  List<cashier.Voucher> redeemedVouchers = []; // Track the redeemed vouchers
+  List<CartItem> cartItems = [];
+  List<cashier.Voucher> redeemedVouchers = [];
 
   @override
   void initState() {
@@ -64,6 +65,7 @@ class _MainHomePageState extends State<MainHomePage> {
         DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
         setState(() {
           user = currentUser;
+          userId = currentUser.uid; // Store the userId
           username = userDoc['username'] ?? "User";
           isLoading = false;
         });
@@ -86,14 +88,14 @@ class _MainHomePageState extends State<MainHomePage> {
     });
   }
 
-  List<Widget> _widgetOptions(String username, double x, double y, List<Offset> path) {
+  List<Widget> _widgetOptions(String username, String userId, double x, double y, List<Offset> path) {
     return <Widget>[
-      HomePage(username: username),
+      HomePage(username: username, userId: userId), // Pass userId to HomePage
       MapScreen(
         x: x,
         y: y,
         path: path,
-        destinationCategory: widget.destinationCategory, // Pass the destinationCategory here
+        destinationCategory: widget.destinationCategory,
       ),
       CategoryScreen(
         navigateToPayment: (items, vouchers) {
@@ -140,13 +142,13 @@ class _MainHomePageState extends State<MainHomePage> {
       );
     }
 
-    if (username == null) {
+    if (username == null || userId == null) { // Ensure both username and userId are available
       return Scaffold(
         body: Center(child: Text("Failed to fetch user data")),
       );
     }
 
-    List<Widget> widgetOptions = _widgetOptions(username!, x, y, path);
+    List<Widget> widgetOptions = _widgetOptions(username!, userId!, x, y, path);
 
     return Scaffold(
       appBar: AppBar(
