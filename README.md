@@ -1,6 +1,6 @@
 # InnoStore
 Smart Retail Inno Store App
-download --> https://github.com/YeeWan1/InnoStore/releases/download/v1.0/app-release.apk
+download --> (https://encr.pw/InnoStore)
 
 This app is part of a demonstration for an indoor positioning system (IPS) in smart retail store. 
 The IPS relies on visible light communication (VLC) to determine the customers' relative positions in the smart retail store.
