@@ -1,5 +1,5 @@
 # InnoStore
-Smart Retail App
+Smart Retail Inno Store App
 download --> https://github.com/YeeWan1/InnoStore/releases/tag/v1.0 
 
 This app is part of a demonstration for an indoor positioning system (IPS) in smart retail store. 
