@@ -14,3 +14,4 @@ The app's features include:
 
 
 View pubspec.yaml to install necessary packages.
+Run main.dart 
